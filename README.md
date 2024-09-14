@@ -1,12 +1,10 @@
 # Data_Structures_And_Algorithms
 My repository on Data Structures and Algorithms
 
-{% tabs %}
-
-{% tab title="Windows" %} Here are the instructions for Windows {% endtab %}
-
-{% tab title="OSX" %} Here are the instructions for macOS {% endtab %}
-
-{% tab title="Linux" %} Here are the instructions for Linux {% endtab %}
-
-{% endtabs %}
+```{r}
+# Source: http://www.htmlwidgets.org/showcase_plotly.html
+library(plotly)
+p <- ggplot(data = diamonds, aes(x = cut, fill = clarity)) +
+            geom_bar(position = "dodge")
+ggplotly(p)
+```
