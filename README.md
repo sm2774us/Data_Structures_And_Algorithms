@@ -1,11 +1,17 @@
 # Data_Structures_And_Algorithms
 My repository on Data Structures and Algorithms
 
-<details open>
-<summary>Shopping list</summary>
+<hr />
+=== "tab_1"
 
-* Vegetables
-* Fruits
-* Fish
+    Content of tab_1  
+    ```cpp
+    const int i = 1;
+    ```
 
-</details>
+=== "tab_2"
+
+    Content of tab_2  
+    ```python
+    global i: int = 1
+    ```
