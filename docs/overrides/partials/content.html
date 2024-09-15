@@ -1,17 +1,17 @@
 <script type="text/javascript">
 window.onload = function() {
-	const newIssueURL = "https://github.com/cp-algorithms/cp-algorithms/issues/new";
-  const issueTitle = "Problem on article " + {{page.title | tojson }};
+	const newIssueURL = "https://github.com/sm2774us/Data_Structures_And_Algorithms/issues/new";
+	const issueTitle = "Problem on article " + {{page.title | tojson }};
 	const issueBody = `
- **Article:** [`+ {{page.title | tojson }} + `](${window.location.href})
+**Article:** [`+ {{page.title | tojson }} + `](${window.location.href})
 
 **Problem:**
 <!--
 Describe the issue of this article in detail.
 -->
 `;
-  var issue_a = document.getElementById("report_issue_a");
-  issue_a.href = `${newIssueURL}?` + `title=${encodeURIComponent(issueTitle)}&` + `body=${encodeURIComponent(issueBody)}`;
+	var issue_a = document.getElementById("report_issue_a");
+	issue_a.href = `${newIssueURL}?` + `title=${encodeURIComponent(issueTitle)}&` + `body=${encodeURIComponent(issueBody)}`;
 }
 </script>
 {% if page.edit_url %}
