@@ -1,4 +1,10 @@
-# String
+---
+tags:
+  - Translated
+e_maxx_link: array
+---
+
+# Array
 
 ## Remove Duplicates from Sorted Array
 

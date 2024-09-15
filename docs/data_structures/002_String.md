@@ -1,3 +1,9 @@
+---
+tags:
+  - Translated
+e_maxx_link: string
+---
+
 # String
 
 ## Shortest String That Contains Three Strings
