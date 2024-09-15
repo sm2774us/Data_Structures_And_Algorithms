@@ -51,7 +51,7 @@ title: Home
 [![github open issues badge]][github open issues link]
 [![github open prs badge]][github open prs link]
 
-[latest release link]: https://github.com/invoke-ai/InvokeAI/releases
+[latest release link]: https://github.com/sm2774us/Data_Structure_And_Algorithms/releases
 
 </div>
 
