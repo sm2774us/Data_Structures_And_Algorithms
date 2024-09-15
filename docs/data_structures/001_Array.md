@@ -2,15 +2,53 @@
 
 ## Remove Duplicates from Sorted Array
 
-Problem Description: [LeetCode - Problem 26 - Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/)
+### Problem Description: [LeetCode - Problem 26 - Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/)
 
 !!! tip
 
     Python solution is the easiest to understand so always start with that.
 
-Solutions:
+### Intuition
 
-=== "Python3"
+The __intuition__ is to use __two pointers, `i` and `j`__, to iterate through the array. The variable `j` is used to keep track of the current index where a unique element should be placed. The initial value of `j` is 1 since the first element in the array is always unique and doesn't need to be changed.
+
+### Solution Explanation
+
+The code starts iterating from `i = 1` because we need to compare each element with its previous element to check for duplicates.
+
+The main logic is inside the for loop:
+
+  - If the current element `nums[i]` is not equal to the previous element `nums[i - 1]`, it means we have encountered a new unique element.
+  - In that case, we update `nums[j]` with the value of the unique element at `nums[i]`, and then increment `j` by `1` to mark the next position for a new unique element.
+  - By doing this, we effectively overwrite any duplicates in the array and only keep the unique elements.
+
+Once the loop finishes, the value of `j` represents the length of the resulting array with duplicates removed.
+
+Finally, we return `j` as the desired result.
+
+### Complexity Analysis
+
+- __Time Complexity :__
+  - Initialization: The variable assignment operation to initialize `j = 1` takes constant time `O(1)`.
+  - Loop: The loop runs through the `nums` list once, comparing elements and updating the `j` index. This loop iterates through the list of length `n` with `n-1` comparisons.
+    - Each iteration does constant work (comparing array elements and updating a counter), leading to a time complexity of `O(n)`.
+  - __Therefore, the overall time complexity of the `removeDuplicates` method is `O(n)`, where `n` is the length of the input list `nums`.__
+
+- __Space Complexity :__
+  - The algorithm performs modifications in-place, updating the input list `nums` without using any extra data structures.
+  - The extra space used is only for a constant number of integer variables (`j`, `i`) and does not depend on the input size.
+  - __Hence, the algorithm has a space complexity of `O(1)`, indicating constant space usage regardless of the size of the input list `nums`.__
+
+__In summary :__
+- __`n` being the length of the input list `nums`.__
+  - __Overall Time Complexity: `O(n)`__
+  - __Overall Space Complexity: `O(1)`__
+
+This solution effectively removes duplicates from the input list in linear time complexity while using only constant additional space, making it an efficient and space-saving approach for this problem.
+
+### Solutions
+
+=== "Python"
 
     ```python
     from typing import List
@@ -25,7 +63,7 @@ Solutions:
             return j
     ```
 
-=== "C++20"
+=== "C++"
 
     ```cpp
     #include <vector>
@@ -143,6 +181,34 @@ Solutions:
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    class Solution {
+        fun removeDuplicates(nums: Array<Int>): Int {
+            var j = 1
+            for (i in 1 until nums.size) {
+                if (nums[i] != nums[i - 1]) {
+                    nums[j] = nums[i]
+                    j++
+                }
+            }
+            return j
+        }
+    }
+
+    fun main() {
+        val solution = Solution()
+        val nums = arrayOf(1, 1, 2, 2, 3, 4, 4, 5, 5)
+        val resultSize = solution.removeDuplicates(nums)
+        
+        println("Modified Array Size: $resultSize")
+        for (i in 0 until resultSize) {
+            print("${nums[i]} ")
+        }
+    }
+    ```
+
 === "Go"
 
     ```go
@@ -251,4 +317,257 @@ Solutions:
     newLength = remove_duplicates(s, nums)
     println("New length: ", newLength)
     println("Modified array: ", nums[1:newLength])
+    ```
+
+## Remove Element
+
+### Problem Description: [LeetCode - Problem 27 - Remove Element](https://leetcode.com/problems/remove-element/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Intuition
+
+The __intuition__ behind this solution is to __iterate through the array and keep track of two pointers: `index` and `i`__. The index pointer represents the position where the next non-target element should be placed, while the i pointer iterates through the array elements. By overwriting the target elements with non-target elements, the solution effectively removes all occurrences of the target value from the array.
+
+### Solution Explanation
+
+- Initialize __`index`__ to __`0`__, which represents the current position for the next non-target element.
+- Iterate through each element of the input array using the __`i`__ pointer.
+- For each element __`nums[i]`__, check if it is equal to the target value.
+  - If __`nums[i]`__ is not equal to __`val`__, it means it is a non-target element.
+  - Set __`nums[index]`__ to __`nums[i]`__ to store the non-target element at the current index position.
+  - Increment __`index`__ by __`1`__ to move to the next position for the next non-target element.
+- Continue this process until all elements in the array have been processed.
+- __Finally, return the value of `index`, which represents the length of the modified array.__
+
+### Complexity Analysis
+
+- __Time Complexity :__
+  - The algorithm iterates through the input list __`nums`__ once, where __the number of iterations is equal to the length of the list `len(nums) = n`.__
+    - Each iteration involves constant time operations: comparing elements, updating the index __`index`__, and potentially updating array elements.
+  - As each element in the array is processed once, the time complexity is __`O(n)`__, where __`n` is the length of the input list `nums`__.
+
+- __Space Complexity :__
+  - The additional space used in the algorithm is independent of the input size and primarily includes maintaining constant variables (__`index`, `i`, `val`__) to track the processing.
+  - The space complexity is __`O(1)`__, indicating that the space usage remains constant regardless of the input size, as the modifications are made in-place without utilizing any extra data structures.
+
+__In summary :__
+- __`n` being the length of the input list `nums`.__
+  - __Overall Time Complexity: `O(n)`__
+  - __Overall Space Complexity: `O(1)`__
+
+The solution efficiently removes the specified element from the input array with a linear time complexity and constant space complexity, making it an optimal approach for this problem.
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    class Solution:
+        def removeElement(self, nums: List[int], val: int) -> int:
+            index = 0
+            for i in range(len(nums)):
+                if nums[i] != val:
+                    nums[index] = nums[i]
+                    index += 1
+            return index
+    ```
+
+=== "C++"
+
+    ```cpp
+    #include <vector>
+
+    class Solution {
+    public:
+        int removeElement(std::vector<int>& nums, int val) {
+            int index = 0;
+            for (int i = 0; i < nums.size(); i++) {
+                if (nums[i] != val) {
+                    nums[index] = nums[i];
+                    index++;
+                }
+            }
+            return index;
+        }
+    };
+    ```
+
+=== "Rust"
+
+    ```rust
+    struct Solution;
+
+    impl Solution {
+        pub fn remove_element(nums: &mut Vec<i32>, val: i32) -> i32 {
+            let mut index = 0;
+            for i in 0..nums.len() {
+                if nums[i] != val {
+                    nums[index] = nums[i];
+                    index += 1;
+                }
+            }
+            index as i32
+        }
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    using System;
+    using System.Collections.Generic;
+
+    public class Solution {
+        public int RemoveElement(List<int> nums, int val) {
+            int index = 0;
+            for (int i = 0; i < nums.Count; i++) {
+                if (nums[i] != val) {
+                    nums[index] = nums[i];
+                    index++;
+                }
+            }
+            return index;
+        }
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    import java.util.List;
+
+    public class Solution {
+        public int removeElement(List<Integer> nums, int val) {
+            int index = 0;
+            for (int i = 0; i < nums.size(); i++) {
+                if (nums.get(i) != val) {
+                    nums.set(index, nums.get(i));
+                    index++;
+                }
+            }
+            return index;
+        }
+    }
+    ```
+
+=== "Scala"
+
+    ```scala
+    class Solution {
+        def removeElement(nums: scala.collection.mutable.Seq[Int], value: Int): Int = {
+            var index = 0
+            for (i <- nums.indices) {
+                if (nums(i) != value) {
+                    nums(index) = nums(i)
+                    index += 1
+                }
+            }
+            index
+        }
+    }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    class Solution {
+        fun removeElement(nums: MutableList<Int>, value: Int): Int {
+            var index = 0
+            for (i in nums.indices) {
+                if (nums[i] != value) {
+                    nums[index] = nums[i]
+                    index++
+                }
+            }
+            return index
+        }
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    package main
+
+    import "fmt"
+
+    type Solution struct{}
+
+    func (s Solution) removeElement(nums []int, val int) int {
+        index := 0
+        for i := 0; i < len(nums); i++ {
+            if nums[i] != val {
+                nums[index] = nums[i]
+                index++
+            }
+        }
+        return index
+    }
+
+    func main() {
+        nums := []int{3, 2, 2, 3}
+        sol := Solution{}
+        result := sol.removeElement(nums, 3)
+        fmt.Println(result)
+    }
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    class Solution {
+        removeElement(nums: number[], val: number): number {
+            let index = 0;
+            for (let i = 0; i < nums.length; i++) {
+                if (nums[i] !== val) {
+                    nums[index] = nums[i];
+                    index++;
+                }
+            }
+            return index;
+        }
+    }
+    ```
+
+=== "R"
+
+    ```R
+    Solution <- setRefClass("Solution", 
+        methods = list(
+            removeElement = function(nums, val) {
+                index <- 0
+                for (i in seq_along(nums)) {
+                    if (nums[i] != val) {
+                    nums[index + 1] <- nums[i]
+                    index <- index + 1
+                    }
+                }
+                return(index)
+            }
+        )
+    )
+    ```
+
+=== "Julia"
+
+    ```julia
+    module SolutionModule
+
+    mutable struct Solution
+        function removeElement(nums::Vector{Int}, val::Int)::Int
+            index = 0
+            for i in 1:length(nums)
+                if nums[i] != val
+                    nums[index + 1] = nums[i]
+                    index += 1
+                end
+            end
+            return index
+        end
+    end
+
+    end
     ```

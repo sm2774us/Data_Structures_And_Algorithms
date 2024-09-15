@@ -2,15 +2,72 @@
 
 ## Shortest String That Contains Three Strings
 
-Problem Description: [LeetCode - Problem 2800 - Shortest String That Contains Three Strings](https://leetcode.com/problems/shortest-string-that-contains-three-strings/)
+### Problem Description: [LeetCode - Problem 2800 - Shortest String That Contains Three Strings](https://leetcode.com/problems/shortest-string-that-contains-three-strings/)
+
 
 !!! tip
 
     Python solution is the easiest to understand so always start with that.
 
-Solutions:
+### Solution Explanation
 
-=== "Python3"
+__1. Suffix Array Construction (`build_suffix_array`):__
+   - This function builds a suffix array for a given string using the prefix doubling algorithm.
+   - It starts by sorting suffixes based on their first character, then iteratively sorts them based on longer prefixes (doubling the length each time).
+
+__2. LCP Array Construction (`build_lcp_array`):__
+   - This function builds the Longest Common Prefix (LCP) array from the suffix array and the original string.
+   - It uses Kasai's algorithm to compute the LCP values efficiently.
+
+__3. Finding Overlap (`find_overlap`):__
+   - This function finds the maximum overlap between two strings using the suffix array and LCP array.
+   - It combines the two strings with a separator, builds the suffix array and LCP array, and then finds the maximum LCP value between suffixes from different strings.
+
+__4. Merging Strings (`merge_strings`):__
+   - This function merges three strings by finding the overlap between the first two, then finding the overlap of the result with the third string.
+
+__5. Main Function (`minimumString`):__
+   - This function generates all permutations of the three input strings and finds the shortest merged string among them.
+   - It uses the `merge_strings` function for each permutation and selects the shortest result (or lexicographically smallest if there are multiple shortest results).
+
+### Complexity Analysis
+
+__1. Suffix Array Construction [`build_suffix_array` - TC: `O(n log n)` ; SC: `O(n)`] :__
+   - __Time Complexity: `O(n log n)`, where `n` is the length of the string.__
+   - __Space Complexity: `O(n)` for storing the suffix array and temporary arrays.__
+
+__2. LCP Array Construction [`build_lcp_array` - TC: `O(n)` ; SC: `O(n)`] :__
+   - __Time Complexity: `O(n)`, where `n` is the length of the string.__
+   - __Space Complexity: `O(n)` for storing the LCP array and rank array.__
+
+__3. Finding Overlap [`find_overlap` - TC: `O(n log n)` ; SC: `O(n)`] :__
+   - __Time Complexity: `O(n log n)` due to suffix array construction, where `n` is the total length of both strings.__
+   - __Space Complexity: `O(n)` for storing the combined string, suffix array, and LCP array.__
+
+__4. Merging Strings [`merge_strings` - TC: `O(n log n)` ; SC: `O(n)`] :__
+   - __Time Complexity: `O(n log n)`, where `n` is the total length of all three strings.__
+   - __Space Complexity: `O(n)` for storing the merged strings.__
+
+__5. Main Function [`minimumString` - TC: `O(n log n)` ; SC: `O(n)`] :__
+   - __Time Complexity: `O(n log n)`, where `n` is the total length of all input strings. Although we try 6 permutations, this is a constant factor.__
+   - __Space Complexity: `O(n)` for storing the merged strings.__
+
+__Overall Complexity Analysis [TC: `O(n log n)` ; SC: `O(n)`] :__
+- __Time Complexity: `O(n log n)`, where n is the total length of all input strings. This is dominated by the suffix array construction, which is done multiple times but always with a total string length proportional to `n`.__
+- __Space Complexity: `O(n)` for storing the suffix arrays, LCP arrays, and merged strings.__
+
+- __Summary :__
+This solution is theoretically more efficient than __`O(n^2)`__ solutions, especially for large inputs. The use of suffix arrays allows for efficient string matching and overlap finding. However, it's worth noting that:
+
+1. The implementation is more complex than simpler approaches, which could make it more prone to bugs and harder to maintain.
+2. For smaller inputs, simpler O(n^2) solutions might actually be faster due to lower constant factors and better cache performance.
+3. This solution still tries all permutations of the three strings, which isn't necessary in theory but simplifies the implementation.
+
+In practice, the choice between this solution and simpler ones would depend on the expected size and characteristics of the input strings, as well as the importance of optimizing for worst-case versus average-case performance.
+
+### Solutions
+
+=== "Python"
 
     ```python
     from typing import List, Tuple
@@ -91,7 +148,7 @@ Solutions:
             return min((merge_strings(x[0], x[1], x[2]) for x in all_permutations), key=lambda s: (len(s), s))
     ```
 
-=== "C++20"
+=== "C++"
 
     ```cpp
     #include <string>
@@ -572,92 +629,92 @@ Solutions:
         def minimumString(string1: String, string2: String, string3: String): String = {
 
             def buildSuffixArray(text: String): Array[Int] = {
-            val textLength = text.length
-            val suffixArray = (0 until textLength).toArray
-            val rank = text.map(_.toInt).toArray
-            val tempRank = Array.ofDim[Int](textLength)
-            var chunkSize = 1
+                val textLength = text.length
+                val suffixArray = (0 until textLength).toArray
+                val rank = text.map(_.toInt).toArray
+                val tempRank = Array.ofDim[Int](textLength)
+                var chunkSize = 1
 
-            while (chunkSize < textLength) {
-                java.util.Arrays.sort(suffixArray, (i: Int, j: Int) => {
-                val secondRankI = if (i + chunkSize < textLength) rank(i + chunkSize) else -1
-                val secondRankJ = if (j + chunkSize < textLength) rank(j + chunkSize) else -1
-                if (rank(i) == rank(j)) Integer.compare(secondRankI, secondRankJ) else Integer.compare(rank(i), rank(j))
-                })
+                while (chunkSize < textLength) {
+                    java.util.Arrays.sort(suffixArray, (i: Int, j: Int) => {
+                    val secondRankI = if (i + chunkSize < textLength) rank(i + chunkSize) else -1
+                    val secondRankJ = if (j + chunkSize < textLength) rank(j + chunkSize) else -1
+                    if (rank(i) == rank(j)) Integer.compare(secondRankI, secondRankJ) else Integer.compare(rank(i), rank(j))
+                    })
 
-                tempRank(suffixArray(0)) = 0
-                for (i <- 1 until textLength) {
-                val currentSecondRank = if (suffixArray(i) + chunkSize < textLength) rank(suffixArray(i) + chunkSize) else -1
-                val prevSecondRank = if (suffixArray(i - 1) + chunkSize < textLength) rank(suffixArray(i - 1) + chunkSize) else -1
-                tempRank(suffixArray(i)) = tempRank(suffixArray(i - 1)) + (if (rank(suffixArray(i)) != rank(suffixArray(i - 1)) || currentSecondRank != prevSecondRank) 1 else 0)
+                    tempRank(suffixArray(0)) = 0
+                    for (i <- 1 until textLength) {
+                    val currentSecondRank = if (suffixArray(i) + chunkSize < textLength) rank(suffixArray(i) + chunkSize) else -1
+                    val prevSecondRank = if (suffixArray(i - 1) + chunkSize < textLength) rank(suffixArray(i - 1) + chunkSize) else -1
+                    tempRank(suffixArray(i)) = tempRank(suffixArray(i - 1)) + (if (rank(suffixArray(i)) != rank(suffixArray(i - 1)) || currentSecondRank != prevSecondRank) 1 else 0)
+                    }
+                    for (i <- 0 until textLength) {
+                    rank(i) = tempRank(i)
+                    }
+                    if (tempRank(textLength - 1) == textLength - 1) {
+                    return suffixArray
+                    }
+                    chunkSize *= 2
                 }
-                for (i <- 0 until textLength) {
-                rank(i) = tempRank(i)
-                }
-                if (tempRank(textLength - 1) == textLength - 1) {
-                return suffixArray
-                }
-                chunkSize *= 2
-            }
 
-            suffixArray
+                suffixArray
             }
 
             def buildLCPArray(text: String, suffixArray: Array[Int]): Array[Int] = {
-            val textLength = text.length
-            val rank = Array.ofDim[Int](textLength)
-            val lcp = Array.ofDim[Int](textLength - 1)
-            for (i <- 0 until textLength) {
-                rank(suffixArray(i)) = i
-            }
-            var k = 0
-            for (i <- 0 until textLength) {
-                if (rank(i) == textLength - 1) {
-                k = 0
-                } else {
-                val j = suffixArray(rank(i) + 1)
-                while (i + k < textLength && j + k < textLength && text.charAt(i + k) == text.charAt(j + k)) {
-                    k += 1
+                val textLength = text.length
+                val rank = Array.ofDim[Int](textLength)
+                val lcp = Array.ofDim[Int](textLength - 1)
+                for (i <- 0 until textLength) {
+                    rank(suffixArray(i)) = i
                 }
-                lcp(rank(i)) = k
-                if (k > 0) k -= 1
+                var k = 0
+                for (i <- 0 until textLength) {
+                    if (rank(i) == textLength - 1) {
+                    k = 0
+                    } else {
+                    val j = suffixArray(rank(i) + 1)
+                    while (i + k < textLength && j + k < textLength && text.charAt(i + k) == text.charAt(j + k)) {
+                        k += 1
+                    }
+                    lcp(rank(i)) = k
+                    if (k > 0) k -= 1
+                    }
                 }
-            }
 
-            lcp
+                lcp
             }
 
             def mergeStrings(s1: String, s2: String, s3: String): String = {
-            val (mergedS1S2, _) = findOverlap(s1, s2)
-            val (finalMerged, _) = findOverlap(mergedS1S2, s3)
-            finalMerged
+                val (mergedS1S2, _) = findOverlap(s1, s2)
+                val (finalMerged, _) = findOverlap(mergedS1S2, s3)
+                finalMerged
             }
 
             def findOverlap(stringA: String, stringB: String): (String, Int) = {
-            val combinedString = s"$stringA#$stringB"
-            val suffixArray = buildSuffixArray(combinedString)
-            val lcpArray = buildLCPArray(combinedString, suffixArray)
+                val combinedString = s"$stringA#$stringB"
+                val suffixArray = buildSuffixArray(combinedString)
+                val lcpArray = buildLCPArray(combinedString, suffixArray)
 
-            var maxOverlap = 0
-            for (i <- 0 until combinedString.length - 1) {
-                if ((suffixArray(i) < stringA.length) != (suffixArray(i + 1) < stringA.length)) {
-                maxOverlap = math.max(maxOverlap, lcpArray(i))
+                var maxOverlap = 0
+                for (i <- 0 until combinedString.length - 1) {
+                    if ((suffixArray(i) < stringA.length) != (suffixArray(i + 1) < stringA.length)) {
+                    maxOverlap = math.max(maxOverlap, lcpArray(i))
+                    }
                 }
-            }
 
-            if (stringA.contains(stringB)) {
-                (stringB, stringA.length)
-            } else if (stringB.contains(stringA)) {
-                (stringA, stringB.length)
-            } else if (maxOverlap > 0) {
-                if (suffixArray(maxOverlap) < stringA.length) {
-                (stringA + stringB.substring(maxOverlap), maxOverlap)
+                if (stringA.contains(stringB)) {
+                    (stringB, stringA.length)
+                } else if (stringB.contains(stringA)) {
+                    (stringA, stringB.length)
+                } else if (maxOverlap > 0) {
+                    if (suffixArray(maxOverlap) < stringA.length) {
+                    (stringA + stringB.substring(maxOverlap), maxOverlap)
+                    } else {
+                    (stringB + stringA.substring(maxOverlap), maxOverlap)
+                    }
                 } else {
-                (stringB + stringA.substring(maxOverlap), maxOverlap)
+                    (stringA + stringB, 0)
                 }
-            } else {
-                (stringA + stringB, 0)
-            }
             }
 
             val allPermutations = Seq(
@@ -673,19 +730,119 @@ Solutions:
             .map { case (a, b, c) => mergeStrings(a, b, c) }
             .minBy(s => (s.length, s))
         }
+    }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import kotlin.math.max
+
+    class Solution {
+        fun minimumString(string1: String, string2: String, string3: String): String {
+            
+            fun buildSuffixArray(text: String): List<Int> {
+                val textLength = text.length
+                var suffixArray = (0 until textLength).toList()
+                val rank = text.map { it.toInt() }
+                var tempRank = List(textLength) { 0 }
+                var chunkSize = 1
+                
+                while (chunkSize < textLength) {
+                    suffixArray = suffixArray.sortedWith(compareBy({ i -> Pair(rank[i], rank.getOrElse(i + chunkSize) { -1 }) }))
+                    for (i in 1 until textLength) {
+                        tempRank[i] = tempRank[i - 1] + if (
+                            Pair(rank[suffixArray[i]],
+                                rank.getOrElse(suffixArray[i] + chunkSize) { -1 }) != Pair(rank[suffixArray[i - 1]],
+                                rank.getOrElse(suffixArray[i - 1] + chunkSize) { -1 })
+                        ) 1 else 0
+                    }
+                    for (i in 0 until textLength) {
+                        rank[suffixArray[i]] = tempRank[i]
+                    }
+                    if (tempRank[textLength - 1] == textLength - 1) {
+                        break
+                    }
+                    chunkSize *= 2
+                }
+                return suffixArray
+            }
+
+            fun buildLCPArray(text: String, suffixArray: List<Int>): List<Int> {
+                val textLength = text.length
+                val rank = MutableList(textLength) { 0 }
+                suffixArray.forEachIndexed { i, sa -> rank[sa] = i }
+                val lcp = MutableList(textLength - 1) { 0 }
+                var k = 0
+                
+                for (i in 0 until textLength) {
+                    if (rank[i] == textLength - 1) {
+                        k = 0
+                        continue
+                    }
+                    var j = suffixArray[rank[i] + 1]
+                    while (i + k < textLength && j + k < textLength && text[i + k] == text[j + k]) {
+                        k++
+                    }
+                    lcp[rank[i]] = k
+                    if (k > 0) k--
+                }
+                return lcp
+            }
+
+            fun findOverlap(stringA: String, stringB: String): Pair<String, Int> {
+                val combinedString = "$stringA#$stringB"
+                val suffixArray = buildSuffixArray(combinedString)
+                val lcpArray = buildLCPArray(combinedString, suffixArray)
+                
+                var maxOverlap = 0
+                for (i in 0 until combinedString.length - 1) {
+                    if ((suffixArray[i] < stringA.length) != (suffixArray[i + 1] < stringA.length)) {
+                        maxOverlap = max(maxOverlap, lcpArray[i])
+                    }
+                }
+                
+                if (stringA in stringB) {
+                    return Pair(stringB, stringA.length)
+                } else if (stringB in stringA) {
+                    return Pair(stringA, stringB.length)
+                } else if (maxOverlap > 0) {
+                    return if (suffixArray[maxOverlap] < stringA.length) {
+                        Pair(stringA + stringB.substring(maxOverlap), maxOverlap)
+                    } else {
+                        Pair(stringB + stringA.substring(maxOverlap), maxOverlap)
+                    }
+                } else {
+                    return Pair(stringA + stringB, 0)
+                }
+            }
+
+            fun mergeStrings(s1: String, s2: String, s3: String): String {
+                val (mergedS1S2, _) = findOverlap(s1, s2)
+                val (finalMerged, _) = findOverlap(mergedS1S2, s3)
+                return finalMerged
+            }
+
+            val allPermutations = listOf(
+                Triple(string1, string2, string3), Triple(string1, string3, string2),
+                Triple(string2, string1, string3), Triple(string2, string3, string1),
+                Triple(string3, string1, string2), Triple(string3, string2, string1)
+            )
+
+            return allPermutations.map { (a, b, c) -> mergeStrings(a, b, c) }.minByOrNull { it.length } ?: ""
         }
+    }
+
+    fun main() {
+        val solution = Solution()
+        val result = solution.minimumString("abc", "bca", "aaa")
+        println("Minimum String: $result")
+    }
     ```
 
 === "Go"
 
     ```go
-    package main
-
-    import (
-        "strings"
-        "sort"
-    )
-
     package main
 
     import (
@@ -695,9 +852,6 @@ Solutions:
     )
 
     type Solution struct{}
-
-    func (s *Solution) getPrefix(pattern string) []int {
-    }
 
     func (s *Solution) buildSuffixArray(text string) []int {
         textLength := len(text)
