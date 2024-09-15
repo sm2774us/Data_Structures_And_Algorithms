@@ -25,7 +25,7 @@ extra_css:
 # Configuration
 theme:
   name: material
-  custom_dir: src/overrides
+  custom_dir: docs/overrides
   logo: favicon.ico
   favicon: favicon.ico
   icon:
