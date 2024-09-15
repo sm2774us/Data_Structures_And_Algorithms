@@ -112,6 +112,12 @@ dependencies = [
   "mkdocs-material>=9.5.13",
   "mkdocs-git-revision-date-localized-plugin",
   "mkdocs-redirects",
+  "mkdocs-macros-plugin",
+  "mkdocs-literate-nav",
+  "mkdocs-git-authors-plugin",
+  "mkdocs-simple-hooks",
+  "mkdocs-rss-plugin",
+  "plugins/mkdocs-git-committers-plugin-2",
   "mkdocstrings[python]>=0.24.1",
 ]
 "dev" = ["jurigged", "pudb", "snakeviz", "gprof2dot"]
