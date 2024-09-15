@@ -843,10 +843,124 @@ Solutions:
     }
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    class Solution {
+        buildSuffixArray(text: string): number[] {
+            const textLength = text.length;
+            const suffixArray = Array.from({ length: textLength }, (_, i) => i);
+            let rank = text.split('').map(char => char.charCodeAt(0));
+            const tempRank = Array(textLength).fill(0);
+            let chunkSize = 1;
+
+            while (chunkSize < textLength) {
+                suffixArray.sort((i, j) => {
+                    const secondRankI = i + chunkSize < textLength ? rank[i + chunkSize] : -1;
+                    const secondRankJ = j + chunkSize < textLength ? rank[j + chunkSize] : -1;
+                    return rank[i] === rank[j] ? secondRankI - secondRankJ : rank[i] - rank[j];
+                });
+
+                tempRank[suffixArray[0]] = 0;
+                for (let i = 1; i < textLength; i++) {
+                    const currentSecondRank = suffixArray[i] + chunkSize < textLength ? rank[suffixArray[i] + chunkSize] : -1;
+                    const prevSecondRank = suffixArray[i - 1] + chunkSize < textLength ? rank[suffixArray[i - 1] + chunkSize] : -1;
+                    tempRank[suffixArray[i]] = tempRank[suffixArray[i - 1]] + (rank[suffixArray[i]] !== rank[suffixArray[i - 1]] || currentSecondRank !== prevSecondRank ? 1 : 0);
+                }
+                rank = [...tempRank];
+
+                if (tempRank[textLength - 1] === textLength - 1) {
+                    break;
+                }
+
+                chunkSize *= 2;
+            }
+
+            return suffixArray;
+        }
+
+        buildLCPArray(text: string, suffixArray: number[]): number[] {
+            const textLength = text.length;
+            const rank = Array(textLength).fill(0);
+            const lcp = Array(textLength - 1).fill(0);
+
+            suffixArray.forEach((sa, i) => rank[sa] = i);
+
+            let k = 0;
+            for (let i = 0; i < textLength; i++) {
+                if (rank[i] === textLength - 1) {
+                    k = 0;
+                    continue;
+                }
+                const j = suffixArray[rank[i] + 1];
+                while (i + k < textLength && j + k < textLength && text[i + k] === text[j + k]) {
+                    k++;
+                }
+                lcp[rank[i]] = k;
+                if (k > 0) k--;
+            }
+
+            return lcp;
+        }
+
+        mergeStrings(s1: string, s2: string, s3: string): string {
+            const mergedS1S2 = this.findOverlap(s1, s2).merged;
+            return this.findOverlap(mergedS1S2, s3).merged;
+        }
+
+        findOverlap(stringA: string, stringB: string): { merged: string, overlap: number } {
+            const combinedString = `${stringA}#${stringB}`;
+            const suffixArray = this.buildSuffixArray(combinedString);
+            const lcpArray = this.buildLCPArray(combinedString, suffixArray);
+
+            let maxOverlap = 0;
+            for (let i = 0; i < combinedString.length - 1; i++) {
+                const isDifferentSide = (suffixArray[i] < stringA.length) !== (suffixArray[i + 1] < stringA.length);
+                if (isDifferentSide && lcpArray[i] > maxOverlap) {
+                    maxOverlap = lcpArray[i];
+                }
+            }
+
+            if (stringA.includes(stringB)) {
+                return { merged: stringA, overlap: stringA.length };
+            } else if (stringB.includes(stringA)) {
+                return { merged: stringB, overlap: stringB.length };
+            } else if (maxOverlap > 0) {
+                if (suffixArray[maxOverlap] < stringA.length) {
+                    return { merged: stringA + stringB.slice(maxOverlap), overlap: maxOverlap };
+                }
+                return { merged: stringB + stringA.slice(maxOverlap), overlap: maxOverlap };
+            } else {
+                return { merged: stringA + stringB, overlap: 0 };
+            }
+        }
+
+        minimumString(string1: string, string2: string, string3: string): string {
+            const permutations = [
+                [string1, string2, string3],
+                [string1, string3, string2],
+                [string2, string1, string3],
+                [string2, string3, string1],
+                [string3, string1, string2],
+                [string3, string2, string1]
+            ];
+
+            return permutations
+                .map(([a, b, c]) => this.mergeStrings(a, b, c))
+                .reduce((min, current) => current.length < min.length || (current.length === min.length && current < min) ? current : min);
+        }
+    }
+
+    const solution = new Solution();
+    console.log(solution.minimumString("abc", "bca", "aaa"));
+    ```
+
 === "R"
 
     ```r
-    Solution <- R6::R6Class("Solution",
+    #library(R6)
+    #Solution <- R6::R6Class("Solution",
+    Solution <- setRefClass("Solution",    
         public = list(
             build_suffix_array <- function(text) {
                 text_length <- nchar(text)
@@ -973,9 +1087,19 @@ Solutions:
 === "Julia"
 
     ```julia
-    module Solution
+    module SolutionModule
 
-    function build_suffix_array(text::String)::Vector{Int}
+    using Printf
+
+    export Solution
+
+    # Define the Solution class
+    mutable struct Solution
+        function Solution() end
+    end
+
+    # Method to build suffix array
+    function Solution.build_suffix_array(s::Solution, text::String)::Vector{Int}
         text_length = length(text)
         suffix_array = 0:text_length-1
         rank = [Int(text[i]) for i in 1:text_length]
@@ -1004,7 +1128,8 @@ Solutions:
         suffix_array
     end
 
-    function build_lcp_array(text::String, suffix_array::Vector{Int})::Vector{Int}
+    # Method to build LCP array
+    function Solution.build_lcp_array(s::Solution, text::String, suffix_array::Vector{Int})::Vector{Int}
         text_length = length(text)
         rank = zeros(Int, text_length)
         lcp = zeros(Int, text_length - 1)
@@ -1034,10 +1159,11 @@ Solutions:
         lcp
     end
 
-    function find_overlap(stringA::String, stringB::String)::Tuple{String, Int}
+    # Method to find overlap
+    function Solution.find_overlap(s::Solution, stringA::String, stringB::String)::Tuple{String, Int}
         combined_string = stringA * "#" * stringB
-        suffix_array = build_suffix_array(combined_string)
-        lcp_array = build_lcp_array(combined_string, suffix_array)
+        suffix_array = Solution.build_suffix_array(s, combined_string)
+        lcp_array = Solution.build_lcp_array(s, combined_string, suffix_array)
         
         max_overlap = 0
         for i in 1:length(suffix_array) - 1
@@ -1061,13 +1187,15 @@ Solutions:
         end
     end
 
-    function merge_strings(s1::String, s2::String, s3::String)::String
-        merged_s1_s2, _ = find_overlap(s1, s2)
-        final_merged, _ = find_overlap(merged_s1_s2, s3)
+    # Method to merge strings
+    function Solution.merge_strings(s::Solution, s1::String, s2::String, s3::String)::String
+        merged_s1_s2, _ = Solution.find_overlap(s, s1, s2)
+        final_merged, _ = Solution.find_overlap(s, merged_s1_s2, s3)
         final_merged
     end
 
-    function minimum_string(string1::String, string2::String, string3::String)::String
+    # Method to find minimum string
+    function Solution.minimum_string(s::Solution, string1::String, string2::String, string3::String)::String
         permutations = [
             (string1, string2, string3),
             (string1, string3, string2),
@@ -1078,10 +1206,10 @@ Solutions:
         ]
         
         result = permutations[1]
-        result_string = merge_strings(result[1], result[2], result[3])
+        result_string = Solution.merge_strings(s, result[1], result[2], result[3])
         
         for perm in permutations
-            merged = merge_strings(perm[1], perm[2], perm[3])
+            merged = Solution.merge_strings(s, perm[1], perm[2], perm[3])
             if length(merged) < length(result_string) || (length(merged) == length(result_string) && merged < result_string)
                 result_string = merged
             end
@@ -1090,9 +1218,11 @@ Solutions:
         result_string
     end
 
-    end # module
+    end
 
-    # Example usage:
-    using .Solution
-    println(Solution.minimum_string("abc", "bca", "aaa"))
+    # Usage
+    using .SolutionModule
+
+    sol = SolutionModule.Solution()
+    println(SolutionModule.Solution.minimum_string(sol, "abc", "bca", "aaa"))
     ```
