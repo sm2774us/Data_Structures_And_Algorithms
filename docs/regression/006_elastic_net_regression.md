@@ -1,6 +1,6 @@
 ---
 tags:
-  - Translated
+  - Original
 ---
 
 # Elastic-Net Regression

@@ -1,6 +1,6 @@
 ---
 tags:
-  - Translated
+  - Original
 ---
 
 # Ridge Regression (L2 Regularization)
