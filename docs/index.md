@@ -38,23 +38,6 @@ title: Home
     }
 </style>
 
-<div align="center" markdown>
-
-[![latest release badge]][latest release link]
-[![github stars badge]][github stars link]
-[![github forks badge]][github forks link]
-
-<!-- [![CI checks on main badge]][ci checks on main link]
-[![CI checks on dev badge]][ci checks on dev link]
-[![latest commit to dev badge]][latest commit to dev link] -->
-
-[![github open issues badge]][github open issues link]
-[![github open prs badge]][github open prs link]
-
-[latest release link]: https://github.com/sm2774us/Data_Structure_And_Algorithms/releases
-
-</div>
-
 Data Structures and Algorithms is my personal repository to explore core Computer Science Topics.
 
 ## :octicons-link-24: Quick Links
