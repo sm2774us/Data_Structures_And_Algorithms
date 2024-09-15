@@ -14,18 +14,35 @@ edit_uri: edit/main/docs/
 # Copyright
 copyright: Copyright &copy; 2024 Shaikat Majumdar
 
+extra_javascript:
+  - javascript/config.js
+  - https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
 extra_css:
   - stylesheets/extra.css
 
 # Configuration
 theme:
   name: material
+  custom_dir: src/overrides
+  logo: favicon.ico
+  favicon: favicon.ico
   icon:
     repo: fontawesome/brands/github
     edit: material/file-document-edit-outline
-  favicon: img/favicon.ico
   palette:
     scheme: slate
+  palette:
+    - scheme: cpalgo
+      primary: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate 
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode    
   features:
     - navigation.instant
     - navigation.tabs
@@ -46,10 +63,10 @@ markdown_extensions:
   - def_list
   - footnotes
   - md_in_html
-  - toc:
-      permalink: '#'
   - pymdownx.arithmatex:
       generic: true
+      tex_inline_wrap: ['$', '$']
+      tex_block_wrap: ['$$', '$$']
   - pymdownx.betterem:
       smart_enable: all
   - pymdownx.caret
@@ -78,12 +95,26 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+  - meta
   - tables
+  - toc:
+      permalink: true
 
 plugins:
   - search
+  - tags:
+      tags_file: tags.md
+  - literate-nav:
+      nav_file: navigation.md  
   - git-revision-date-localized:
       enable_creation_date: true
+      enabled: !ENV [MKDOCS_ENABLE_GIT_REVISION_DATE, False]
+  - git-authors
+  - git-committers:
+      repository: sm2774us/Data_Structures_And_Algorithms
+      docs_path: docs/
+      token: !ENV MKDOCS_GIT_COMMITTERS_APIKEY
+      enabled: !ENV [MKDOCS_ENABLE_GIT_COMMITTERS, False]
   - mkdocstrings:
       handlers:
         python:
@@ -97,6 +128,8 @@ plugins:
             show_root_heading: true
             show_root_full_path: false
             show_bases: false
+  - macros
+  - rss
 
 extra_javascript:
   - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
@@ -108,11 +141,11 @@ extra:
     provider: google
     property: G-2X4JR4S4FB
 
-nav:
-  - Home: 'index.md'
-  - Data Structures:
-      - Overview: 'data_structures/DATA_STRUCTURES.md'
-  - Algortithms:
-      - Overview: 'algorithms/ALGORITHMS.md'
-  - Miscellaneous:
-      - Overview: 'miscellaneous/MISCELLANEOUS.md'
+# nav:
+#   - Home: 'index.md'
+#   - Data Structures:
+#       - Overview: 'data_structures/DATA_STRUCTURES.md'
+#   - Algortithms:
+#       - Overview: 'algorithms/ALGORITHMS.md'
+#   - Miscellaneous:
+#       - Overview: 'miscellaneous/MISCELLANEOUS.md'

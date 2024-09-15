@@ -1,0 +1,76 @@
+---
+search:
+  exclude: true
+---
+
+- Home
+    - [Main Page](index.md)
+    - [Navigation](navigation.md)
+    - [Tag index](tags.md)
+    - [Code of conduct](code_of_conduct.md)
+- Data Structures
+    - [Array](data_structures/001_Array.md)
+    - [String](data_structures/002_String.md)
+    - [Linked List](data_structures/003_Linked_List.md)
+    - [Stack](data_structures/004_Stack.md)
+    - [Queue](data_structures/005_Queue.md)
+    - [Binary Heap](data_structures/006_Binary_Heap.md)
+    - [Tree](data_structures/007_Tree.md)
+    - [Graph](data_structures/008_Graph.md)
+    - [Hashtable](data_structures/009_Hashtable.md)
+- Algorithms
+    - [Two Pointers](algorithms/001_Two_Pointers.md)
+    - [Binary Search](algorithms/002_Binary_Search.md)
+    - [Binary Search Tree](algorithms/003_Binary_Search_Tree.md)
+    - [Depth First Search](algorithms/004_Depth_First_Search.md)
+    - [Breadth First Search](algorithms/005_Breadth_First_Search.md)
+    - [Backtracking](algorithms/006_Backtracking.md)
+    - [Dynamic Programming](algorithms/007_Dynamic_Programming.md)
+    - [Recursion](algorithms/008_Recursion.md)
+- Algebra
+    - [Fundamentals](algebra/001_fundamentals.md)
+    - [Prime Numbers](algebra/002_prime_numbers.md)
+    - [Number-Theoretic Functions](algebra/003_number_theoretic_functions.md)
+    - [Modular Arithmetic](algebra/004_modular_arithmetic.md)
+    - [Number Systems](algebra/005_number_systems.md)
+    - [Miscellaneous](algebra/006_miscellaneous.md)
+- Geometry
+    - [Elementary Operations](geometry/001_elementary_operations.md)
+    - [Polygons](geometry/002_polygons.md)
+    - [Convex Hull](geometry/003_convex_hull.md)
+    - [Sweep-Line](geometry/004_sweep_line.md)
+    - [Planar Graphs](geometry/005_planar_graphs.md)
+    - [Miscellaeous](geometry/006_miscellaneous.md)
+- Linear Algebra
+    - [Matrices](linear_algebra/001_matrices.md)
+- Combinatorics
+    - [Fundamentals](combinatorics/001_fundamentals.md)
+    - [Techniques](combinatorics/002_techniques.md)
+    - [Tasks](combinatorics/003_tasks.md)
+- Numerical Methods
+    - [Search](numerical_methods/001_search.md)
+    - [Integration](numerical_methods/002_integration.md)
+- Regression
+    - [Linear Regression](regression/001_linear_regression.md)
+    - [Polynomial Regression](regression/002_polynomial_regression.md)
+    - [Ridge Regression (L2 Regularization)](regression/003_ridge_regression_l2_regularization.md)
+    - [Lasso Regression (L1 Regularization)](regression/004_lasso_regression_l1_regularization.md)
+    - [Logistic Regression](regression/005_logistic_regression.md)
+    - [ElasticNet Regression](regression/006_elastic_net_regression.md)
+- Machine Learning
+    - [Supervised Learning](machine_learning/001_supervised_learning.md)
+    - [Unsupervised Learning](machine_learning/002_unsupervised_learning.md)
+    - [Semi-supervised Learning](machine_learning/003_semi_supervised_learning.md)
+    - [Self-supervised Learning](machine_learning/004_self_supervised_learning.md)
+    - [Reinforcement Learning](machine_learning/005_reinforcement_learning.md)
+- Large Language Model
+    - [NLP](large_language_model/001_nlp.md)
+    - [Word Embeddings](large_language_model/002_word_embeddings.md)
+    - [RNNs, LSTMs & GRUs](large_language_model/003_rnn_s_lstm_s_and_gru_s.md)
+    - [Encoder-Decoder Architecture](large_language_model/004_encoder_decoder_architecture.md)
+    - [Attention Mechanism](large_language_model/005_attention_mechanism.md)
+    - [Transformers](large_language_model/006_transformers.md)
+    - [BERT](large_language_model/007_bert.md)
+    - [GPT](large_language_model/008_gpt.md)
+    - [LLama](large_language_model/009_llama.md)
+    - [Mistral](large_language_model/010_mistral.md)

@@ -4,7 +4,6 @@
 
 ### Problem Description: [LeetCode - Problem 2800 - Shortest String That Contains Three Strings](https://leetcode.com/problems/shortest-string-that-contains-three-strings/)
 
-
 !!! tip
 
     Python solution is the easiest to understand so always start with that.
