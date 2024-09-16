@@ -273,6 +273,8 @@ This solution effectively removes duplicates from the input list in linear time 
 === "R"
 
     ```r
+    #library(R6)
+    #Solution <- R6::R6Class("Solution",
     Solution <- setRefClass("Solution",
         methods = list(
             removeDuplicates = function(nums) {
@@ -539,7 +541,9 @@ The solution efficiently removes the specified element from the input array with
 
 === "R"
 
-    ```R
+    ```r
+    #library(R6)
+    #Solution <- R6::R6Class("Solution",
     Solution <- setRefClass("Solution", 
         methods = list(
             removeElement = function(nums, val) {
@@ -575,4 +579,508 @@ The solution efficiently removes the specified element from the input array with
     end
 
     end
+    ```
+
+## Next Permutation
+
+### Problem Description: [LeetCode - Problem 31 - Next Permutation](https://leetcode.com/problems/next-permutation/description/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Intuition
+
+The problem requires finding the __next lexicographical permutation__ of a given sequence of numbers. The next permutation is the next arrangement of numbers that's larger than the current sequence but in ascending order. If no such arrangement exists (i.e., the numbers are in descending order), the next permutation is simply the smallest possible arrangement (ascending order).
+
+### Key Insights
+
+- The __next permutation__ problem boils down to rearranging the elements to find the smallest possible permutation that is larger than the given one.
+- This involves finding the right elements to swap and then arranging the rest of the sequence in ascending order to get the smallest possible arrangement.
+
+### Solution Explanation
+
+### Complexity Analysis
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    from typing import List
+
+    class Solution:
+        def reverse(self, nums: List[int], i: int, j: int) -> None:
+            """
+            Helper function to reverse the array segment between indices i and j.
+            """
+            while i <= j:
+                nums[i], nums[j] = nums[j], nums[i]
+                i += 1
+                j -= 1
+
+        def nextPermutation(self, nums: List[int]) -> None:
+            n = len(nums)  # Get the size of the array.
+            i, j = n - 1, n - 1
+
+            # Step 1: Find the first decreasing element when traversing from the end.
+            while i > 0 and nums[i - 1] >= nums[i]:
+                i -= 1
+            i -= 1  # i is now the index of the first decreasing element (nums[i] < nums[i+1]).
+
+            # Step 2: If such an element was found, find the first element just larger than nums[i].
+            if i >= 0:
+                while j >= 0 and nums[i] >= nums[j]:
+                    j -= 1
+
+                # Step 3: Swap nums[i] with nums[j], which is the smallest larger element.
+                nums[i], nums[j] = nums[j], nums[i]
+
+            # Step 4: Reverse the segment from i+1 to the end to get the smallest possible arrangement.
+            self.reverse(nums, i + 1, n - 1)
+
+    # Example Usage
+    if __name__ == '__main__':
+        solution = Solution()
+        nums = [1, 2, 3]
+        solution.nextPermutation(nums)
+        print(nums)
+    ```
+
+=== "C++"
+
+    ```cpp
+    class Solution {
+    public:
+        // Helper function to reverse the array segment between indices i and j.
+        void reverse(vector<int> &nums, int i, int j) {
+            // Reverse the segment in place using two pointers.
+            while(i <= j) {
+                swap(nums[i++], nums[j--]);
+            }
+        }
+
+        // Function to find the next lexicographical permutation of the given array.
+        void nextPermutation(vector<int>& nums) {
+            int n = nums.size(); // Get the size of the array.
+            int i = n - 1, j = n - 1;
+
+            // Step 1: Find the first decreasing element when traversing from the end.
+            while(i > 0 && nums[i - 1] >= nums[i]) {
+                --i;
+            }
+            --i; // Now, i is the index of the first decreasing element (nums[i] < nums[i+1]).
+
+            // Step 2: If such an element was found, find the first element just larger than nums[i].
+            if(i >= 0) {
+                while(j >= 0 && nums[i] >= nums[j]) {
+                    --j;
+                }
+                // Step 3: Swap nums[i] with nums[j], which is the smallest larger element.
+                swap(nums[i], nums[j]);
+            }
+
+            // Step 4: Reverse the segment from i+1 to the end to get the smallest possible arrangement.
+            reverse(nums, i + 1, n - 1);
+        }
+    };
+
+    int main() {
+        Solution solution;
+        std::vector<int> nums = {1, 2, 3};
+        solution.nextPermutation(nums);
+        for (int num : nums) {
+            std::cout << num << " ";
+        }
+        std::cout << std::endl;
+        return 0;
+    }
+    ```
+
+=== "Rust"
+
+    ```rust
+    struct Solution;
+
+    impl Solution {
+        fn reverse(nums: &mut Vec<i32>, mut i: usize, mut j: usize) {
+            while i <= j {
+                nums.swap(i, j);
+                i += 1;
+                j -= 1;
+            }
+        }
+
+        fn next_permutation(&self, nums: &mut Vec<i32>) {
+            let n = nums.len();
+            let (mut i, mut j) = (n - 1, n - 1);
+
+            while i > 0 && nums[i - 1] >= nums[i] {
+                i -= 1;
+            }
+            if i > 0 {
+                i -= 1;
+                while j >= 0 && nums[i] >= nums[j] {
+                    j -= 1;
+                }
+                nums.swap(i, j);
+            }
+
+            Solution::reverse(nums, i + 1, n - 1);
+        }
+    }
+
+    fn main() {
+        let mut nums = vec![1, 2, 3];
+        let solution = Solution;
+        solution.next_permutation(&mut nums);
+        println!("{:?}", nums);
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    using System;
+    using System.Collections.Generic;
+
+    public class Solution {
+        public void Reverse(List<int> nums, int i, int j) {
+            while (i <= j) {
+                int temp = nums[i];
+                nums[i] = nums[j];
+                nums[j] = temp;
+                i++;
+                j--;
+            }
+        }
+
+        public void NextPermutation(List<int> nums) {
+            int n = nums.Count;
+            int i = n - 1, j = n - 1;
+
+            while (i > 0 && nums[i - 1] >= nums[i]) {
+                i--;
+            }
+            i--;
+
+            if (i >= 0) {
+                while (j >= 0 && nums[i] >= nums[j]) {
+                    j--;
+                }
+                int temp = nums[i];
+                nums[i] = nums[j];
+                nums[j] = temp;
+            }
+
+            Reverse(nums, i + 1, n - 1);
+        }
+
+        public static void Main(string[] args) {
+            Solution solution = new Solution();
+            List<int> nums = new List<int> { 1, 2, 3 };
+            solution.NextPermutation(nums);
+            Console.WriteLine(string.Join(" ", nums));
+        }
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    import java.util.*;
+
+    public class Solution {
+
+        public void reverse(List<Integer> nums, int i, int j) {
+            while (i <= j) {
+                Collections.swap(nums, i, j);
+                i++;
+                j--;
+            }
+        }
+
+        public void nextPermutation(List<Integer> nums) {
+            int n = nums.size();
+            int i = n - 1, j = n - 1;
+
+            while (i > 0 && nums.get(i - 1) >= nums.get(i)) {
+                i--;
+            }
+            i--;
+
+            if (i >= 0) {
+                while (j >= 0 && nums.get(i) >= nums.get(j)) {
+                    j--;
+                }
+                Collections.swap(nums, i, j);
+            }
+
+            reverse(nums, i + 1, n - 1);
+        }
+
+        public static void main(String[] args) {
+            Solution solution = new Solution();
+            List<Integer> nums = new ArrayList<>(Arrays.asList(1, 2, 3));
+            solution.nextPermutation(nums);
+            System.out.println(nums);
+        }
+    }
+    ```
+
+=== "Scala"
+
+    ```scala
+    object Solution {
+        def reverse(nums: Array[Int], i: Int, j: Int): Unit = {
+            var l = i
+            var r = j
+            while (l <= r) {
+            val temp = nums(l)
+            nums(l) = nums(r)
+            nums(r) = temp
+            l += 1
+            r -= 1
+            }
+        }
+
+        def nextPermutation(nums: Array[Int]): Unit = {
+            val n = nums.length
+            var i = n - 1
+            var j = n - 1
+
+            while (i > 0 && nums(i - 1) >= nums(i)) i -= 1
+            i -= 1
+
+            if (i >= 0) {
+            while (j >= 0 && nums(i) >= nums(j)) j -= 1
+            val temp = nums(i)
+            nums(i) = nums(j)
+            nums(j) = temp
+            }
+
+            reverse(nums, i + 1, n - 1)
+        }
+
+        def main(args: Array[String]): Unit = {
+            val nums = Array(1, 2, 3)
+            nextPermutation(nums)
+            println(nums.mkString(", "))
+        }
+    }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    class Solution {
+        fun reverse(nums: MutableList<Int>, i: Int, j: Int) {
+            var left = i
+            var right = j
+            while (left <= right) {
+                nums[left] = nums[right].also { nums[right] = nums[left] }
+                left++
+                right--
+            }
+        }
+
+        fun nextPermutation(nums: MutableList<Int>) {
+            val n = nums.size
+            var i = n - 1
+            var j = n - 1
+
+            while (i > 0 && nums[i - 1] >= nums[i]) i--
+            i--
+
+            if (i >= 0) {
+                while (j >= 0 && nums[i] >= nums[j]) j--
+                nums[i] = nums[j].also { nums[j] = nums[i] }
+            }
+
+            reverse(nums, i + 1, n - 1)
+        }
+    }
+
+    fun main() {
+        val solution = Solution()
+        val nums = mutableListOf(1, 2, 3)
+        solution.nextPermutation(nums)
+        println(nums)
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    package main
+
+    import (
+        "fmt"
+    )
+
+    type Solution struct{}
+
+    func (s Solution) reverse(nums []int, i int, j int) {
+        for i <= j {
+            nums[i], nums[j] = nums[j], nums[i]
+            i++
+            j--
+        }
+    }
+
+    func (s Solution) nextPermutation(nums []int) {
+        n := len(nums)
+        i, j := n-1, n-1
+
+        for i > 0 && nums[i-1] >= nums[i] {
+            i--
+        }
+        i--
+
+        if i >= 0 {
+            for j >= 0 && nums[i] >= nums[j] {
+                j--
+            }
+            nums[i], nums[j] = nums[j], nums[i]
+        }
+
+        s.reverse(nums, i+1, n-1)
+    }
+
+    func main() {
+        solution := Solution{}
+        nums := []int{1, 2, 3}
+        solution.nextPermutation(nums)
+        fmt.Println(nums)
+    }
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    class Solution {
+        reverse(nums: number[], i: number, j: number): void {
+            while (i <= j) {
+                [nums[i], nums[j]] = [nums[j], nums[i]];
+                i++;
+                j--;
+            }
+        }
+
+        nextPermutation(nums: number[]): void {
+            const n = nums.length;
+            let i = n - 1;
+            let j = n - 1;
+
+            while (i > 0 && nums[i - 1] >= nums[i]) {
+                i--;
+            }
+            i--;
+
+            if (i >= 0) {
+                while (j >= 0 && nums[i] >= nums[j]) {
+                    j--;
+                }
+                [nums[i], nums[j]] = [nums[j], nums[i]];
+            }
+
+            this.reverse(nums, i + 1, n - 1);
+        }
+    }
+
+    const solution = new Solution();
+    const nums = [1, 2, 3];
+    solution.nextPermutation(nums);
+    console.log(nums);
+    ```
+
+=== "R"
+
+    ```r
+    #library(R6)
+    #Solution <- R6::R6Class("Solution",
+    Solution <- setRefClass("Solution", 
+        methods = list(
+            reverse = function(nums, i, j) {
+                while (i <= j) {
+                    tmp <- nums[i + 1]
+                    nums[i + 1] <- nums[j + 1]
+                    nums[j + 1] <- tmp
+                    i <- i + 1
+                    j <- j - 1
+                }
+                return(nums)
+            },
+            
+            nextPermutation = function(nums) {
+                n <- length(nums)
+                i <- n
+                j <- n
+                
+                while (i > 1 && nums[i - 1] >= nums[i]) {
+                    i <- i - 1
+                }
+                i <- i - 1
+                
+                if (i >= 1) {
+                    while (j >= 1 && nums[i] >= nums[j]) {
+                    j <- j - 1
+                    }
+                    tmp <- nums[i]
+                    nums[i] <- nums[j]
+                    nums[j] <- tmp
+                }
+                
+                nums <- reverse(nums, i + 1, n)
+                return(nums)
+            }
+        )
+    )
+
+    nums <- c(1, 2, 3)
+    solution <- Solution$new()
+    nums <- solution$nextPermutation(nums)
+    print(nums)
+    ```
+
+=== "Julia"
+
+    ```julia
+    mutable struct Solution
+    end
+
+    function reverse!(nums::Vector{Int}, i::Int, j::Int)
+        while i <= j
+            nums[i], nums[j] = nums[j], nums[i]
+            i += 1
+            j -= 1
+        end
+    end
+
+    function nextPermutation!(nums::Vector{Int})
+        n = length(nums)
+        i, j = n, n
+
+        while i > 1 && nums[i - 1] >= nums[i]
+            i -= 1
+        end
+        i -= 1
+
+        if i >= 1
+            while j >= 1 && nums[i] >= nums[j]
+                j -= 1
+            end
+            nums[i], nums[j] = nums[j], nums[i]
+        end
+
+        reverse!(nums, i + 1, n)
+    end
+
+    function main()
+        nums = [1, 2, 3]
+        nextPermutation!(nums)
+        println(nums)
+    end
+
+    main()
     ```
