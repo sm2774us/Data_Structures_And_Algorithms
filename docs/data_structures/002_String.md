@@ -30,19 +30,30 @@ tags:
    - Calculate the start position in the original string and return the substring.
 
 ### Complexity Analysis
+
 __Time Complexity: `O(n)`__
-- PreProcess function: O(n)
+
+- PreProcess function: __`O(n)`__
+
 - Main loop: Although there's a nested while loop, each character is visited at most twice.
-  - The outer loop runs n times.
+
+  - The outer loop runs __`n`__ times.
+
   - The inner while loop can expand at most n times in total across all iterations of the outer loop.
-- Finding the maximum in P: O(n)
-- Overall: O(n) + O(n) + O(n) = O(n)
+
+- Finding the maximum in __`P`__: __`O(n)`__
+
+- __Overall: `O(n) + O(n) + O(n) = O(n)`__
 
 __Space Complexity: `O(n)`__
-- T (preprocessed string): O(n)
-- P (palindrome length array): O(n)
+
+- __`T`__ (preprocessed string): __`O(n)`__
+
+- __`P`__ (palindrome length array): __`O(n)`__
+
 - Other variables use constant space
-- Overall: O(n)
+
+- __Overall: `O(n)`__
 
 ### Key Points
 
