@@ -44,59 +44,28 @@ theme:
         icon: material/weather-sunny
         name: Switch to light mode    
   features:
-    - navigation.instant
     - navigation.tabs
-    - navigation.tabs.sticky
-    - navigation.tracking
-    - navigation.indexes
-    - navigation.path
-    - navigation.top    
-    - search.highlight
     - search.suggest
     - toc.integrate
+    - content.code.copy
 
 # Extensions
 markdown_extensions:
-  - abbr
-  - admonition
-  - attr_list
-  - def_list
-  - footnotes
-  - md_in_html
   - pymdownx.arithmatex:
       generic: true
       tex_inline_wrap: ['$', '$']
       tex_block_wrap: ['$$', '$$']
-  - pymdownx.betterem:
-      smart_enable: all
-  - pymdownx.caret
+  - pymdownx.highlight
+  - admonition
   - pymdownx.details
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.inlinehilite
-  - pymdownx.keys
-  - pymdownx.magiclink:
-      repo_url_shorthand: true
-      user: 'sm2774us'
-      repo: 'Data_Structures_And_Algorithms'
-  - pymdownx.mark
-  - pymdownx.smartsymbols
-  - pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
-  - pymdownx.snippets
+  - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
-  - pymdownx.tasklist:
-      custom_checkbox: true
-  - pymdownx.tilde
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji 
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - meta
-  - tables
   - toc:
       permalink: true
 
