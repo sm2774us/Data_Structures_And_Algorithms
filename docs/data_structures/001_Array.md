@@ -302,7 +302,8 @@ This solution effectively removes duplicates from the input list in linear time 
 === "Julia"
 
     ```julia
-    struct Solution end
+    struct Solution
+    end
 
     function remove_duplicates(s::Solution, nums::Vector{Int})::Int
         if isempty(nums)

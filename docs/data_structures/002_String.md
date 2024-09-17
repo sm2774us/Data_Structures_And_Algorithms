@@ -5,7 +5,2337 @@ tags:
 
 # String
 
-## Shortest String That Contains Three Strings
+## Longest Palindromic Substring - `Manacher's Algorithm`
+
+### Problem Description: [LeetCode - Problem 5 - Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+1. PreProcess Function:
+   - This function transforms the input string to handle even-length palindromes.
+   - It adds special characters '^' and '$' at the start and end, and '#' between each character.
+   - Example: "abc" becomes "^#a#b#c#$"
+
+2. Main Algorithm:
+   - Initialize array P to store palindrome lengths.
+   - Variables 'center' and 'right' keep track of the rightmost palindrome boundary.
+   - Iterate through the transformed string T:
+     a. If i is within the right boundary, use previously computed values to initialize P[i].
+     b. Expand palindrome around center i as far as possible.
+     c. Update 'center' and 'right' if a longer palindrome is found.
+   - Find the maximum value in P, which represents the longest palindrome.
+   - Calculate the start position in the original string and return the substring.
+
+### Complexity Analysis
+__Time Complexity: `O(n)`__
+- PreProcess function: O(n)
+- Main loop: Although there's a nested while loop, each character is visited at most twice.
+  - The outer loop runs n times.
+  - The inner while loop can expand at most n times in total across all iterations of the outer loop.
+- Finding the maximum in P: O(n)
+- Overall: O(n) + O(n) + O(n) = O(n)
+
+__Space Complexity: `O(n)`__
+- T (preprocessed string): O(n)
+- P (palindrome length array): O(n)
+- Other variables use constant space
+- Overall: O(n)
+
+### Key Points
+
+1. Manacher's algorithm efficiently handles both odd and even-length palindromes by preprocessing the string.
+2. It reuses previously computed information to avoid unnecessary comparisons.
+3. The algorithm maintains a rightmost palindrome boundary to optimize expansions.
+4. Despite the nested loops, the linear time complexity is achieved because each character is processed at most twice.
+
+This algorithm significantly improves upon the naive `O(n^3)` or dynamic programming `O(n^2)` approaches, achieving linear time complexity for finding the longest palindromic substring.
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    class Solution:
+        def longestPalindrome(self, s: str) -> str:
+            """
+            :type s: str
+            :rtype: str
+            """
+            def preProcess(s: str) -> str:
+                if not s:
+                    return ['^', '$']
+                T = ['^']
+                for c in s:
+                    T +=  ['#', c]
+                T += ['#', '$']
+                return T
+
+            T = preProcess(s)
+            P = [0] * len(T)
+            center, right = 0, 0
+            for i in range(1, len(T) - 1):
+                i_mirror = 2 * center - i
+                if right > i:
+                    P[i] = min(right - i, P[i_mirror])
+                else:
+                    P[i] = 0
+
+                while T[i + 1 + P[i]] == T[i - 1 - P[i]]:
+                    P[i] += 1
+
+                if i + P[i] > right:
+                    center, right = i, i + P[i]
+
+            max_i = 0
+            for i in range(1, len(T) - 1):
+                if P[i] > P[max_i]:
+                    max_i = i
+            start = (max_i - 1 - P[max_i]) // 2
+            return s[start : start + P[max_i]]
+    ```
+
+=== "C++"
+
+    ```cpp
+    #include <iostream>
+    #include <vector>
+    #include <string>
+    #include <algorithm>
+
+    class Solution {
+    public:
+        std::string longestPalindrome(const std::string& s) {
+            if (s.empty()) return "";
+
+            std::string T = preProcess(s);
+            std::vector<int> P(T.size(), 0);
+            int center = 0, right = 0;
+
+            for (int i = 1; i < T.size() - 1; i++) {
+                int i_mirror = 2 * center - i;
+
+                if (right > i)
+                    P[i] = std::min(right - i, P[i_mirror]);
+
+                while (T[i + 1 + P[i]] == T[i - 1 - P[i]])
+                    P[i]++;
+
+                if (i + P[i] > right) {
+                    center = i;
+                    right = i + P[i];
+                }
+            }
+
+            int max_i = 0;
+            for (int i = 1; i < T.size() - 1; i++) {
+                if (P[i] > P[max_i])
+                    max_i = i;
+            }
+
+            int start = (max_i - 1 - P[max_i]) / 2;
+            return s.substr(start, P[max_i]);
+        }
+
+    private:
+        std::string preProcess(const std::string& s) {
+            if (s.empty()) return "^$";
+            std::string T = "^";
+            for (char c : s) {
+                T += "#" + std::string(1, c);
+            }
+            T += "#$";
+            return T;
+        }
+    };
+
+    int main() {
+        Solution solution;
+        std::string input = "babad";
+        std::cout << "Longest Palindromic Substring: " << solution.longestPalindrome(input) << std::endl;
+    }
+    ```
+
+=== "Rust"
+
+    ```rust
+    struct Solution;
+
+    impl Solution {
+        pub fn longest_palindrome(&self, s: &str) -> String {
+            let T = self.pre_process(s);
+            let mut P = vec![0; T.len()];
+            let (mut center, mut right) = (0, 0);
+
+            for i in 1..T.len() - 1 {
+                let i_mirror = 2 * center - i;
+                if right > i {
+                    P[i] = P[i_mirror].min(right - i);
+                }
+                while T.chars().nth(i + 1 + P[i]).unwrap() == T.chars().nth(i - 1 - P[i]).unwrap() {
+                    P[i] += 1;
+                }
+                if i + P[i] > right {
+                    center = i;
+                    right = i + P[i];
+                }
+            }
+
+            let mut max_i = 0;
+            for i in 1..T.len() - 1 {
+                if P[i] > P[max_i] {
+                    max_i = i;
+                }
+            }
+
+            let start = (max_i - 1 - P[max_i]) / 2;
+            s[start..start + P[max_i]].to_string()
+        }
+
+        fn pre_process(&self, s: &str) -> String {
+            if s.is_empty() {
+                return "^$".to_string();
+            }
+            let mut T = String::from("^");
+            for c in s.chars() {
+                T.push_str(&format!("#{}", c));
+            }
+            T.push_str("#$");
+            T
+        }
+    }
+
+    fn main() {
+        let solution = Solution {};
+        let input = "babad";
+        println!("Longest Palindromic Substring: {}", solution.longest_palindrome(input));
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    using System;
+
+    public class Solution {
+        public string LongestPalindrome(string s) {
+            if (string.IsNullOrEmpty(s)) return "";
+            string T = PreProcess(s);
+            int[] P = new int[T.Length];
+            int center = 0, right = 0;
+
+            for (int i = 1; i < T.Length - 1; i++) {
+                int i_mirror = 2 * center - i;
+                if (right > i) {
+                    P[i] = Math.Min(right - i, P[i_mirror]);
+                }
+
+                while (T[i + 1 + P[i]] == T[i - 1 - P[i]]) {
+                    P[i]++;
+                }
+
+                if (i + P[i] > right) {
+                    center = i;
+                    right = i + P[i];
+                }
+            }
+
+            int max_i = 0;
+            for (int i = 1; i < T.Length - 1; i++) {
+                if (P[i] > P[max_i]) {
+                    max_i = i;
+                }
+            }
+
+            int start = (max_i - 1 - P[max_i]) / 2;
+            return s.Substring(start, P[max_i]);
+        }
+
+        private string PreProcess(string s) {
+            if (string.IsNullOrEmpty(s)) return "^$";
+            var T = "^";
+            foreach (var c in s) {
+                T += "#" + c;
+            }
+            T += "#$";
+            return T;
+        }
+    }
+
+    class Program {
+        static void Main() {
+            Solution solution = new Solution();
+            string input = "babad";
+            Console.WriteLine("Longest Palindromic Substring: " + solution.LongestPalindrome(input));
+        }
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    public class Solution {
+
+        public String longestPalindrome(String s) {
+            if (s.isEmpty()) return "";
+            String T = preProcess(s);
+            int[] P = new int[T.length()];
+            int center = 0, right = 0;
+
+            for (int i = 1; i < T.length() - 1; i++) {
+                int i_mirror = 2 * center - i;
+                if (right > i) {
+                    P[i] = Math.min(right - i, P[i_mirror]);
+                }
+
+                while (T.charAt(i + 1 + P[i]) == T.charAt(i - 1 - P[i])) {
+                    P[i]++;
+                }
+
+                if (i + P[i] > right) {
+                    center = i;
+                    right = i + P[i];
+                }
+            }
+
+            int max_i = 0;
+            for (int i = 1; i < T.length() - 1; i++) {
+                if (P[i] > P[max_i]) {
+                    max_i = i;
+                }
+            }
+
+            int start = (max_i - 1 - P[max_i]) / 2;
+            return s.substring(start, start + P[max_i]);
+        }
+
+        private String preProcess(String s) {
+            if (s.isEmpty()) return "^$";
+            StringBuilder T = new StringBuilder("^");
+            for (char c : s.toCharArray()) {
+                T.append("#").append(c);
+            }
+            T.append("#$");
+            return T.toString();
+        }
+
+        public static void main(String[] args) {
+            Solution solution = new Solution();
+            String input = "babad";
+            System.out.println("Longest Palindromic Substring: " + solution.longestPalindrome(input));
+        }
+    }
+    ```
+
+=== "Scala"
+
+    ```scala
+    class Solution {
+        def longestPalindrome(s: String): String = {
+            if (s.isEmpty) return ""
+            val T = preProcess(s)
+            val P = Array.fill(T.length)(0)
+            var center = 0
+            var right = 0
+
+            for (i <- 1 until T.length - 1) {
+                val i_mirror = 2 * center - i
+                if (right > i) {
+                    P(i) = Math.min(right - i, P(i_mirror))
+                }
+
+                while (T(i + 1 + P(i)) == T(i - 1 - P(i))) {
+                    P(i) += 1
+                }
+
+                if (i + P(i) > right) {
+                    center = i
+                    right = i + P(i)
+                }
+            }
+
+            var max_i = 0
+            for (i <- 1 until T.length - 1) {
+                if (P(i) > P(max_i)) max_i = i
+            }
+
+            val start = (max_i - 1 - P(max_i)) / 2
+            s.substring(start, start + P(max_i))
+        }
+
+        private def preProcess(s: String): String = {
+            if (s.isEmpty) "^$"
+            else "^" + s.flatMap(c => "#" + c.toString) + "#$"
+        }
+    }
+
+    object Main extends App {
+        val solution = new Solution()
+        val input = "babad"
+        println(s"Longest Palindromic Substring: ${solution.longestPalindrome(input)}")
+    }
+
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    class Solution {
+        fun longestPalindrome(s: String): String {
+            if (s.isEmpty()) return ""
+
+            val T = preProcess(s)
+            val P = IntArray(T.length)
+            var center = 0
+            var right = 0
+
+            for (i in 1 until T.length - 1) {
+                val iMirror = 2 * center - i
+                if (right > i) {
+                    P[i] = Math.min(right - i, P[iMirror])
+                } else {
+                    P[i] = 0
+                }
+
+                // Attempt to expand palindrome centered at i
+                while (T[i + 1 + P[i]] == T[i - 1 - P[i]]) {
+                    P[i]++
+                }
+
+                // If palindrome centered at i expands past right, adjust center based on expanded palindrome
+                if (i + P[i] > right) {
+                    center = i
+                    right = i + P[i]
+                }
+            }
+
+            // Find the maximum element in P to locate the longest palindrome
+            var max_i = 0
+            for (i in 1 until T.length - 1) {
+                if (P[i] > P[max_i]) {
+                    max_i = i
+                }
+            }
+
+            val start = (max_i - 1 - P[max_i]) / 2
+            return s.substring(start, start + P[max_i])
+        }
+
+        private fun preProcess(s: String): String {
+            if (s.isEmpty()) return "^$"
+            val sb = StringBuilder("^")
+            for (c in s) {
+                sb.append("#").append(c)
+            }
+            sb.append("#$")
+            return sb.toString()
+        }
+    }
+
+    fun main() {
+        val solution = Solution()
+        val input = "babad"
+        println("Longest Palindromic Substring: ${solution.longestPalindrome(input)}")
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    package main
+
+    import (
+        "fmt"
+    )
+
+    type Solution struct{}
+
+    func (s Solution) longestPalindrome(str string) string {
+        if len(str) == 0 {
+            return ""
+        }
+
+        T := s.preProcess(str)
+        P := make([]int, len(T))
+        center, right := 0, 0
+
+        for i := 1; i < len(T)-1; i++ {
+            i_mirror := 2*center - i
+            if right > i {
+                P[i] = min(right-i, P[i_mirror])
+            }
+
+            for T[i+1+P[i]] == T[i-1-P[i]] {
+                P[i]++
+            }
+
+            if i+P[i] > right {
+                center = i
+                right = i + P[i]
+            }
+        }
+
+        max_i := 0
+        for i := 1; i < len(T)-1; i++ {
+            if P[i] > P[max_i] {
+                max_i = i
+            }
+        }
+
+        start := (max_i - 1 - P[max_i]) / 2
+        return str[start : start+P[max_i]]
+    }
+
+    func (s Solution) preProcess(str string) string {
+        if len(str) == 0 {
+            return "^$"
+        }
+        T := "^"
+        for _, c := range str {
+            T += "#" + string(c)
+        }
+        T += "#$"
+        return T
+    }
+
+    func min(a, b int) int {
+        if a < b {
+            return a
+        }
+        return b
+    }
+
+    func main() {
+        solution := Solution{}
+        input := "babad"
+        fmt.Println("Longest Palindromic Substring:", solution.longestPalindrome(input))
+    }
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    class Solution {
+        reverseList(list1: number[], list2: number[]): number[] {
+            let result: number[] = [];
+            let i = 0, j = 0;
+
+            while (i < list1.length && j < list2.length) {
+                if (list1[i] < list2[j]) {
+                    result.push(list1[i]);
+                    i++;
+                } else {
+                    result.push(list2[j]);
+                    j++;
+                }
+            }
+
+            result = result.concat(list1.slice(i));
+            result = result.concat(list2.slice(j));
+
+            return result;
+        }
+    }
+
+    const main = (): void => {
+        const list1 = [1, 3, 5, 7];
+        const list2 = [2, 4, 6, 8];
+
+        const solution = new Solution();
+        console.log("Merged List:", solution.reverseList(list1, list2));
+    }
+
+    main();
+    ```
+
+=== "R"
+
+    ```r
+    #library(R6)
+    #Solution <- R6::R6Class("Solution",
+    Solution <- setRefClass(
+        "Solution",
+        methods = list(
+            reverseList = function(list1, list2) {
+                result <- c()
+                i <- 1
+                j <- 1
+
+                while (i <= length(list1) && j <= length(list2)) {
+                    if (list1[i] < list2[j]) {
+                        result <- c(result, list1[i])
+                        i <- i + 1
+                    } else {
+                        result <- c(result, list2[j])
+                        j <- j + 1
+                    }
+                }
+
+                result <- c(result, list1[i:length(list1)], list2[j:length(list2)])
+                return(result)
+            }
+        )
+    )
+
+    main <- function() {
+        list1 <- c(1, 3, 5, 7)
+        list2 <- c(2, 4, 6, 8)
+
+        solution <- Solution$new()
+        cat("Merged List:", solution$reverseList(list1, list2), "\n")
+    }
+
+    main()
+    ```
+
+=== "Julia"
+
+    ```julia
+    module SolutionModule
+
+    struct Solution
+    end
+
+    function reverseList(::Solution, list1::Vector{Int}, list2::Vector{Int})::Vector{Int}
+        result = Int[]
+        i, j = 1, 1
+
+        while i <= length(list1) && j <= length(list2)
+            if list1[i] < list2[j]
+                push!(result, list1[i])
+                i += 1
+            else
+                push!(result, list2[j])
+                j += 1
+            end
+        end
+
+        append!(result, list1[i:end])
+        append!(result, list2[j:end])
+
+        result
+    end
+
+    function main()
+        list1 = [1, 3, 5, 7]
+        list2 = [2, 4, 6, 8]
+
+        solution = Solution()
+        println("Merged List: ", reverseList(solution, list1, list2))
+    end
+
+    end
+
+    using .SolutionModule
+    SolutionModule.main()
+    ```
+
+## Zigzag Conversion
+
+### Problem Description: [LeetCode - Problem 6 - Zigzag Conversion](https://leetcode.com/problems/zigzag-conversion/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+This solution implements the zigzag pattern by iterating through each row and adding characters in the zigzag order.
+
+1. If there's only one row, return the string as is.
+2. Calculate the step size: 2 * numRows - 2. This represents the number of characters before the pattern repeats.
+3. Iterate through each row:
+   a. For the first and last rows, add characters at intervals of the step size.
+   b. For middle rows, add two characters: one from the current position, and another from (j + step - 2 * i).
+4. Return the constructed zigzag string.
+
+### Complexity Analysis
+- __Time Complexity: `O(n)`, where `n` is the length of the input string. We iterate through each character once.__
+- __Space Complexity: `O(n)` to store the result string.__
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    class Solution:
+        def convert(self, s: str, numRows: int) -> str:
+            """
+            :type s: str
+            :type numRows: int
+            :rtype: str
+            """
+            if numRows == 1:
+                return s
+            step, zigzag = 2 * numRows - 2, ""
+            for i in range(numRows):
+                for j in range(i, len(s), step):
+                    zigzag += s[j]
+                    if 0 < i < numRows - 1 and j + step - 2 * i < len(s):
+                        zigzag += s[j + step - 2 * i]
+            return zigzag
+    ```
+
+=== "C++"
+
+    ```cpp
+    #include <string>
+
+    class Solution {
+    public:
+        std::string convert(const std::string &s, int numRows) {
+            if (numRows == 1) return s;
+            
+            std::string zigzag;
+            int step = 2 * numRows - 2;
+
+            for (int i = 0; i < numRows; ++i) {
+                for (int j = i; j < s.size(); j += step) {
+                    zigzag += s[j];
+                    if (i > 0 && i < numRows - 1 && j + step - 2 * i < s.size()) {
+                        zigzag += s[j + step - 2 * i];
+                    }
+                }
+            }
+            return zigzag;
+        }
+    };
+    ```
+
+=== "Rust"
+
+    ```rust
+    pub struct Solution;
+
+    impl Solution {
+        pub fn convert(s: String, numRows: i32) -> String {
+            if numRows == 1 {
+                return s;
+            }
+
+            let mut zigzag = String::new();
+            let step = 2 * numRows - 2;
+
+            for i in 0..numRows {
+                let mut j = i;
+                while j < s.len() as i32 {
+                    zigzag.push(s.chars().nth(j as usize).unwrap());
+                    if i > 0 && i < numRows - 1 && j + step - 2 * i < s.len() as i32 {
+                        zigzag.push(s.chars().nth((j + step - 2 * i) as usize).unwrap());
+                    }
+                    j += step;
+                }
+            }
+            zigzag
+        }
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    public class Solution {
+        public string Convert(string s, int numRows) {
+            if (numRows == 1) return s;
+            
+            string zigzag = "";
+            int step = 2 * numRows - 2;
+
+            for (int i = 0; i < numRows; i++) {
+                for (int j = i; j < s.Length; j += step) {
+                    zigzag += s[j];
+                    if (i > 0 && i < numRows - 1 && j + step - 2 * i < s.Length) {
+                        zigzag += s[j + step - 2 * i];
+                    }
+                }
+            }
+            return zigzag;
+        }
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    class Solution {
+        public String convert(String s, int numRows) {
+            if (numRows == 1) return s;
+            
+            StringBuilder zigzag = new StringBuilder();
+            int step = 2 * numRows - 2;
+
+            for (int i = 0; i < numRows; i++) {
+                for (int j = i; j < s.length(); j += step) {
+                    zigzag.append(s.charAt(j));
+                    if (i > 0 && i < numRows - 1 && j + step - 2 * i < s.length()) {
+                        zigzag.append(s.charAt(j + step - 2 * i));
+                    }
+                }
+            }
+            return zigzag.toString();
+        }
+    }
+    ```
+
+=== "Scala"
+
+    ```scala
+    class Solution {
+        def convert(s: String, numRows: Int): String = {
+            if (numRows == 1) return s
+            
+            val zigzag = new StringBuilder()
+            val step = 2 * numRows - 2
+
+            for (i <- 0 until numRows) {
+                for (j <- i until s.length by step) {
+                    zigzag.append(s(j))
+                    if (i > 0 && i < numRows - 1 && j + step - 2 * i < s.length) {
+                        zigzag.append(s(j + step - 2 * i))
+                    }
+                }
+            }
+            zigzag.toString()
+        }
+    }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    class Solution {
+        fun convert(s: String, numRows: Int): String {
+            if (numRows == 1) return s
+            
+            val zigzag = StringBuilder()
+            val step = 2 * numRows - 2
+
+            for (i in 0 until numRows) {
+                for (j in i until s.length step step) {
+                    zigzag.append(s[j])
+                    if (i > 0 && i < numRows - 1 && j + step - 2 * i < s.length) {
+                        zigzag.append(s[j + step - 2 * i])
+                    }
+                }
+            }
+            return zigzag.toString()
+        }
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    package main
+
+    import "strings"
+
+    type Solution struct{}
+
+    func (Solution) Convert(s string, numRows int) string {
+        if numRows == 1 {
+            return s
+        }
+
+        zigzag := strings.Builder{}
+        step := 2*numRows - 2
+
+        for i := 0; i < numRows; i++ {
+            for j := i; j < len(s); j += step {
+                zigzag.WriteByte(s[j])
+                if i > 0 && i < numRows-1 && j+step-2*i < len(s) {
+                    zigzag.WriteByte(s[j+step-2*i])
+                }
+            }
+        }
+        return zigzag.String()
+    }
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    class Solution {
+        convert(s: string, numRows: number): string {
+            if (numRows === 1) return s;
+            
+            let zigzag = "";
+            const step = 2 * numRows - 2;
+
+            for (let i = 0; i < numRows; i++) {
+                for (let j = i; j < s.length; j += step) {
+                    zigzag += s[j];
+                    if (i > 0 && i < numRows - 1 && j + step - 2 * i < s.length) {
+                        zigzag += s[j + step - 2 * i];
+                    }
+                }
+            }
+            return zigzag;
+        }
+    }
+    ```
+
+=== "R"
+
+    ```r
+    #library(R6)
+    #Solution <- R6::R6Class("Solution",
+    Solution <- setRefClass(
+        "Solution",
+        methods = list(
+            convert = function(s, numRows) {
+                if (numRows == 1) return(s)
+                
+                zigzag <- ""
+                step <- 2 * numRows - 2
+
+                for (i in seq_len(numRows)) {
+                    for (j in seq(i, nchar(s), by = step)) {
+                        zigzag <- paste0(zigzag, substr(s, j, j))
+                        if (i > 1 && i < numRows && j + step - 2 * i <= nchar(s)) {
+                            zigzag <- paste0(zigzag, substr(s, j + step - 2 * i, j + step - 2 * i))
+                        }
+                    }
+                }
+                zigzag
+            }
+        )
+    )
+    ```
+
+=== "Julia"
+
+    ```julia
+    module SolutionModule
+
+    struct Solution
+    end
+
+    function reverseList(::Solution, s::String, numRows::Int)::String
+        if numRows == 1
+            return s
+        end
+
+        zigzag = ""
+        step = 2 * numRows - 2
+
+        for i in 1:numRows
+            for j in i:step:length(s)
+                zigzag *= s[j]
+                if i > 1 && i < numRows && j + step - 2 * i <= length(s)
+                    zigzag *= s[j + step - 2 * i]
+                end
+            end
+        end
+        return zigzag
+    end
+
+    end
+    ```
+
+## String to Integer (`atoi`)
+
+### Problem Description: [LeetCode - Problem 8 - String to Integer (`atoi`)](https://leetcode.com/problems/string-to-integer-atoi/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+1. Skip leading whitespace.
+2. Check for a sign (+ or -).
+3. Iterate through digits, building the result:
+   a. Check for overflow before adding each digit.
+   b. If overflow would occur, return INT_MAX or INT_MIN based on the sign.
+4. Apply the sign to the result and return.
+
+### Complexity Analysis
+- __Time Complexity: `O(n)`, where `n` is the length of the input string. We iterate through the string once.__
+- __Space Complexity: `O(1)`, as we only use a constant amount of extra space.__
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    import sys
+
+    class Solution:
+        def myAtoi(self, str: str) -> int:
+            """
+            :type str: str
+            :rtype: int
+            """
+            #INT_MAX =  2147483647
+            #INT_MIN = -2147483648
+            INT_MAX = sys.maxsize
+            INT_MIN = -sys.maxsize - 1
+            result = 0
+
+            if not str:
+                return result
+
+            i = 0
+            while i < len(str) and str[i].isspace():
+                i += 1
+
+            if len(str) == i:
+                return result
+
+            sign = 1
+            if str[i] == "+":
+                i += 1
+            elif str[i] == "-":
+                sign = -1
+                i += 1
+
+            while i < len(str) and '0' <= str[i] <= '9':
+                if result > (INT_MAX - int(str[i])) / 10:
+                    return INT_MAX if sign > 0 else INT_MIN
+                result = result * 10 + int(str[i])
+                i += 1
+
+            return sign * result
+    ```
+
+=== "C++"
+
+    ```cpp
+    #include <string>
+    #include <climits>
+
+    class Solution {
+    public:
+        int myAtoi(const std::string &s) {
+            int i = 0, sign = 1;
+            long result = 0;
+
+            // Skip whitespaces
+            while (i < s.length() && s[i] == ' ') i++;
+
+            // Check for optional sign
+            if (i < s.length() && (s[i] == '+' || s[i] == '-')) {
+                sign = (s[i] == '-') ? -1 : 1;
+                i++;
+            }
+
+            // Convert digits to integer
+            while (i < s.length() && isdigit(s[i])) {
+                result = result * 10 + (s[i++] - '0');
+                if (result * sign >= INT_MAX) return INT_MAX;
+                if (result * sign <= INT_MIN) return INT_MIN;
+            }
+
+            return result * sign;
+        }
+    };
+    ```
+
+=== "Rust"
+
+    ```rust
+    pub struct Solution;
+
+    impl Solution {
+        pub fn my_atoi(s: String) -> i32 {
+            let mut chars = s.chars().peekable();
+            let mut result: i64 = 0;
+            let mut sign = 1;
+            let mut started = false;
+
+            while let Some(&ch) = chars.peek() {
+                if !started && ch == ' ' {
+                    chars.next();
+                    continue;
+                }
+                if !started && (ch == '-' || ch == '+') {
+                    sign = if ch == '-' { -1 } else { 1 };
+                    chars.next();
+                    started = true;
+                    continue;
+                }
+                if let Some(digit) = ch.to_digit(10) {
+                    result = result * 10 + digit as i64;
+                    if result * sign > i32::MAX as i64 {
+                        return i32::MAX;
+                    }
+                    if result * sign < i32::MIN as i64 {
+                        return i32::MIN;
+                    }
+                    chars.next();
+                    started = true;
+                } else {
+                    break;
+                }
+            }
+
+            (result * sign) as i32
+        }
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    using System;
+
+    public class Solution {
+        public int MyAtoi(string s) {
+            int i = 0, sign = 1;
+            long result = 0;
+
+            while (i < s.Length && s[i] == ' ') i++;
+
+            if (i < s.Length && (s[i] == '+' || s[i] == '-')) {
+                sign = (s[i] == '-') ? -1 : 1;
+                i++;
+            }
+
+            while (i < s.Length && Char.IsDigit(s[i])) {
+                result = result * 10 + (s[i++] - '0');
+                if (result * sign >= int.MaxValue) return int.MaxValue;
+                if (result * sign <= int.MinValue) return int.MinValue;
+            }
+
+            return (int)(result * sign);
+        }
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    class Solution {
+        public int myAtoi(String s) {
+            int i = 0, sign = 1;
+            long result = 0;
+
+            while (i < s.length() && s.charAt(i) == ' ') i++;
+
+            if (i < s.length() && (s.charAt(i) == '+' || s.charAt(i) == '-')) {
+                sign = (s.charAt(i) == '-') ? -1 : 1;
+                i++;
+            }
+
+            while (i < s.length() && Character.isDigit(s.charAt(i))) {
+                result = result * 10 + (s.charAt(i++) - '0');
+                if (result * sign >= Integer.MAX_VALUE) return Integer.MAX_VALUE;
+                if (result * sign <= Integer.MIN_VALUE) return Integer.MIN_VALUE;
+            }
+
+            return (int)(result * sign);
+        }
+    }
+    ```
+
+=== "Scala"
+
+    ```scala
+    class Solution {
+        def myAtoi(s: String): Int = {
+            var i = 0
+            var sign = 1
+            var result: Long = 0
+
+            while (i < s.length && s(i) == ' ') i += 1
+
+            if (i < s.length && (s(i) == '+' || s(i) == '-')) {
+                sign = if (s(i) == '-') -1 else 1
+                i += 1
+            }
+
+            while (i < s.length && s(i).isDigit) {
+                result = result * 10 + (s(i) - '0')
+                if (result * sign >= Int.MaxValue) return Int.MaxValue
+                if (result * sign <= Int.MinValue) return Int.MinValue
+                i += 1
+            }
+
+            (result * sign).toInt
+        }
+    }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    class Solution {
+        fun myAtoi(s: String): Int {
+            var i = 0
+            var sign = 1
+            var result: Long = 0
+
+            while (i < s.length && s[i] == ' ') i++
+
+            if (i < s.length && (s[i] == '+' || s[i] == '-')) {
+                sign = if (s[i] == '-') -1 else 1
+                i++
+            }
+
+            while (i < s.length && s[i].isDigit()) {
+                result = result * 10 + (s[i++] - '0')
+                if (result * sign >= Int.MAX_VALUE) return Int.MAX_VALUE
+                if (result * sign <= Int.MIN_VALUE) return Int.MIN_VALUE
+            }
+
+            return (result * sign).toInt()
+        }
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    package main
+
+    import (
+        "math"
+        "unicode"
+    )
+
+    type Solution struct{}
+
+    func (Solution) MyAtoi(s string) int {
+        i, sign := 0, 1
+        var result int64 = 0
+
+        // Skip whitespaces
+        for i < len(s) && s[i] == ' ' {
+            i++
+        }
+
+        // Check for optional sign
+        if i < len(s) && (s[i] == '-' || s[i] == '+') {
+            if s[i] == '-' {
+                sign = -1
+            }
+            i++
+        }
+
+        // Convert digits to integer
+        for i < len(s) && unicode.IsDigit(rune(s[i])) {
+            result = result*10 + int64(s[i]-'0')
+            if result*int64(sign) > math.MaxInt32 {
+                return math.MaxInt32
+            }
+            if result*int64(sign) < math.MinInt32 {
+                return math.MinInt32
+            }
+            i++
+        }
+
+        return int(result * int64(sign))
+    }
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    class Solution {
+        myAtoi(s: string): number {
+            let i = 0;
+            let sign = 1;
+            let result = 0;
+
+            while (i < s.length && s[i] === ' ') i++;
+
+            if (i < s.length && (s[i] === '+' || s[i] === '-')) {
+                sign = s[i] === '-' ? -1 : 1;
+                i++;
+            }
+
+            while (i < s.length && /\d/.test(s[i])) {
+                result = result * 10 + (s[i].charCodeAt(0) - '0'.charCodeAt(0));
+                if (result * sign > 2 ** 31 - 1) return 2 ** 31 - 1;
+                if (result * sign < -(2 ** 31)) return -(2 ** 31);
+                i++;
+            }
+
+            return result * sign;
+        }
+    }
+    ```
+
+=== "R"
+
+    ```r
+    #library(R6)
+    #Solution <- R6::R6Class("Solution",
+    Solution <- setRefClass(
+        "Solution",
+        methods = list(
+            my_atoi = function(s) {
+                i <- 1
+                sign <- 1
+                result <- 0
+
+                while (i <= nchar(s) && substr(s, i, i) == " ") {
+                    i <- i + 1
+                }
+
+                if (i <= nchar(s) && (substr(s, i, i) == "+" || substr(s, i, i) == "-")) {
+                    sign <- ifelse(substr(s, i, i) == "-", -1, 1)
+                    i <- i + 1
+                }
+
+                while (i <= nchar(s) && grepl("[0-9]", substr(s, i, i))) {
+                    result <- result * 10 + as.numeric(substr(s, i, i))
+                    if (result * sign >= .Machine$integer.max) return(.Machine$integer.max)
+                    if (result * sign <= -.Machine$integer.max) return(-.Machine$integer.max)
+                    i <- i + 1
+                }
+
+                result * sign
+            }
+        )
+    )
+    ```
+
+=== "Julia"
+
+    ```julia
+    module SolutionModule
+
+    struct Solution
+    end
+
+    function my_atoi(::Solution, s::String)::Int
+        i = 1
+        sign = 1
+        result = 0
+
+        while i <= length(s) && s[i] == ' '
+            i += 1
+        end
+
+        if i <= length(s) && (s[i] == '+' || s[i] == '-')
+            sign = s[i] == '-' ? -1 : 1
+            i += 1
+        end
+
+        while i <= length(s) && isdigit(s[i])
+            result = result * 10 + (s[i] - '0')
+            if result * sign >= typemax(Int32)
+                return typemax(Int32)
+            end
+            if result * sign <= typemin(Int32)
+                return typemin(Int32)
+            end
+            i += 1
+        end
+
+        return result * sign
+    end
+
+    end
+    ```
+
+## Longest Common Prefix
+
+### Problem Description: [LeetCode - Problem 14 - Longest Common Prefix](https://leetcode.com/problems/longest-common-prefix/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+This solution finds the longest common prefix among an array of strings.
+
+1. If the array is empty, return an empty string.
+2. Iterate through characters of the first string:
+   a. Compare this character with the corresponding character in all other strings.
+   b. If a mismatch is found or we reach the end of any string, return the prefix up to this point.
+3. If we complete the loop, the entire first string is the common prefix.
+
+### Complexity Analysis
+- __Time Complexity: `O(S)`, where `S` is the sum of all characters in all strings. In the worst case, we compare every character of every string.__
+- __Space Complexity: `O(1)`, as we only use a constant amount of extra space.__
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    class Solution:
+        def longestCommonPrefix(self, strs: List[str]) -> str:
+            """
+            :type strs: List[str]
+            :rtype: str
+            """
+            if not strs:
+                return ""
+
+            for i in range(len(strs[0])):
+                for string in strs[1:]:
+                    if i >= len(string) or string[i] != strs[0][i]:
+                        return strs[0][:i]
+            return strs[0]
+    ```
+
+=== "C++"
+
+    ```cpp
+    #include <iostream>
+    #include <vector>
+    #include <string>
+
+    class Solution {
+    public:
+        std::string longestCommonPrefix(const std::vector<std::string>& strs) {
+            if (strs.empty()) return "";
+            std::string prefix = strs[0];
+            for (int i = 1; i < strs.size(); ++i) {
+                while (strs[i].find(prefix) != 0) {
+                    prefix = prefix.substr(0, prefix.size() - 1);
+                    if (prefix.empty()) return "";
+                }
+            }
+            return prefix;
+        }
+    };
+
+    int main() {
+        Solution solution;
+        std::vector<std::string> strs = {"flower", "flow", "flight"};
+        std::cout << "Longest Common Prefix: " << solution.longestCommonPrefix(strs) << std::endl;
+        return 0;
+    }
+    ```
+
+=== "Rust"
+
+    ```rust
+    struct Solution;
+
+    impl Solution {
+        pub fn longest_common_prefix(strs: Vec<String>) -> String {
+            if strs.is_empty() {
+                return "".to_string();
+            }
+            let mut prefix = strs[0].clone();
+            for s in &strs[1..] {
+                while !s.starts_with(&prefix) {
+                    prefix.pop();
+                    if prefix.is_empty() {
+                        return "".to_string();
+                    }
+                }
+            }
+            prefix
+        }
+    }
+
+    fn main() {
+        let strs = vec!["flower".to_string(), "flow".to_string(), "flight".to_string()];
+        let result = Solution::longest_common_prefix(strs);
+        println!("Longest Common Prefix: {}", result);
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    class Solution {
+        public String longestCommonPrefix(String[] strs) {
+            if (strs == null || strs.length == 0) return "";
+            String prefix = strs[0];
+            for (int i = 1; i < strs.length; i++) {
+                while (strs[i].indexOf(prefix) != 0) {
+                    prefix = prefix.substring(0, prefix.length() - 1);
+                    if (prefix.isEmpty()) return "";
+                }
+            }
+            return prefix;
+        }
+
+        public static void main(String[] args) {
+            Solution solution = new Solution();
+            String[] strs = {"flower", "flow", "flight"};
+            System.out.println("Longest Common Prefix: " + solution.longestCommonPrefix(strs));
+        }
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    class Solution {
+        public String longestCommonPrefix(String[] strs) {
+            if (strs == null || strs.length == 0) return "";
+            String prefix = strs[0];
+            for (int i = 1; i < strs.length; i++) {
+                while (strs[i].indexOf(prefix) != 0) {
+                    prefix = prefix.substring(0, prefix.length() - 1);
+                    if (prefix.isEmpty()) return "";
+                }
+            }
+            return prefix;
+        }
+
+        public static void main(String[] args) {
+            Solution solution = new Solution();
+            String[] strs = {"flower", "flow", "flight"};
+            System.out.println("Longest Common Prefix: " + solution.longestCommonPrefix(strs));
+        }
+    }
+    ```
+
+=== "Scala"
+
+    ```scala
+    object Solution {
+        def longestCommonPrefix(strs: Array[String]): String = {
+            if (strs.isEmpty) return ""
+            var prefix = strs(0)
+            for (s <- strs.tail) {
+                while (!s.startsWith(prefix)) {
+                    prefix = prefix.substring(0, prefix.length - 1)
+                    if (prefix.isEmpty) return ""
+                }
+            }
+            prefix
+        }
+
+        def main(args: Array[String]): Unit = {
+            val strs = Array("flower", "flow", "flight")
+            println(s"Longest Common Prefix: ${longestCommonPrefix(strs)}")
+        }
+    }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    class Solution {
+        fun longestCommonPrefix(strs: Array<String>): String {
+            if (strs.isEmpty()) return ""
+            var prefix = strs[0]
+            for (i in 1 until strs.size) {
+                while (!strs[i].startsWith(prefix)) {
+                    prefix = prefix.substring(0, prefix.length - 1)
+                    if (prefix.isEmpty()) return ""
+                }
+            }
+            return prefix
+        }
+    }
+
+    fun main() {
+        val solution = Solution()
+        val strs = arrayOf("flower", "flow", "flight")
+        println("Longest Common Prefix: ${solution.longestCommonPrefix(strs)}")
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    package main
+
+    import (
+        "fmt"
+        "strings"
+    )
+
+    type Solution struct{}
+
+    func (s Solution) LongestCommonPrefix(strs []string) string {
+        if len(strs) == 0 {
+            return ""
+        }
+        prefix := strs[0]
+        for i := 1; i < len(strs); i++ {
+            for !strings.HasPrefix(strs[i], prefix) {
+                prefix = prefix[:len(prefix)-1]
+                if len(prefix) == 0 {
+                    return ""
+                }
+            }
+        }
+        return prefix
+    }
+
+    func main() {
+        solution := Solution{}
+        strs := []string{"flower", "flow", "flight"}
+        fmt.Println("Longest Common Prefix:", solution.LongestCommonPrefix(strs))
+    }
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    class Solution {
+        longestCommonPrefix(strs: string[]): string {
+            if (strs.length === 0) return "";
+            let prefix = strs[0];
+            for (let i = 1; i < strs.length; i++) {
+                while (!strs[i].startsWith(prefix)) {
+                    prefix = prefix.substring(0, prefix.length - 1);
+                    if (prefix === "") return "";
+                }
+            }
+            return prefix;
+        }
+    }
+
+    function main() {
+        const solution = new Solution();
+        const strs = ["flower", "flow", "flight"];
+        console.log(`Longest Common Prefix: ${solution.longestCommonPrefix(strs)}`);
+    }
+
+    main();
+    ```
+
+=== "R"
+
+    ```r
+    #library(R6)
+    #Solution <- R6::R6Class("Solution",
+    Solution <- setRefClass("Solution", methods = list(
+            longestCommonPrefix = function(strs) {
+                if (length(strs) == 0) return("")
+                prefix <- strs[1]
+                for (i in 2:length(strs)) {
+                    while (substr(strs[i], 1, nchar(prefix)) != prefix) {
+                        prefix <- substr(prefix, 1, nchar(prefix) - 1)
+                        if (prefix == "") return("")
+                    }
+                }
+                return(prefix)
+            }
+        )
+    )
+
+    main <- function() {
+        solution <- Solution$new()
+        strs <- c("flower", "flow", "flight")
+        cat("Longest Common Prefix:", solution$longestCommonPrefix(strs), "\n")
+    }
+
+    main()
+    ```
+
+=== "Julia"
+
+    ```julia
+    struct Solution
+    end
+
+    function longest_common_prefix(strs::Vector{String})::String
+        if isempty(strs)
+            return ""
+        end
+        prefix = strs[1]
+        for i in 2:length(strs)
+            while !startswith(strs[i], prefix)
+                prefix = prefix[1:end-1]
+                if isempty(prefix)
+                    return ""
+                end
+            end
+        end
+        return prefix
+    end
+
+    function main()
+        strs = ["flower", "flow", "flight"]
+        prefix = longest_common_prefix(strs)
+        println("Longest Common Prefix: ", prefix)
+    end
+
+    main()
+    ```
+
+## Implement `strStr()` - `Knuth-Morris-Platt (KMP) Algorithm`
+
+### Problem Description: [LeetCode - Problem 28 - Implement `strStr()`](https://leetcode.com/problems/implement-strstr/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+
+### Complexity Analysis
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    from typing import List
+
+    class Solution:
+        def strStr(self, haystack: str, needle: str) -> int:
+            """
+            :type haystack: str
+            :type needle: str
+            :rtype: int
+            """
+            if not needle:
+                return 0
+
+            return self.KMP(haystack, needle)
+
+        def KMP(self, text: str, pattern: str) -> int:
+            prefix = self.getPrefix(pattern)
+            j = -1
+            for i in range(len(text)):
+                while j > -1 and pattern[j + 1] != text[i]:
+                    j = prefix[j]
+                if pattern[j + 1] == text[i]:
+                    j += 1
+                if j == len(pattern) - 1:
+                    return i - j
+            return -1
+
+        def getPrefix(self, pattern: str) -> List[int]:
+            prefix = [-1] * len(pattern)
+            j = -1
+            for i in range(1, len(pattern)):
+                while j > -1 and pattern[j + 1] != pattern[i]:
+                    j = prefix[j]
+                if pattern[j + 1] == pattern[i]:
+                    j += 1
+                prefix[i] = j
+            return prefix
+    ```
+
+=== "C++"
+
+    ```cpp
+    ```
+
+=== "Rust"
+
+    ```rust
+    ```
+
+=== "C#"
+
+    ```csharp
+    ```
+
+=== "Java"
+
+    ```java
+    ```
+
+=== "Scala"
+
+    ```scala
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    ```
+
+=== "Go"
+
+    ```go
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    ```
+
+=== "R"
+
+    ```r
+    ```
+
+=== "Julia"
+
+    ```julia
+    ```
+
+## Add Binary
+
+### Problem Description: [LeetCode - Problem 67 - Add Binary](https://leetcode.com/problems/add-binary/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+
+### Complexity Analysis
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    class Solution:
+        # @param a, a string
+        # @param b, a string
+        # @return a string
+        def addBinary(self, a: str, b: str) -> str:
+            result, carry, val = "", 0, 0
+            for i in range(max(len(a), len(b))):
+                val = carry
+                if i < len(a):
+                    val += int(a[-(i + 1)])
+                if i < len(b):
+                    val += int(b[-(i + 1)])
+                carry, val = divmod(val, 2)
+                result += str(val)
+            if carry:
+                result += str(carry)
+            return result[::-1]
+
+    #from itertools import izip_longest
+    #
+    #
+    #class Solution:
+    #    def addBinary(self, a: str, b: str) -> str:
+    #        """
+    #        :type a: str
+    #        :type b: str
+    #        :rtype: str
+    #        """
+    #        result = ""
+    #        carry = 0
+    #        for x, y in izip_longest(reversed(a), reversed(b), fillvalue="0"):
+    #            carry, remainder = divmod(int(x)+int(y)+carry, 2)
+    #            result += str(remainder)
+    #        
+    #        if carry:
+    #            result += str(carry)
+    #        
+    #        return result[::-1]
+    ```
+
+=== "C++"
+
+    ```cpp
+    ```
+
+=== "Rust"
+
+    ```rust
+    ```
+
+=== "C#"
+
+    ```csharp
+    ```
+
+=== "Java"
+
+    ```java
+    ```
+
+=== "Scala"
+
+    ```scala
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    ```
+
+=== "Go"
+
+    ```go
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    ```
+
+=== "R"
+
+    ```r
+    ```
+
+=== "Julia"
+
+    ```julia
+    ```
+
+## Text Justification
+
+### Problem Description: [LeetCode - Problem 68 - Add Binary](https://leetcode.com/problems/text-justification/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+
+### Complexity Analysis
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    from typing import List
+    class Solution:
+        def fullJustify(self, words: str, maxWidth: str) -> List[str]:
+            """
+            :type words: List[str]
+            :type maxWidth: int
+            :rtype: List[str]
+            """
+            def addSpaces(i, spaceCnt, maxWidth, is_last):
+                if i < spaceCnt:
+                    # For the last line of text, it should be left justified,
+                    # and no extra space is inserted between words.
+                    return 1 if is_last else (maxWidth // spaceCnt) + int(i < maxWidth % spaceCnt)
+                return 0
+
+            def connect(words, maxWidth, begin, end, length, is_last):
+                s = []  # The extra space O(k) is spent here.
+                n = end - begin
+                for i in range(n):
+                    s += words[begin + i],
+                    s += ' ' * addSpaces(i, n - 1, maxWidth - length, is_last),
+                # For only one word in a line.
+                line = "".join(s)
+                if len(line) < maxWidth:
+                    line += ' ' * (maxWidth - len(line))
+                return line
+
+            res = []
+            begin, length = 0, 0
+            for i in range(len(words)):
+                if length + len(words[i]) + (i - begin) > maxWidth:
+                    res += connect(words, maxWidth, begin, i, length, False),
+                    begin, length = i, 0
+                length += len(words[i])
+
+            # Last line.
+            res += connect(words, maxWidth, begin, len(words), length, True),
+            return res
+    ```
+
+=== "C++"
+
+    ```cpp
+    ```
+
+=== "Rust"
+
+    ```rust
+    ```
+
+=== "C#"
+
+    ```csharp
+    ```
+
+=== "Java"
+
+    ```java
+    ```
+
+=== "Scala"
+
+    ```scala
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    ```
+
+=== "Go"
+
+    ```go
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    ```
+
+=== "R"
+
+    ```r
+    ```
+
+=== "Julia"
+
+    ```julia
+    ```
+
+## Valid Palindrome
+
+### Problem Description: [LeetCode - Problem 125 - Valid Palindrome](https://leetcode.com/problems/valid-palindrome/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+
+### Complexity Analysis
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    class Solution:
+        # @param s, a string
+        # @return a boolean
+        def isPalindrome(self, s: str) -> bool:
+            i, j = 0, len(s) - 1
+            while i < j:
+                while i < j and not s[i].isalnum():
+                    i += 1
+                while i < j and not s[j].isalnum():
+                    j -= 1
+                if s[i].lower() != s[j].lower():
+                    return False
+                i, j = i + 1, j - 1
+            return True
+    ```
+
+=== "C++"
+
+    ```cpp
+    ```
+
+=== "Rust"
+
+    ```rust
+    ```
+
+=== "C#"
+
+    ```csharp
+    ```
+
+=== "Java"
+
+    ```java
+    ```
+
+=== "Scala"
+
+    ```scala
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    ```
+
+=== "Go"
+
+    ```go
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    ```
+
+=== "R"
+
+    ```r
+    ```
+
+=== "Julia"
+
+    ```julia
+    ```
+
+## Reverse Words in a String
+
+### Problem Description: [LeetCode - Problem 151 - Reverse Words in a String](https://leetcode.com/problems/reverse-words-in-a-string/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+
+### Complexity Analysis
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    class Solution:
+        ## @param s, a string
+        ## @return a string
+        #def reverseWords(self, s: str) -> str:
+        #    return ' '.join(reversed(s.split()))
+
+        ## @param s, a string
+        ## @return a string
+        #def reverseWords(self, s: str) -> str:
+        #    return" ".join(s.split()[::-1])
+
+        # @param s, a string
+        # @return a string
+        # Without built-in
+        def reverseWords(self, s: str) -> str:
+            word=""
+            res=""
+            for i in s+" ":
+                if i!=" ":
+                    word+=i
+                elif word:
+                    res=word+" "+res
+                    word=""
+            return res[:-1]
+    ```
+
+=== "C++"
+
+    ```cpp
+    ```
+
+=== "Rust"
+
+    ```rust
+    ```
+
+=== "C#"
+
+    ```csharp
+    ```
+
+=== "Java"
+
+    ```java
+    ```
+
+=== "Scala"
+
+    ```scala
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    ```
+
+=== "Go"
+
+    ```go
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    ```
+
+=== "R"
+
+    ```r
+    ```
+
+=== "Julia"
+
+    ```julia
+    ```
+
+## Shortest Palindrome - `Manacher's Algorithm`
+
+### Problem Description: [LeetCode - Problem 214 - Shortest Palindrome](https://leetcode.com/problems/shortest-palindrome/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+
+### Complexity Analysis
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    class Solution:
+        def shortestPalindrome(self, s: str) -> str:
+            """
+            :type s: str
+            :rtype: str
+            """
+            def preProcess(s):
+                if not s:
+                    return ['^', '$']
+                string = ['^']
+                for c in s:
+                    string +=  ['#', c]
+                string += ['#', '$']
+                return string
+
+            string = preProcess(s)
+            palindrome = [0] * len(string)
+            center, right = 0, 0
+            for i in range(1, len(string) - 1):
+                i_mirror = 2 * center - i
+                if right > i:
+                    palindrome[i] = min(right - i, palindrome[i_mirror])
+                else:
+                    palindrome[i] = 0
+
+                while string[i + 1 + palindrome[i]] == string[i - 1 - palindrome[i]]:
+                    palindrome[i] += 1
+
+                if i + palindrome[i] > right:
+                    center, right = i, i + palindrome[i]
+
+            max_len = 0
+            for i in range(1, len(string) - 1):
+                if i - palindrome[i] == 1:
+                    max_len = palindrome[i]
+            return s[len(s)-1:max_len-1:-1] + s
+    ```
+
+=== "C++"
+
+    ```cpp
+    ```
+
+=== "Rust"
+
+    ```rust
+    ```
+
+=== "C#"
+
+    ```csharp
+    ```
+
+=== "Java"
+
+    ```java
+    ```
+
+=== "Scala"
+
+    ```scala
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    ```
+
+=== "Go"
+
+    ```go
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    ```
+
+=== "R"
+
+    ```r
+    ```
+
+=== "Julia"
+
+    ```julia
+    ```
+
+## Valid Anagram
+
+### Problem Description: [LeetCode - Problem 242 - Valid Anagram](https://leetcode.com/problems/valid-anagram/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+
+### Complexity Analysis
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    import collections
+
+    class Solution:
+        def isAnagram(self, s: str, t: str) -> bool:
+            """
+            :type s: str
+            :type t: str
+            :rtype: bool
+            """
+            if len(s) != len(t):
+                return False
+            count = collections.defaultdict(int)
+            for c in s:
+                count[c] += 1
+            for c in t:
+                count[c] -= 1
+                if count[c] < 0:
+                    return False
+            return True
+    ```
+
+=== "C++"
+
+    ```cpp
+    ```
+
+=== "Rust"
+
+    ```rust
+    ```
+
+=== "C#"
+
+    ```csharp
+    ```
+
+=== "Java"
+
+    ```java
+    ```
+
+=== "Scala"
+
+    ```scala
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    ```
+
+=== "Go"
+
+    ```go
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    ```
+
+=== "R"
+
+    ```r
+    ```
+
+=== "Julia"
+
+    ```julia
+    ```
 
 ### Problem Description: [LeetCode - Problem 2800 - Shortest String That Contains Three Strings](https://leetcode.com/problems/shortest-string-that-contains-three-strings/)
 
