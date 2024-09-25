@@ -8,7 +8,7 @@ tags:
 ## Merge Two Sorted Lists
 
 ### Problem Description:
-Merge two-sorted lists.
+Merge two sorted lists.
 
 Bonus: Can you provide the in-place merge, improved space complexity solution.
 
@@ -860,6 +860,827 @@ Bonus: Can you provide the in-place merge, improved space complexity solution.
 		list2 = [1, 3, 4]
 		mergeListsInPlace!(list1, list2)
 		println("Merged List (In-place): ", list1)
+	end
+
+	main()
+	```
+
+## Merge `k` Sorted Lists
+
+### Problem Description:
+Merge `k` Sorted Lists.
+
+Bonus: Can you provide the in-place merge, improved space complexity solution.
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+
+Sure! Let's break down the provided C++ solution for merging `k` sorted arrays, along with an in-place merge solution, and analyze their time and space complexities.
+
+### Detailed Solution Explanation for the Priority Queue Method
+
+#### Problem Statement
+You are given `k` sorted arrays (or vectors) and need to merge them into a single sorted array.
+
+#### Approach
+The provided solution uses a **priority queue** (min-heap) to efficiently retrieve the smallest element across all `k` arrays. Here's a step-by-step breakdown of the approach:
+
+1. **Data Structures**:
+   - A **priority queue** is used to maintain the current smallest elements from each of the `k` arrays. Each element in the priority queue is a pair of iterators, pointing to the current position in each sorted array.
+   - A **result vector** is used to store the merged output.
+
+2. **Initialization**:
+   - The priority queue is initialized with the beginning iterators of all non-empty arrays. The custom comparator ensures that the smallest element can be accessed efficiently.
+
+3. **Merging Process**:
+   - While the priority queue is not empty:
+     - The top element (smallest) is extracted, and its value is added to the result vector.
+     - The iterator for the extracted element is advanced. If the iterator hasn't reached the end of its corresponding array, the next element is pushed back into the priority queue.
+
+4. **Result**:
+   - Once all elements have been processed, the result vector contains the merged sorted elements.
+
+#### Time Complexity
+- **Pushing Elements**: Inserting elements into the priority queue takes $$O(\log k)$$ time.
+- **Total Merges**: Each of the $$N$$ elements (where $$N$$ is the total number of elements across all arrays) is processed once. Therefore, the overall complexity is:
+  
+```math
+O(N \log k)
+```
+
+#### Space Complexity
+- **Priority Queue Storage**: The priority queue holds at most `k` elements at any time, leading to a space complexity of $$O(k)$$.
+- **Result Vector**: The space used for the result vector is $$O(N)$$ since it stores all merged elements.
+
+Overall, the space complexity is dominated by the result vector:
+
+```math
+O(N + k)
+```
+
+### In-Place Merge Solution
+
+An alternative in-place merge approach modifies one of the original arrays to accommodate the merged result, thereby not requiring an additional array for storing the merged result. Here’s how you can implement this:
+
+#### In-Place Merge Function
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+void mergeInPlace(vector<vector<char>>& chunks) {
+    if (chunks.empty()) return;
+
+    // Create a vector to store all elements
+    vector<char> result;
+    
+    // Collect all elements in the result vector
+    for (const auto& chunk : chunks) {
+        result.insert(result.end(), chunk.begin(), chunk.end());
+    }
+
+    // Sort the result vector in-place
+    sort(result.begin(), result.end());
+
+    // Output the merged result
+    cout << "Merged Array: ";
+    for (char c : result) {
+        cout << c << " ";
+    }
+    cout << endl;
+}
+
+int main() {
+    vector<vector<char>> chunks = {
+        {'a', 'c', 'e'},
+        {'b', 'd', 'f'},
+        {'g', 'h'}
+    };
+
+    mergeInPlace(chunks); // Merge the arrays in-place
+
+    return 0;
+}
+```
+
+### Explanation of In-Place Merge Solution
+
+#### Steps
+1. **Collection**: Iterate through each of the `k` arrays and append their elements to a single `result` vector.
+2. **Sorting**: Use the standard library's `sort()` function to sort the entire `result` vector in place.
+
+#### Time Complexity
+- **Collecting Elements**: Appending elements from all `k` arrays takes $$O(N)$$.
+- **Sorting**: The sorting operation takes $$O(N \log N)$$ in the worst case.
+  
+Overall, the time complexity for this approach is:
+
+```math
+O(N \log N)
+```
+
+#### Space Complexity
+- **Result Vector**: We store all elements in a new vector, which requires $$O(N)$$ space.
+  
+Thus, the space complexity is:
+
+```math
+O(N)
+```
+
+### Summary of Complexity Analysis
+
+- **Priority Queue Method**:
+  - Time Complexity: $$O(N \log k)$$
+  - Space Complexity: $$O(N + k)$$
+
+- **In-Place Merge Method**:
+  - Time Complexity: $$O(N \log N)$$
+  - Space Complexity: $$O(N)$$
+
+### Conclusion
+
+The priority queue method is generally more efficient for merging `k` sorted arrays, especially when $$k$$ is much smaller than $$N$$, as it takes advantage of the sorted nature of the input arrays. The in-place merge method, while simpler, incurs a higher time complexity due to the sorting step, making it less optimal for large datasets.
+
+
+### Solutions
+
+=== "Python"
+
+	```python
+	from typing import List
+
+	class Solution:
+		def merge(self, chunks: List[List[str]]) -> List[str]:
+			from heapq import heappop, heappush
+			
+			# Define a pair type for iterators
+			heap = []
+			
+			# Initialize the priority queue with the beginning and end of each vector
+			for i, v in enumerate(chunks):
+				if v:
+					heappush(heap, (v[0], i, 0))  # (value, chunk_index, value_index)
+
+			result = []
+			while heap:
+				value, chunk_index, value_index = heappop(heap)
+				result.append(value)
+				if value_index + 1 < len(chunks[chunk_index]):
+					next_value = chunks[chunk_index][value_index + 1]
+					heappush(heap, (next_value, chunk_index, value_index + 1))
+
+			return result
+
+		def merge_in_place(self, chunks: List[List[str]]) -> None:
+			if not chunks:
+				return
+
+			result = []
+			for chunk in chunks:
+				result.extend(chunk)
+
+			result.sort()
+			print("Merged Array:", result)
+
+
+	def main() -> None:
+		solution = Solution()
+		chunks = [['a', 'c', 'e'], ['b', 'd', 'f'], ['g', 'h']]
+		merged = solution.merge(chunks)
+		print("Merged Array:", merged)
+
+		solution.merge_in_place(chunks)
+
+	if __name__ == "__main__":
+		main()
+	```
+
+=== "C++"
+
+	```cpp
+	#include <iostream>
+	#include <vector>
+	#include <queue>
+	#include <utility> // For std::pair
+
+	using namespace std;
+
+	class Solution {
+	public:
+		vector<char> merge(vector<vector<char>>& chunks) {
+			// Define a pair type for iterators
+			typedef pair<vector<char>::iterator, vector<char>::iterator> it_pair;
+
+			// Custom comparator for the priority queue
+			auto comp = [](const it_pair& a, const it_pair& b) {
+				return *a.first > *b.first; // Min-heap based on the value pointed to by iterators
+			};
+
+			// Priority queue (min-heap) to hold the iterators
+			priority_queue<it_pair, vector<it_pair>, decltype(comp)> q(comp);
+
+			// Initialize the priority queue with the beginning and end of each vector
+			for (auto& v : chunks) {
+				if (!v.empty()) { // Only push non-empty vectors
+					q.push({v.begin(), v.end()});
+				}
+			}
+
+			vector<char> res; // Result vector to store the merged result
+			while (!q.empty()) {
+				auto [it, end] = q.top(); // Get the smallest element iterator
+				q.pop();
+				res.push_back(*it); // Add the smallest element to the result
+				if (++it != end) { // Move the iterator forward
+					q.push({it, end}); // Push the next element of the same vector to the queue
+				}
+			}
+
+			return res; // Return the merged result
+		}
+		
+		void mergeInPlace(vector<vector<char>>& chunks) {
+			if (chunks.empty()) return;
+
+			// Create a vector to store all elements
+			vector<char> result;
+			
+			// Collect all elements in the result vector
+			for (const auto& chunk : chunks) {
+				result.insert(result.end(), chunk.begin(), chunk.end());
+			}
+
+			// Sort the result vector in-place
+			sort(result.begin(), result.end());
+
+			// Output the merged result
+			cout << "Merged Array: ";
+			for (char c : result) {
+				cout << c << " ";
+			}
+			cout << endl;
+		}
+
+	int main() {
+		Solution solution;
+		// Example input: k sorted arrays
+		vector<vector<char>> chunks = {
+			{'a', 'c', 'e'},
+			{'b', 'd', 'f'},
+			{'g', 'h'}
+		};
+
+		vector<char> merged = solution.merge(chunks); // Merge the arrays
+
+		// Output the merged result
+		cout << "Merged Array: ";
+		for (char c : merged) {
+			cout << c << " ";
+		}
+		cout << endl;
+		
+		chunks = {
+			{'a', 'c', 'e'},
+			{'b', 'd', 'f'},
+			{'g', 'h'}
+		};
+		
+		merged = solution.merge(chunks); // Merge the arrays
+
+		// Output the merged result
+		cout << "Merged Array: ";
+		for (char c : merged) {
+			cout << c << " ";
+		}
+		cout << endl;
+
+		return 0; // Indicate successful completion
+	}
+	```
+
+=== "Rust"
+
+	```rust
+	use std::cmp::Ordering;
+	use std::collections::BinaryHeap;
+
+	struct Solution;
+
+	impl Solution {
+		pub fn merge(chunks: Vec<Vec<char>>) -> Vec<char> {
+			let mut heap = BinaryHeap::new();
+			for (i, v) in chunks.iter().enumerate() {
+				if !v.is_empty() {
+					heap.push((v[0], i, 0)); // (value, chunk_index, value_index)
+				}
+			}
+
+			let mut result = Vec::new();
+			while let Some((value, chunk_index, value_index)) = heap.pop() {
+				result.push(value);
+				let next_index = value_index + 1;
+				if next_index < chunks[chunk_index].len() {
+					heap.push((chunks[chunk_index][next_index], chunk_index, next_index));
+				}
+			}
+
+			result
+		}
+
+		pub fn merge_in_place(chunks: Vec<Vec<char>>) {
+			let mut result: Vec<char> = chunks.iter().flat_map(|chunk| chunk.iter()).cloned().collect();
+			result.sort();
+			println!("Merged Array: {:?}", result);
+		}
+	}
+
+	fn main() {
+		let solution = Solution;
+		let chunks = vec![vec!['a', 'c', 'e'], vec!['b', 'd', 'f'], vec!['g', 'h']];
+		let merged = solution.merge(chunks.clone());
+		println!("Merged Array: {:?}", merged);
+		solution.merge_in_place(chunks);
+	}
+	```
+
+=== "C#"
+
+	```csharp
+	using System;
+	using System.Collections.Generic;
+
+	public class Solution
+	{
+		public List<char> Merge(List<List<char>> chunks)
+		{
+			var heap = new SortedSet<(char value, int chunkIndex, int valueIndex)>();
+			for (int i = 0; i < chunks.Count; i++)
+			{
+				if (chunks[i].Count > 0)
+					heap.Add((chunks[i][0], i, 0));
+			}
+
+			var result = new List<char>();
+			while (heap.Count > 0)
+			{
+				var (value, chunkIndex, valueIndex) = heap.Min;
+				heap.Remove(heap.Min);
+				result.Add(value);
+				if (valueIndex + 1 < chunks[chunkIndex].Count)
+				{
+					heap.Add((chunks[chunkIndex][valueIndex + 1], chunkIndex, valueIndex + 1));
+				}
+			}
+
+			return result;
+		}
+
+		public void MergeInPlace(List<List<char>> chunks)
+		{
+			if (chunks.Count == 0) return;
+
+			var result = new List<char>();
+			foreach (var chunk in chunks)
+			{
+				result.AddRange(chunk);
+			}
+			
+			result.Sort();
+			Console.WriteLine("Merged Array: " + string.Join(" ", result));
+		}
+	}
+
+	public class Program
+	{
+		public static void Main()
+		{
+			var solution = new Solution();
+			var chunks = new List<List<char>> {
+				new List<char> {'a', 'c', 'e'},
+				new List<char> {'b', 'd', 'f'},
+				new List<char> {'g', 'h'}
+			};
+			
+			var merged = solution.Merge(chunks);
+			Console.WriteLine("Merged Array: " + string.Join(" ", merged));
+			
+			solution.MergeInPlace(chunks);
+		}
+	}
+	```
+
+=== "Java"
+
+	```java
+	import java.util.*;
+
+	class Solution {
+		public List<Character> merge(List<List<Character>> chunks) {
+			PriorityQueue<Iterator<Character>> heap = new PriorityQueue<>((a, b) -> Character.compare(a.next(), b.next()));
+			
+			for (List<Character> chunk : chunks) {
+				if (!chunk.isEmpty()) {
+					heap.offer(chunk.iterator());
+				}
+			}
+
+			List<Character> result = new ArrayList<>();
+			while (!heap.isEmpty()) {
+				Iterator<Character> it = heap.poll();
+				if (it.hasNext()) {
+					result.add(it.next());
+					if (it.hasNext()) {
+						heap.offer(it);
+					}
+				}
+			}
+
+			return result;
+		}
+
+		public void mergeInPlace(List<List<Character>> chunks) {
+			if (chunks.isEmpty()) return;
+
+			List<Character> result = new ArrayList<>();
+			for (List<Character> chunk : chunks) {
+				result.addAll(chunk);
+			}
+			Collections.sort(result);
+			System.out.println("Merged Array: " + result);
+		}
+
+		public static void main(String[] args) {
+			Solution solution = new Solution();
+			List<List<Character>> chunks = Arrays.asList(
+				Arrays.asList('a', 'c', 'e'),
+				Arrays.asList('b', 'd', 'f'),
+				Arrays.asList('g', 'h')
+			);
+
+			List<Character> merged = solution.merge(chunks);
+			System.out.println("Merged Array: " + merged);
+
+			solution.mergeInPlace(chunks);
+		}
+	}
+	```
+
+=== "Scala"
+
+	```scala
+	import scala.collection.mutable
+	import scala.collection.mutable.ListBuffer
+
+	class Solution {
+	  def merge(chunks: List[List[Char]]): List[Char] = {
+		val heap = mutable.PriorityQueue.empty[(Char, Int, Int)](Ordering.by[(Char, Int, Int), Char](_._1).reverse)
+
+		for (i <- chunks.indices if chunks(i).nonEmpty) {
+		  heap.enqueue((chunks(i)(0), i, 0))
+		}
+
+		val result = ListBuffer[Char]()
+		while (heap.nonEmpty) {
+		  val (value, chunkIndex, valueIndex) = heap.dequeue()
+		  result += value
+		  if (valueIndex + 1 < chunks(chunkIndex).length) {
+			heap.enqueue((chunks(chunkIndex)(valueIndex + 1), chunkIndex, valueIndex + 1))
+		  }
+		}
+
+		result.toList
+	  }
+
+	  def mergeInPlace(chunks: List[List[Char]]): Unit = {
+		if (chunks.isEmpty) return
+
+		val result = chunks.flatten.sorted
+		println("Merged Array: " + result.mkString(" "))
+	  }
+	}
+
+	object Main extends App {
+	  val solution = new Solution
+	  val chunks = List(
+		List('a', 'c', 'e'),
+		List('b', 'd', 'f'),
+		List('g', 'h')
+	  )
+
+	  val merged = solution.merge(chunks)
+	  println("Merged Array: " + merged.mkString(" "))
+	  solution.mergeInPlace(chunks)
+	}
+	```
+
+=== "Kotlin"
+
+	```kotlin
+	class Solution {
+		fun merge(chunks: List<List<Char>>): List<Char> {
+			val heap = PriorityQueue<Pair<Char, Pair<Int, Int>>> { a, b -> a.first.compareTo(b.first) }
+
+			for (i in chunks.indices) {
+				if (chunks[i].isNotEmpty()) {
+					heap.add(Pair(chunks[i][0], Pair(i, 0)))
+				}
+			}
+
+			val result = mutableListOf<Char>()
+			while (heap.isNotEmpty()) {
+				val (value, (chunkIndex, valueIndex)) = heap.poll()
+				result.add(value)
+				if (valueIndex + 1 < chunks[chunkIndex].size) {
+					heap.add(Pair(chunks[chunkIndex][valueIndex + 1], Pair(chunkIndex, valueIndex + 1)))
+				}
+			}
+
+			return result
+		}
+
+		fun mergeInPlace(chunks: List<List<Char>>) {
+			if (chunks.isEmpty()) return
+
+			val result = chunks.flatten().sorted()
+			println("Merged Array: ${result.joinToString(" ")}")
+		}
+	}
+
+	fun main() {
+		val solution = Solution()
+		val chunks = listOf(
+			listOf('a', 'c', 'e'),
+			listOf('b', 'd', 'f'),
+			listOf('g', 'h')
+		)
+
+		val merged = solution.merge(chunks)
+		println("Merged Array: ${merged.joinToString(" ")}")
+		solution.mergeInPlace(chunks)
+	}
+	```
+
+=== "Go"
+
+	```go
+	package main
+
+	import (
+		"container/heap"
+		"fmt"
+		"sort"
+	)
+
+	type Item struct {
+		value      rune
+		chunkIndex int
+		valueIndex int
+	}
+
+	type MinHeap []Item
+
+	func (h MinHeap) Len() int           { return len(h) }
+	func (h MinHeap) Less(i, j int) bool { return h[i].value < h[j].value }
+	func (h MinHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+
+	func (h *MinHeap) Push(x interface{}) {
+		*h = append(*h, x.(Item))
+	}
+
+	func (h *MinHeap) Pop() interface{} {
+		old := *h
+		n := len(old)
+		x := old[n-1]
+		*h = old[0 : n-1]
+		return x
+	}
+
+	type Solution struct{}
+
+	func (s *Solution) Merge(chunks [][]rune) []rune {
+		h := &MinHeap{}
+		heap.Init(h)
+
+		for i, chunk := range chunks {
+			if len(chunk) > 0 {
+				heap.Push(h, Item{value: chunk[0], chunkIndex: i, valueIndex: 0})
+			}
+		}
+
+		result := []rune{}
+		for h.Len() > 0 {
+			item := heap.Pop(h).(Item)
+			result = append(result, item.value)
+			if item.valueIndex+1 < len(chunks[item.chunkIndex]) {
+				nextItem := Item{value: chunks[item.chunkIndex][item.valueIndex+1], chunkIndex: item.chunkIndex, valueIndex: item.valueIndex + 1}
+				heap.Push(h, nextItem)
+			}
+		}
+
+		return result
+	}
+
+	func (s *Solution) MergeInPlace(chunks [][]rune) {
+		if len(chunks) == 0 {
+			return
+		}
+
+		result := []rune{}
+		for _, chunk := range chunks {
+			result = append(result, chunk...)
+		}
+		sort.Slice(result, func(i, j int) bool {
+			return result[i] < result[j]
+		})
+
+		fmt.Println("Merged Array:", string(result))
+	}
+
+	func main() {
+		solution := Solution{}
+		chunks := [][]rune{
+			{'a', 'c', 'e'},
+			{'b', 'd', 'f'},
+			{'g', 'h'},
+		}
+
+		merged := solution.Merge(chunks)
+		fmt.Println("Merged Array:", string(merged))
+		solution.MergeInPlace(chunks)
+	}
+	```
+
+=== "TypeScript"
+
+	```typescript
+	class Solution {
+		merge(chunks: Array<Array<string>>): Array<string> {
+			const heap: Array<[string, number, number]> = [];
+
+			for (let i = 0; i < chunks.length; i++) {
+				if (chunks[i].length > 0) {
+					heap.push([chunks[i][0], i, 0]);
+				}
+			}
+
+			heap.sort(([valueA], [valueB]) => valueA.localeCompare(valueB));
+
+			const result: string[] = [];
+			while (heap.length > 0) {
+				const [value, chunkIndex, valueIndex] = heap.shift()!;
+				result.push(value);
+				if (valueIndex + 1 < chunks[chunkIndex].length) {
+					heap.push([chunks[chunkIndex][valueIndex + 1], chunkIndex, valueIndex + 1]);
+				}
+				heap.sort(([valueA], [valueB]) => valueA.localeCompare(valueB));
+			}
+
+			return result;
+		}
+
+		mergeInPlace(chunks: Array<Array<string>>): void {
+			if (chunks.length === 0) return;
+
+			const result: string[] = [];
+			for (const chunk of chunks) {
+				result.push(...chunk);
+			}
+
+			result.sort();
+			console.log("Merged Array:", result.join(" "));
+		}
+	}
+
+	function main() {
+		const solution = new Solution();
+		const chunks = [
+			['a', 'c', 'e'],
+			['b', 'd', 'f'],
+			['g', 'h']
+		];
+
+		const merged = solution.merge(chunks);
+		console.log("Merged Array:", merged.join(" "));
+		
+		solution.mergeInPlace(chunks);
+	}
+
+	main();
+	```
+
+=== "R"
+
+	```r
+	merge <- function(chunks) {
+	  heap <- list()
+	  
+	  for (i in seq_along(chunks)) {
+		if (length(chunks[[i]]) > 0) {
+		  heap[[length(heap) + 1]] <- list(value = chunks[[i]][1], chunkIndex = i, valueIndex = 1)
+		}
+	  }
+	  
+	  result <- character(0)
+	  
+	  while (length(heap) > 0) {
+		minIndex <- which.min(sapply(heap, function(x) x$value))
+		minItem <- heap[[minIndex]]
+		result <- c(result, minItem$value)
+		heap <- heap[-minIndex]
+		
+		nextValueIndex <- minItem$valueIndex + 1
+		if (nextValueIndex <= length(chunks[[minItem$chunkIndex]])) {
+		  heap[[length(heap) + 1]] <- list(value = chunks[[minItem$chunkIndex]][nextValueIndex], chunkIndex = minItem$chunkIndex, valueIndex = nextValueIndex)
+		}
+	  }
+	  
+	  return(result)
+	}
+
+	mergeInPlace <- function(chunks) {
+	  if (length(chunks) == 0) return()
+	  
+	  result <- unlist(chunks)
+	  result <- sort(result)
+	  cat("Merged Array:", paste(result, collapse = " "), "\n")
+	}
+
+	main <- function() {
+	  chunks <- list(
+		c('a', 'c', 'e'),
+		c('b', 'd', 'f'),
+		c('g', 'h')
+	  )
+	  
+	  merged <- merge(chunks)
+	  cat("Merged Array:", paste(merged, collapse = " "), "\n")
+	  
+	  mergeInPlace(chunks)
+	}
+
+	main()
+	```
+
+=== "Julia"
+
+	```julia
+	module Solution
+
+	export merge, merge_in_place
+
+	function merge(chunks::Vector{Vector{Char}})::Vector{Char}
+		heap = PriorityQueue{Tuple{Char, Int, Int}}()
+
+		for (i, chunk) in enumerate(chunks)
+			if !isempty(chunk)
+				enqueue!(heap, (chunk[1], i, 1))
+			end
+		end
+
+		result = Char[]
+		while !isempty(heap)
+			value, chunkIndex, valueIndex = dequeue!(heap)
+			push!(result, value)
+			if valueIndex < length(chunks[chunkIndex])
+				enqueue!(heap, (chunks[chunkIndex][valueIndex + 1], chunkIndex, valueIndex + 1))
+			end
+		end
+
+		return result
+	end
+
+	function merge_in_place(chunks::Vector{Vector{Char}})
+		if isempty(chunks)
+			return
+		end
+
+		result = reduce(vcat, chunks)
+		sort!(result)
+		println("Merged Array: ", result)
+	end
+
+	end
+
+	using .Solution
+
+	function main()
+		chunks = [
+			['a', 'c', 'e'],
+			['b', 'd', 'f'],
+			['g', 'h']
+		]
+
+		merged = Solution.merge(chunks)
+		println("Merged Array: ", merged)
+
+		Solution.merge_in_place(chunks)
 	end
 
 	main()
