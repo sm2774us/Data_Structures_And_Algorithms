@@ -1,9 +1,9 @@
 # Data_Structures_And_Algorithms
 
-![Contributors](https://img.shields.io/github/contributors/sm2774us/Data_Structures_And_Algorithms.svg)
-![Pull Requests](https://img.shields.io/github/issues-pr/sm2774us/Data_Structures_And_Algorithms.svg)](https://github.com/sm2774us/Data_Structures_And_Algorithms/pulls)
-![Closed Pull Requests](https://img.shields.io/github/issues-pr-closed/sm2774us/Data_Structures_And_Algorithms.svg)](https://github.com/sm2774us/Data_Structures_And_Algorithms/pulls?q=is%3Apr+is%3Aclosed)
-![Build](https://img.shields.io/github/actions/workflow/status/sm2774us/Data_Structures_And_Algorithms/test.yml)](https://github.com/sm2774us/Data_Structures_And_Algorithms/actions?query=branch%3Amaster+workflow%3Atest)
+[![Contributors](https://img.shields.io/github/contributors/sm2774us/Data_Structures_And_Algorithms.svg)](https://img.shields.io/github/contributors/sm2774us/Data_Structures_And_Algorithms.svg)
+[![Pull Requests](https://img.shields.io/github/issues-pr/sm2774us/Data_Structures_And_Algorithms.svg)](https://github.com/sm2774us/Data_Structures_And_Algorithms/pulls)
+[![Closed Pull Requests](https://img.shields.io/github/issues-pr-closed/sm2774us/Data_Structures_And_Algorithms.svg)](https://github.com/sm2774us/Data_Structures_And_Algorithms/pulls?q=is%3Apr+is%3Aclosed)
+[![Build](https://img.shields.io/github/actions/workflow/status/sm2774us/Data_Structures_And_Algorithms/test.yml)](https://github.com/sm2774us/Data_Structures_And_Algorithms/actions?query=branch%3Amaster+workflow%3Atest)
 
 My Repository on Data Structures and Algorithms.
 
