@@ -5,6 +5,866 @@ tags:
 
 # Array
 
+## Merge Two Sorted Lists
+
+### Problem Description:
+Merge two-sorted lists.
+
+Bonus: Can you provide the in-place merge, improved space complexity solution.
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+
+#### Solution 1: Returning a New List
+
+**Code Walkthrough:**
+1. **Initialize Pointers and Result List:**  
+   You create an empty list `result` to store the merged output and use two pointers `i` and `j` initialized to `0`. These pointers will track the current elements in `list1` and `list2`, respectively.
+
+2. **Merge Two Lists Using Pointers:**
+   - While both pointers haven't reached the end of their respective lists:
+     - If the current element of `list1` (`list1[i]`) is smaller, it's appended to `result`, and the pointer `i` is incremented.
+     - Otherwise, the current element from `list2` (`list2[j]`) is appended, and `j` is incremented.
+
+3. **Appending Remaining Elements:**
+   - After the loop, there may be leftover elements in `list1` or `list2`. These are added to `result` using the `extend` method.
+
+4. **Return the Result List:**  
+   The merged list is returned.
+
+#### **Time Complexity:**
+- Each element in both `list1` and `list2` is processed exactly once, so the time complexity is:
+  - **O(n + m)** where `n` is the length of `list1` and `m` is the length of `list2`.
+
+#### **Space Complexity:**
+- Since you're creating a new list (`result`) to store the merged elements, the space complexity is:
+  - **O(n + m)** because the new list will hold `n + m` elements.
+
+---
+
+#### Solution 2: In-Place Merge
+
+**Code Walkthrough:**
+1. **Extend `list1`:**  
+   - You first extend `list1` to have enough space for the elements of `list2` by appending `n` zeros, where `n` is the length of `list2`.
+
+2. **Initialize Indices for Reverse Traversal:**
+   - You set up three pointers:
+     - `i`: Points to the last element of the original `list1`.
+     - `j`: Points to the last element of `list2`.
+     - `k`: Points to the last position of the newly extended `list1`.
+
+3. **Merge in Reverse Order:**
+   - While both `i` and `j` are valid (i.e., not negative), compare the elements at `list1[i]` and `list2[j]`.
+   - Place the larger element at position `k` in `list1` and move the corresponding pointer (`i` or `j`) and the pointer `k` backward.
+
+4. **Handle Remaining Elements of `list2`:**
+   - If there are any elements left in `list2` (i.e., if `j >= 0`), copy them into `list1`.
+
+5. **No Need to Return `list1`:**  
+   - Since the merge happens in-place, `list1` is modified directly and no new list is returned.
+
+#### **Time Complexity:**
+- The time complexity is again **O(n + m)** because each element from `list1` and `list2` is compared and placed in the appropriate position.
+
+#### **Space Complexity:**
+- The space complexity is **O(n)**, where `n` is the size of `list2`, because the only additional memory used is for extending `list1` to fit the elements from `list2`. There is no need for an extra list to hold the merged result.
+
+---
+
+### Summary of Time and Space Complexity:
+
+| Solution | Time Complexity | Space Complexity      |
+|----------|-----------------|-----------------------|
+| Solution 1 (New List)       | **O(n + m)** | **O(n + m)** (new list) |
+| Solution 2 (In-Place Merge) | **O(n + m)** | **O(n)** (in-place)     |
+
+- Both solutions have the same time complexity of **O(n + m)**, but the space complexity differs. Solution 1 creates a new list for the merged result, while Solution 2 does the merge in-place, thus saving space.
+
+### Solutions
+
+=== "Python"
+
+	```python
+	# Solution-1 : Return New List
+	# TC = O(n + m), SC = O(n + m)
+
+	from typing import List
+
+    class Solution:
+		def merge_lists(list1: List[int], list2: List[int]) -> List[int]:
+			result = []
+			i, j = 0, 0
+			
+			while i < len(list1) and j < len(list2):
+				if list1[i] < list2[j]:
+					result.append(list1[i])
+					i += 1
+				else:
+					result.append(list2[j])
+					j += 1
+			
+			# Append remaining elements
+			result.extend(list1[i:])
+			result.extend(list2[j:])
+			
+			return result
+
+		def merge_lists(list1: List[int], list2: List[int]) -> None:
+			m, n = len(list1), len(list2)
+			list1.extend([0] * n)  # Extend list1 to accommodate elements from list2
+
+			i, j, k = m - 1, n - 1, m + n - 1
+
+			# Merge in reverse order
+			while i >= 0 and j >= 0:
+				if list1[i] > list2[j]:
+					list1[k] = list1[i]
+					i -= 1
+				else:
+					list1[k] = list2[j]
+					j -= 1
+				k -= 1
+
+			# Copy remaining elements of list2, if any
+			while j >= 0:
+				list1[k] = list2[j]
+				j -= 1
+				k -= 1
+
+
+	def main() -> None:
+		list1: List[int] = [1, 2, 4]
+		list2: List[int] = [1, 3, 4]
+
+		list: List[int] = merge_lists(list1, list2)
+
+		print(f"Merged List: {list}")
+
+		list1 = [1, 2, 4]
+		list2 = [1, 3, 4]
+
+		merge_lists(list1, list2)
+
+		print(f"Merged List: {list1}")
+
+	if __name__ == "__main__":
+		main()
+
+	## Output:
+	## Merged List: [1, 1, 2, 3, 4, 4]
+	```
+
+=== "C++"
+
+	```cpp
+	#include <iostream>
+	#include <vector>
+
+	class Solution {
+	public:
+		// Solution 1: Return New List
+		std::vector<int> mergeLists(const std::vector<int>& list1, const std::vector<int>& list2) {
+			std::vector<int> result;
+			size_t i = 0, j = 0;
+
+			while (i < list1.size() && j < list2.size()) {
+				if (list1[i] < list2[j]) {
+					result.push_back(list1[i]);
+					++i;
+				} else {
+					result.push_back(list2[j]);
+					++j;
+				}
+			}
+			result.insert(result.end(), list1.begin() + i, list1.end());
+			result.insert(result.end(), list2.begin() + j, list2.end());
+
+			return result;
+		}
+
+		// Solution 2: In-place Merge
+		void mergeListsInPlace(std::vector<int>& list1, std::vector<int>& list2) {
+			size_t m = list1.size();
+			size_t n = list2.size();
+			list1.resize(m + n);
+
+			size_t i = m - 1, j = n - 1, k = m + n - 1;
+
+			while (i != SIZE_MAX && j != SIZE_MAX) {
+				if (list1[i] > list2[j]) {
+					list1[k--] = list1[i--];
+				} else {
+					list1[k--] = list2[j--];
+				}
+			}
+			while (j != SIZE_MAX) {
+				list1[k--] = list2[j--];
+			}
+		}
+	};
+
+	int main() {
+		Solution solution;
+
+		// Example for Solution 1
+		std::vector<int> list1 = {1, 2, 4};
+		std::vector<int> list2 = {1, 3, 4};
+		auto mergedList = solution.mergeLists(list1, list2);
+		std::cout << "Merged List (New List): ";
+		for (int num : mergedList) {
+			std::cout << num << " ";
+		}
+		std::cout << std::endl;
+
+		// Example for Solution 2
+		list1 = {1, 2, 4};
+		list2 = {1, 3, 4};
+		solution.mergeListsInPlace(list1, list2);
+		std::cout << "Merged List (In-place): ";
+		for (int num : list1) {
+			std::cout << num << " ";
+		}
+		std::cout << std::endl;
+
+		return 0;
+	}
+	```
+
+=== "Rust"
+
+	```rust
+	struct Solution;
+
+	impl Solution {
+		// Solution 1: Return New List
+		pub fn merge_lists(list1: &[i32], list2: &[i32]) -> Vec<i32> {
+			let mut result = Vec::new();
+			let (mut i, mut j) = (0, 0);
+
+			while i < list1.len() && j < list2.len() {
+				if list1[i] < list2[j] {
+					result.push(list1[i]);
+					i += 1;
+				} else {
+					result.push(list2[j]);
+					j += 1;
+				}
+			}
+
+			result.extend_from_slice(&list1[i..]);
+			result.extend_from_slice(&list2[j..]);
+
+			result
+		}
+
+		// Solution 2: In-place Merge
+		pub fn merge_lists_in_place(list1: &mut Vec<i32>, list2: &[i32]) {
+			let m = list1.len();
+			let n = list2.len();
+			list1.extend(vec![0; n]);
+
+			let (mut i, mut j, mut k) = (m as isize - 1, n as isize - 1, (m + n) as isize - 1);
+
+			while i >= 0 && j >= 0 {
+				if list1[i as usize] > list2[j as usize] {
+					list1[k as usize] = list1[i as usize];
+					i -= 1;
+				} else {
+					list1[k as usize] = list2[j as usize];
+					j -= 1;
+				}
+				k -= 1;
+			}
+
+			while j >= 0 {
+				list1[k as usize] = list2[j as usize];
+				j -= 1;
+				k -= 1;
+			}
+		}
+	}
+
+	fn main() {
+		let solution = Solution;
+
+		// Example for Solution 1
+		let list1 = vec![1, 2, 4];
+		let list2 = vec![1, 3, 4];
+		let merged_list = solution.merge_lists(&list1, &list2);
+		println!("Merged List (New List): {:?}", merged_list);
+
+		// Example for Solution 2
+		let mut list1 = vec![1, 2, 4];
+		let list2 = vec![1, 3, 4];
+		solution.merge_lists_in_place(&mut list1, &list2);
+		println!("Merged List (In-place): {:?}", list1);
+	}
+
+	```
+
+=== "C#"
+
+	```csharp
+	using System;
+	using System.Collections.Generic;
+
+	public class Solution {
+		// Solution 1: Return New List
+		public List<int> MergeLists(List<int> list1, List<int> list2) {
+			List<int> result = new List<int>();
+			int i = 0, j = 0;
+
+			while (i < list1.Count && j < list2.Count) {
+				if (list1[i] < list2[j]) {
+					result.Add(list1[i]);
+					i++;
+				} else {
+					result.Add(list2[j]);
+					j++;
+				}
+			}
+
+			result.AddRange(list1.GetRange(i, list1.Count - i));
+			result.AddRange(list2.GetRange(j, list2.Count - j));
+
+			return result;
+		}
+
+		// Solution 2: In-place Merge
+		public void MergeListsInPlace(List<int> list1, List<int> list2) {
+			int m = list1.Count;
+			int n = list2.Count;
+			list1.AddRange(new int[n]);
+
+			int i = m - 1, j = n - 1, k = m + n - 1;
+
+			while (i >= 0 && j >= 0) {
+				if (list1[i] > list2[j]) {
+					list1[k] = list1[i];
+					i--;
+				} else {
+					list1[k] = list2[j];
+					j--;
+				}
+				k--;
+			}
+
+			while (j >= 0) {
+				list1[k] = list2[j];
+				j--;
+				k--;
+			}
+		}
+	}
+
+	public class Program {
+		public static void Main() {
+			var solution = new Solution();
+
+			// Example for Solution 1
+			var list1 = new List<int> { 1, 2, 4 };
+			var list2 = new List<int> { 1, 3, 4 };
+			var mergedList = solution.MergeLists(list1, list2);
+			Console.WriteLine("Merged List (New List): " + string.Join(", ", mergedList));
+
+			// Example for Solution 2
+			list1 = new List<int> { 1, 2, 4 };
+			list2 = new List<int> { 1, 3, 4 };
+			solution.MergeListsInPlace(list1, list2);
+			Console.WriteLine("Merged List (In-place): " + string.Join(", ", list1));
+		}
+	}
+	```
+
+=== "Java"
+
+	```java
+	import java.util.ArrayList;
+	import java.util.List;
+
+	class Solution {
+		// Solution 1: Return New List
+		public List<Integer> mergeLists(List<Integer> list1, List<Integer> list2) {
+			List<Integer> result = new ArrayList<>();
+			int i = 0, j = 0;
+
+			while (i < list1.size() && j < list2.size()) {
+				if (list1.get(i) < list2.get(j)) {
+					result.add(list1.get(i));
+					i++;
+				} else {
+					result.add(list2.get(j));
+					j++;
+				}
+			}
+			result.addAll(list1.subList(i, list1.size()));
+			result.addAll(list2.subList(j, list2.size()));
+
+			return result;
+		}
+
+		// Solution 2: In-place Merge
+		public void mergeListsInPlace(List<Integer> list1, List<Integer> list2) {
+			int m = list1.size();
+			int n = list2.size();
+			for (int k = 0; k < n; k++) {
+				list1.add(0); // Extending list1 to accommodate list2
+			}
+
+			int i = m - 1, j = n - 1, k = m + n - 1;
+
+			while (i >= 0 && j >= 0) {
+				if (list1.get(i) > list2.get(j)) {
+					list1.set(k--, list1.get(i--));
+				} else {
+					list1.set(k--, list2.get(j--));
+				}
+			}
+
+			while (j >= 0) {
+				list1.set(k--, list2.get(j--));
+			}
+		}
+	}
+
+	public class Main {
+		public static void main(String[] args) {
+			Solution solution = new Solution();
+
+			// Example for Solution 1
+			List<Integer> list1 = new ArrayList<>(List.of(1, 2, 4));
+			List<Integer> list2 = new ArrayList<>(List.of(1, 3, 4));
+			List<Integer> mergedList = solution.mergeLists(list1, list2);
+			System.out.println("Merged List (New List): " + mergedList);
+
+			// Example for Solution 2
+			list1 = new ArrayList<>(List.of(1, 2, 4));
+			list2 = new ArrayList<>(List.of(1, 3, 4));
+			solution.mergeListsInPlace(list1, list2);
+			System.out.println("Merged List (In-place): " + list1);
+		}
+	}
+	```
+
+=== "Scala"
+
+	```scala
+	object Solution {
+	  // Solution 1: Return New List
+	  def mergeLists(list1: List[Int], list2: List[Int]): List[Int] = {
+		  (list1, list2) match {
+		    case (Nil, _) => list2
+		    case (_, Nil) => list1
+		    case (h1 :: t1, h2 :: t2) =>
+			    if (h1 < h2) h1 :: mergeLists(t1, list2)
+			    else h2 :: mergeLists(list1, t2)
+		  }
+	  }
+
+	  // Solution 2: In-place Merge
+	  def mergeListsInPlace(list1: Array[Int], m: Int, list2: Array[Int], n: Int): Unit = {
+		  var i = m - 1
+		  var j = n - 1
+		  var k = m + n - 1
+
+		  while (i >= 0 && j >= 0) {
+		    if (list1(i) > list2(j)) {
+			    list1(k) = list1(i)
+			    i -= 1
+		    } else {
+			    list1(k) = list2(j)
+			    j -= 1
+		    }
+		    k -= 1
+		  }
+
+		  while (j >= 0) {
+		    list1(k) = list2(j)
+		    j -= 1
+		    k -= 1
+		  }
+	  }
+
+	  def main(args: Array[String]): Unit = {
+		  // Example for Solution 1
+		  val list1 = List(1, 2, 4)
+		  val list2 = List(1, 3, 4)
+		  val mergedList = mergeLists(list1, list2)
+		  println(s"Merged List (New List): $mergedList")
+
+		  // Example for Solution 2
+		  val listArray1 = Array(1, 2, 4) ++ Array.fill(3)(0) // Allocating space for list2
+		  val listArray2 = Array(1, 3, 4)
+		  mergeListsInPlace(listArray1, 3, listArray2, 3)
+		  println(s"Merged List (In-place): ${listArray1.mkString(", ")}")
+	  }
+	}
+	```
+
+=== "Kotlin"
+
+	```kotlin
+	class Solution {
+		// Solution 1: Return New List
+		fun mergeLists(list1: List<Int>, list2: List<Int>): List<Int> {
+			val result = mutableListOf<Int>()
+			var i = 0
+			var j = 0
+
+			while (i < list1.size && j < list2.size) {
+				if (list1[i] < list2[j]) {
+					result.add(list1[i])
+					i++
+				} else {
+					result.add(list2[j])
+					j++
+				}
+			}
+
+			result.addAll(list1.subList(i, list1.size))
+			result.addAll(list2.subList(j, list2.size))
+
+			return result
+		}
+
+		// Solution 2: In-place Merge
+		fun mergeListsInPlace(list1: MutableList<Int>, list2: List<Int>) {
+			val m = list1.size
+			val n = list2.size
+			list1.addAll(MutableList(n) { 0 }) // Extend list1
+
+			var i = m - 1
+			var j = n - 1
+			var k = m + n - 1
+
+			while (i >= 0 && j >= 0) {
+				if (list1[i] > list2[j]) {
+					list1[k--] = list1[i--]
+				} else {
+					list1[k--] = list2[j--]
+				}
+			}
+
+			while (j >= 0) {
+				list1[k--] = list2[j--]
+			}
+		}
+	}
+
+	fun main() {
+		val solution = Solution()
+
+		// Example for Solution 1
+		val list1 = listOf(1, 2, 4)
+		val list2 = listOf(1, 3, 4)
+		val mergedList = solution.mergeLists(list1, list2)
+		println("Merged List (New List): $mergedList")
+
+		// Example for Solution 2
+		val mutableList1 = mutableListOf(1, 2, 4)
+		val mutableList2 = listOf(1, 3, 4)
+		solution.mergeListsInPlace(mutableList1, mutableList2)
+		println("Merged List (In-place): $mutableList1")
+	}
+	```
+
+=== "Go"
+
+	```go
+	package main
+
+	import (
+		"fmt"
+	)
+
+	type Solution struct{}
+
+	// Solution 1: Return New List
+	func (s *Solution) mergeLists(list1 []int, list2 []int) []int {
+		result := []int{}
+		i, j := 0, 0
+
+		for i < len(list1) && j < len(list2) {
+			if list1[i] < list2[j] {
+				result = append(result, list1[i])
+				i++
+			} else {
+				result = append(result, list2[j])
+				j++
+			}
+		}
+
+		result = append(result, list1[i:]...)
+		result = append(result, list2[j:]...)
+
+		return result
+	}
+
+	// Solution 2: In-place Merge
+	func (s *Solution) mergeListsInPlace(list1 *[]int, list2 []int) {
+		m := len(*list1)
+		n := len(list2)
+		*list1 = append(*list1, make([]int, n)...)
+
+		i, j, k := m-1, n-1, m+n-1
+
+		for i >= 0 && j >= 0 {
+			if (*list1)[i] > list2[j] {
+				(*list1)[k] = (*list1)[i]
+				i--
+			} else {
+				(*list1)[k] = list2[j]
+				j--
+			}
+			k--
+		}
+
+		for j >= 0 {
+			(*list1)[k] = list2[j]
+			j--
+			k--
+		}
+	}
+
+	func main() {
+		solution := Solution{}
+
+		// Example for Solution 1
+		list1 := []int{1, 2, 4}
+		list2 := []int{1, 3, 4}
+		mergedList := solution.mergeLists(list1, list2)
+		fmt.Println("Merged List (New List):", mergedList)
+
+		// Example for Solution 2
+		list1 = []int{1, 2, 4}
+		list2 = []int{1, 3, 4}
+		solution.mergeListsInPlace(&list1, list2)
+		fmt.Println("Merged List (In-place):", list1)
+	}
+	```
+
+=== "TypeScript"
+
+	```typescript
+	class Solution {
+		// Solution 1: Return New List
+		mergeLists(list1: number[], list2: number[]): number[] {
+			const result: number[] = [];
+			let i = 0, j = 0;
+
+			while (i < list1.length && j < list2.length) {
+				if (list1[i] < list2[j]) {
+					result.push(list1[i]);
+					i++;
+				} else {
+					result.push(list2[j]);
+					j++;
+				}
+			}
+
+			result.push(...list1.slice(i));
+			result.push(...list2.slice(j));
+
+			return result;
+		}
+
+		// Solution 2: In-place Merge
+		mergeListsInPlace(list1: number[], list2: number[]): void {
+			const m = list1.length;
+			const n = list2.length;
+			list1.length += n; // Extend list1
+
+			let i = m - 1, j = n - 1, k = m + n - 1;
+
+			while (i >= 0 && j >= 0) {
+				if (list1[i] > list2[j]) {
+					list1[k--] = list1[i--];
+				} else {
+					list1[k--] = list2[j--];
+				}
+			}
+
+			while (j >= 0) {
+				list1[k--] = list2[j--];
+			}
+		}
+	}
+
+	function main() {
+		const solution = new Solution();
+
+		// Example for Solution 1
+		const list1 = [1, 2, 4];
+		const list2 = [1, 3, 4];
+		const mergedList = solution.mergeLists(list1, list2);
+		console.log("Merged List (New List):", mergedList);
+
+		// Example for Solution 2
+		const listArray1 = [1, 2, 4];
+		const listArray2 = [1, 3, 4];
+		solution.mergeListsInPlace(listArray1, listArray2);
+		console.log("Merged List (In-place):", listArray1);
+	}
+
+	main();
+	```
+
+=== "R"
+
+	```r
+    #library(R6)
+    #Solution <- R6::R6Class("Solution",
+	Solution <- setRefClass(
+	  "Solution",
+	  fields = list(),
+	  
+	  methods = list(
+		# Solution 1: Return New List
+		mergeLists = function(list1, list2) {
+		  result <- integer(0)
+		  i <- 1
+		  j <- 1
+		  
+		  while (i <= length(list1) && j <= length(list2)) {
+			if (list1[i] < list2[j]) {
+			  result <- c(result, list1[i])
+			  i <- i + 1
+			} else {
+			  result <- c(result, list2[j])
+			  j <- j + 1
+			}
+		  }
+		  
+		  result <- c(result, list1[i:length(list1)], list2[j:length(list2)])
+		  return(result)
+		},
+		
+		# Solution 2: In-place Merge
+		mergeListsInPlace = function(list1, list2) {
+		  m <- length(list1)
+		  n <- length(list2)
+		  list1 <- c(list1, rep(0, n)) # Extend list1
+		  
+		  i <- m
+		  j <- n
+		  k <- m + n
+		  
+		  while (i > 0 && j > 0) {
+			if (list1[i] > list2[j]) {
+			  list1[k] <- list1[i]
+			  i <- i - 1
+			} else {
+			  list1[k] <- list2[j]
+			  j <- j - 1
+			}
+			k <- k - 1
+		  }
+		  
+		  while (j > 0) {
+			list1[k] <- list2[j]
+			j <- j - 1
+			k <- k - 1
+		  }
+		  
+		  return(list1)
+		}
+	  )
+	)
+
+	main <- function() {
+	  solution <- Solution$new()
+
+	  # Example for Solution 1
+	  list1 <- c(1, 2, 4)
+	  list2 <- c(1, 3, 4)
+	  mergedList <- solution$mergeLists(list1, list2)
+	  print(paste("Merged List (New List):", toString(mergedList)))
+
+	  # Example for Solution 2
+	  list1 <- c(1, 2, 4, 0, 0, 0) # Allocating space for list2
+	  list2 <- c(1, 3, 4)
+	  mergedList <- solution$mergeListsInPlace(list1, list2)
+	  print(paste("Merged List (In-place):", toString(mergedList)))
+	}
+
+	main()
+	```
+
+=== "Julia"
+
+	```julia
+	struct Solution
+	end
+
+	# Solution 1: Return New List
+	function mergeLists(list1::Vector{Int}, list2::Vector{Int})
+		result = Int[]
+		i, j = 1, 1
+
+		while i <= length(list1) && j <= length(list2)
+			if list1[i] < list2[j]
+				push!(result, list1[i])
+				i += 1
+			else
+				push!(result, list2[j])
+				j += 1
+			end
+		end
+
+		append!(result, list1[i:end])
+		append!(result, list2[j:end])
+		return result
+	end
+
+	# Solution 2: In-place Merge
+	function mergeListsInPlace!(list1::Vector{Int}, list2::Vector{Int})
+		m = length(list1)
+		n = length(list2)
+		append!(list1, zeros(Int, n)) # Extend list1
+
+		i, j, k = m, n, m + n
+
+		while i > 0 && j > 0
+			if list1[i] > list2[j]
+				list1[k] = list1[i]
+				i -= 1
+			else
+				list1[k] = list2[j]
+				j -= 1
+			end
+			k -= 1
+		end
+
+		while j > 0
+			list1[k] = list2[j]
+			j -= 1
+			k -= 1
+		end
+	end
+
+	function main()
+		solution = Solution()
+
+		# Example for Solution 1
+		list1 = [1, 2, 4]
+		list2 = [1, 3, 4]
+		mergedList = mergeLists(list1, list2)
+		println("Merged List (New List): ", mergedList)
+
+		# Example for Solution 2
+		list1 = [1, 2, 4, 0, 0, 0] # Allocating space for list2
+		list2 = [1, 3, 4]
+		mergeListsInPlace!(list1, list2)
+		println("Merged List (In-place): ", list1)
+	end
+
+	main()
+	```
+
 ## Remove Duplicates from Sorted Array
 
 ### Problem Description: [LeetCode - Problem 26 - Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/)
@@ -168,10 +1028,10 @@ This solution effectively removes duplicates from the input list in linear time 
         def removeDuplicates(nums: Array[Int]): Int = {
             var j = 1
             for (i <- 1 until nums.length) {
-            if (nums(i) != nums(i - 1)) {
-                nums(j) = nums(i)
-                j += 1
-            }
+                if (nums(i) != nums(i - 1)) {
+                    nums(j) = nums(i)
+                    j += 1
+                }
             }
             j
         }
@@ -837,11 +1697,11 @@ The problem requires finding the __next lexicographical permutation__ of a given
             var l = i
             var r = j
             while (l <= r) {
-            val temp = nums(l)
-            nums(l) = nums(r)
-            nums(r) = temp
-            l += 1
-            r -= 1
+                val temp = nums(l)
+                nums(l) = nums(r)
+                nums(r) = temp
+                l += 1
+                r -= 1
             }
         }
 
@@ -854,10 +1714,10 @@ The problem requires finding the __next lexicographical permutation__ of a given
             i -= 1
 
             if (i >= 0) {
-            while (j >= 0 && nums(i) >= nums(j)) j -= 1
-            val temp = nums(i)
-            nums(i) = nums(j)
-            nums(j) = temp
+                while (j >= 0 && nums(i) >= nums(j)) j -= 1
+                val temp = nums(i)
+                nums(i) = nums(j)
+                nums(j) = temp
             }
 
             reverse(nums, i + 1, n - 1)
