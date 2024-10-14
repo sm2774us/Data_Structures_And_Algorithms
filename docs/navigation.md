@@ -44,9 +44,7 @@ search:
 - Linear Algebra
     - [Matrices](linear_algebra/001_matrices.md)
 - Combinatorics
-    - [Fundamentals](combinatorics/001_fundamentals.md)
-    - [Techniques](combinatorics/002_techniques.md)
-    - [Tasks](combinatorics/003_tasks.md)
+    - [Permutations](combinatorics/001_permutations.md)
 - Numerical Methods
     - [Search](numerical_methods/001_search.md)
     - [Integration](numerical_methods/002_integration.md)
