@@ -1,8 +1,24 @@
+---
+tags:
+  - Original
+---
 
+# Permutations
 
-### Detailed Explanation of the Solutions
+## Display the number of permutations for a list of `n` integers.
 
-Both the Python and C++ solutions use **Heap's Algorithm**, an efficient method for generating permutations in-place. I'll explain how the algorithm works, and then break down the **time** and **space complexity** for each version.
+### Problem Description:
+Display the number of permutations for a list of `n` integers.
+
+Bonus: Can you provide the in-place merge, improved space complexity solution.
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+
+The Python solution use **Heap's Algorithm**, an efficient method for generating permutations in-place. I'll explain how the algorithm works, and then break down the **time** and **space complexity** for each version.
 
 #### **Heap's Algorithm Overview**
 Heap's Algorithm is an iterative method for generating permutations of a list in-place (without using additional space for the entire result). It works as follows:
@@ -10,34 +26,6 @@ Heap's Algorithm is an iterative method for generating permutations of a list in
 2. **Swapping**: For each position `i`, the algorithm decides whether to swap the element at position `i` with the first element (for even `i`) or with the element at position `c[i]` (for odd `i`).
 3. **Permutation Generation**: It generates a new permutation after each swap. The process continues until all permutations have been generated.
 4. **Termination**: The algorithm terminates when the `c` array contains only zeros, indicating that all permutations have been generated.
-
----
-
-### Python3 Solution (Iterative with Yield)
-
-```python
-from typing import List, Generator
-
-def generate_permutations(nums: List[int]) -> Generator[List[int], None, None]:
-    n = len(nums)
-    c = [0] * n  # Control array for the iterative process
-    
-    yield nums[:]  # Yield the initial permutation
-    
-    i = 0
-    while i < n:
-        if c[i] < i:
-            if i % 2 == 0:
-                nums[0], nums[i] = nums[i], nums[0]  # Swap for even i
-            else:
-                nums[c[i]], nums[i] = nums[i], nums[c[i]]  # Swap for odd i
-            yield nums[:]  # Yield the next permutation
-            c[i] += 1
-            i = 0
-        else:
-            c[i] = 0
-            i += 1
-```
 
 #### **Explanation**
 - **Initial Setup**: We start with a list `nums` that contains the numbers from 1 to 10 (or any other list). The control array `c` is initialized with zeros and has the same length as `nums`.
@@ -53,7 +41,7 @@ def generate_permutations(nums: List[int]) -> Generator[List[int], None, None]:
 #### **Time Complexity**
 - **Swap Operations**: For each permutation, the algorithm performs up to `n` swaps, where `n` is the length of the list (`n = 10` in this case).
 - **Permutations**: There are `n!` permutations (for `n = 10`, this is `10! = 3,628,800`).
-- **Total Time Complexity**: \( O(n \times n!) \), where `n` is the size of the list.
+- **Total Time Complexity**: $$O(n \times n!)$$, where `n` is the size of the list.
   - Each permutation requires `O(n)` swaps.
   - There are `n!` permutations to generate.
 
@@ -61,84 +49,382 @@ def generate_permutations(nums: List[int]) -> Generator[List[int], None, None]:
 - **Control Array**: The `c` array has size `n`, so it requires `O(n)` space.
 - **Current Permutation**: The current list of length `n` requires `O(n)` space.
 - **Stack Memory**: Since this solution uses `yield`, it doesn't store all permutations in memory at once, only one at a time.
-- **Total Space Complexity**: \( O(n) \), which is dominated by the `c` array and the current permutation.
+- **Total Space Complexity**: $$O(n)$$, which is dominated by the `c` array and the current permutation.
+
+### Solutions
 
 ---
 
-### C++20 Solution (Iterative with In-Place Permutation Generation)
+=== "Python"
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <algorithm>  // For std::swap
+	```python
+    from typing import List, Generator
 
-// Function to generate permutations iteratively using Heap's Algorithm in-place
-void generate_permutations(std::vector<int>& nums) {
-    int n = nums.size();
-    std::vector<int> c(n, 0);  // Control array
-    
-    // Output the first permutation
-    for (int num : nums) std::cout << num << " ";
-    std::cout << std::endl;
-    
-    int i = 0;
-    while (i < n) {
-        if (c[i] < i) {
-            if (i % 2 == 0) {
-                std::swap(nums[0], nums[i]);  // Swap for even i
+    def generate_permutations(nums: List[int]) -> Generator[List[int], None, None]:
+        n = len(nums)
+        c = [0] * n  # Control array for the iterative process
+        
+        yield nums[:]  # Yield the initial permutation
+        
+        i = 0
+        while i < n:
+            if c[i] < i:
+                if i % 2 == 0:
+                    nums[0], nums[i] = nums[i], nums[0]  # Swap for even i
+                else:
+                    nums[c[i]], nums[i] = nums[i], nums[c[i]]  # Swap for odd i
+                yield nums[:]  # Yield the next permutation
+                c[i] += 1
+                i = 0
+            else:
+                c[i] = 0
+                i += 1
+    ```
+
+=== "C++"
+
+	```cpp
+    #include <iostream>
+    #include <vector>
+    #include <iterator>
+
+    // Function to generate permutations using Heap's Algorithm
+    std::vector<std::vector<int>> generate_permutations(std::vector<int> nums) {
+        std::vector<std::vector<int>> permutations;
+        int n = nums.size();
+        std::vector<int> c(n, 0);  // Control array for the iterative process
+
+        // Add the initial permutation
+        permutations.push_back(nums);
+
+        int i = 0;
+        while (i < n) {
+            if (c[i] < i) {
+                if (i % 2 == 0) {
+                    std::swap(nums[0], nums[i]);
+                } else {
+                    std::swap(nums[c[i]], nums[i]);
+                }
+                permutations.push_back(nums);
+                c[i] += 1;
+                i = 0;
             } else {
-                std::swap(nums[c[i]], nums[i]);  // Swap for odd i
+                c[i] = 0;
+                i += 1;
             }
-            // Output the next permutation
-            for (int num : nums) std::cout << num << " ";
-            std::cout << std::endl;
+        }
+        return permutations;
+    }
 
-            c[i] += 1;
-            i = 0;
-        } else {
-            c[i] = 0;
-            ++i;
+    // Main method to demonstrate the usage
+    int main() {
+        std::vector<int> nums = {1, 2, 3};
+        
+        auto permutations = generate_permutations(nums);
+
+        // Print all generated permutations
+        std::cout << "Generated permutations:\n";
+        for (const auto& perm : permutations) {
+            for (int num : perm) {
+                std::cout << num << ' ';
+            }
+            std::cout << '\n';
+        }
+
+        return 0;
+    }
+    ```
+
+=== "Rust"
+
+	```rust
+    fn generate_permutations(nums: Vec<i32>) -> impl Iterator<Item = Vec<i32>> {
+        let mut nums = nums.clone();
+        let n = nums.len();
+        let mut c = vec![0; n];
+        let mut i = 0;
+
+        std::iter::from_fn(move || {
+            if i == 0 {
+                i += 1;
+                return Some(nums.clone());
+            }
+            
+            while i < n {
+                if c[i] < i {
+                    if i % 2 == 0 {
+                        nums.swap(0, i);
+                    } else {
+                        nums.swap(c[i], i);
+                    }
+                    c[i] += 1;
+                    i = 0;
+                    return Some(nums.clone());
+                } else {
+                    c[i] = 0;
+                    i += 1;
+                }
+            }
+            None
+        })
+    }
+    ```
+
+=== "C#"
+
+	```csharp
+    using System.Collections.Generic;
+
+    public class Permutations {
+        public static IEnumerable<List<int>> GeneratePermutations(List<int> nums) {
+            int n = nums.Count;
+            var c = new int[n];
+            yield return new List<int>(nums);
+
+            int i = 0;
+            while (i < n) {
+                if (c[i] < i) {
+                    if (i % 2 == 0) {
+                        (nums[0], nums[i]) = (nums[i], nums[0]);
+                    } else {
+                        (nums[c[i]], nums[i]) = (nums[i], nums[c[i]]);
+                    }
+                    yield return new List<int>(nums);
+                    c[i]++;
+                    i = 0;
+                } else {
+                    c[i] = 0;
+                    i++;
+                }
+            }
         }
     }
-}
+	```
 
-int main() {
-    std::vector<int> nums = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    generate_permutations(nums);
-    
-    return 0;
-}
-```
+=== "Java"
 
-#### **Explanation**
-- **Initial Setup**: Similar to the Python version, the control array `c` is initialized with zeros, and we start by printing the first permutation, which is the input list itself.
-- **Swapping and Printing**: The algorithm swaps elements in place using `std::swap` for each permutation. After each swap, the new permutation is printed.
-  - **Even `i`**: Swap `nums[0]` with `nums[i]`.
-  - **Odd `i`**: Swap `nums[i]` with `nums[c[i]]`.
-- **Termination**: The loop terminates after all permutations have been printed.
+	```java
+    import java.util.ArrayList;
+    import java.util.Collections;
+    import java.util.Iterator;
+    import java.util.List;
 
-#### **Time Complexity**
-- **Swap Operations**: As in the Python version, each permutation requires up to `n` swaps.
-- **Permutations**: The number of permutations is `n!`.
-- **Total Time Complexity**: \( O(n \times n!) \), since each of the `n!` permutations requires `O(n)` swaps.
+    public class Permutations {
+        public static Iterable<List<Integer>> generatePermutations(List<Integer> nums) {
+            return () -> new Iterator<>() {
+                private final int[] c = new int[nums.size()];
+                private int i = 0;
+                private final List<Integer> current = new ArrayList<>(nums);
+                private boolean first = true;
 
-#### **Space Complexity**
-- **Control Array**: The `c` array has size `n`, so it requires `O(n)` space.
-- **In-Place Permutation**: The list `nums` is permuted in-place, which requires no additional space beyond the input.
-- **Stack Memory**: Since the solution generates and prints each permutation directly, there is no need to store all permutations in memory.
-- **Total Space Complexity**: \( O(n) \), which comes from the control array and the input list.
+                @Override
+                public boolean hasNext() {
+                    return first || i < nums.size();
+                }
 
----
+                @Override
+                public List<Integer> next() {
+                    if (first) {
+                        first = false;
+                        return new ArrayList<>(current);
+                    }
+                    while (i < nums.size()) {
+                        if (c[i] < i) {
+                            if (i % 2 == 0) {
+                                Collections.swap(current, 0, i);
+                            } else {
+                                Collections.swap(current, c[i], i);
+                            }
+                            c[i]++;
+                            i = 0;
+                            return new ArrayList<>(current);
+                        } else {
+                            c[i] = 0;
+                            i++;
+                        }
+                    }
+                    return null;
+                }
+            };
+        }
+    }
+	```
 
-### Summary of Time and Space Complexities
+=== "Scala"
 
-| Metric             | Python3 (Iterative with Yield) | C++20 (Iterative with In-Place) |
-|--------------------|--------------------------------|---------------------------------|
-| **Time Complexity** | \( O(n \times n!) \)           | \( O(n \times n!) \)            |
-| **Space Complexity**| \( O(n) \)                    | \( O(n) \)                     |
+	```scala
+    def generatePermutations(nums: List[Int]): Iterator[List[Int]] = {
+        val c = Array.fill(nums.size)(0)
+        var i = 0
+        var current = nums.toArray
 
-### Key Points:
-1. **Time Complexity**: Both solutions have the same time complexity of \( O(n \times n!) \) because the algorithm generates `n!` permutations, and each permutation requires `O(n)` operations (swaps).
-   
-2. **Space Complexity**: Both solutions are space-efficient with \( O(n) \) complexity. The control array (`c`) and the current list take up space proportional to the size of the input list (`n`). However, neither solution stores all permutations at once, making them both more memory efficient than storing all `n!` permutations.
+        Iterator.continually {
+            if (i == 0) {
+                Some(current.toList)
+            } else {
+                while (i < current.length) {
+                    if (c(i) < i) {
+                        if (i % 2 == 0) {
+                            val tmp = current(0)
+                            current(0) = current(i)
+                            current(i) = tmp
+                        } else {
+                            val tmp = current(c(i))
+                            current(c(i)) = current(i)
+                            current(i) = tmp
+                        }
+                        c(i) += 1
+                        i = 0
+                        return Some(current.toList)
+                    } else {
+                        c(i) = 0
+                        i += 1
+                    }
+                }
+                None
+            }
+        }.flatten
+    }
+	```
 
+=== "Kotlin"
+
+	```kotlin
+    fun generatePermutations(nums: MutableList<Int>): Sequence<List<Int>> = sequence {
+        val c = IntArray(nums.size)
+        yield(nums.toList())
+
+        var i = 0
+        while (i < nums.size) {
+            if (c[i] < i) {
+                if (i % 2 == 0) {
+                    nums[0] = nums[i].also { nums[i] = nums[0] }
+                } else {
+                    nums[c[i]] = nums[i].also { nums[i] = nums[c[i]] }
+                }
+                yield(nums.toList())
+                c[i]++
+                i = 0
+            } else {
+                c[i] = 0
+                i++
+            }
+        }
+    }
+	```
+
+=== "Go"
+
+	```go
+    package main
+
+    func generatePermutations(nums []int) [][]int {
+        n := len(nums)
+        result := [][]int{}
+        c := make([]int, n)
+        
+        result = append(result, append([]int{}, nums...))
+        
+        i := 0
+        for i < n {
+            if c[i] < i {
+                if i%2 == 0 {
+                    nums[0], nums[i] = nums[i], nums[0]
+                } else {
+                    nums[c[i]], nums[i] = nums[i], nums[c[i]]
+                }
+                result = append(result, append([]int{}, nums...))
+                c[i]++
+                i = 0
+            } else {
+                c[i] = 0
+                i++
+            }
+        }
+        return result
+    }
+	```
+
+=== "TypeScript"
+
+	```typescript
+    function* generatePermutations(nums: number[]): Generator<number[]> {
+        const n = nums.length;
+        const c = Array(n).fill(0);
+        
+        yield [...nums];
+        
+        let i = 0;
+        while (i < n) {
+            if (c[i] < i) {
+                if (i % 2 === 0) {
+                    [nums[0], nums[i]] = [nums[i], nums[0]];
+                } else {
+                    [nums[c[i]], nums[i]] = [nums[i], nums[c[i]]];
+                }
+                yield [...nums];
+                c[i]++;
+                i = 0;
+            } else {
+                c[i] = 0;
+                i++;
+            }
+        }
+    }
+	```
+
+=== "R"
+
+	```r
+    generate_permutations <- function(nums) {
+        n <- length(nums)
+        c <- integer(n)
+        perms <- list(nums)
+        
+        i <- 1
+        while (i <= n) {
+            if (c[i] < i) {
+                if (i %% 2 == 1) {
+                    nums[c(i, 1)] <- nums[c(1, i)]
+                } else {
+                    nums[c(c[i] + 1, i)] <- nums[c(i, c[i] + 1)]
+                }
+                perms <- append(perms, list(nums))
+                c[i] <- c[i] + 1
+                i <- 1
+            } else {
+                c[i] <- 0
+                i <- i + 1
+            }
+        }
+        perms
+    }
+	```
+
+=== "Julia"
+
+	```julia
+    function generate_permutations(nums::Vector{Int})
+        n = length(nums)
+        c = zeros(Int, n)
+        result = [copy(nums)]
+
+        i = 1
+        while i <= n
+            if c[i] < i
+                if iseven(i)
+                    nums[1], nums[i+1] = nums[i+1], nums[1]
+                else
+                    nums[c[i]+1], nums[i+1] = nums[i+1], nums[c[i]+1]
+                end
+                push!(result, copy(nums))
+                c[i] += 1
+                i = 1
+            else
+                c[i] = 0
+                i += 1
+            end
+        end
+        result
+    end
+	```
