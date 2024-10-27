@@ -5,6 +5,1106 @@ tags:
 
 # Linked List
 
+## Design a Linked List
+
+### Problem Description: [LeetCode - Problem 707 - Design a Linked List](https://leetcode.com/problems/design-linked-list/description/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+
+This solution defines a doubly linked list using a `MyLinkedList` class, designed to perform efficient node access, insertion, and deletion operations. Let's go through the design, each method, a walkthrough, and a complexity analysis.
+
+### Solution Design
+
+The `MyLinkedList` class uses a **doubly linked list** structure with two sentinel nodes (`__head` and `__tail`) to represent the start and end of the list, simplifying insertion and deletion operations near the list boundaries. The list also keeps track of its current size (`__size`), which helps in validating indices for operations.
+
+### Methods and Their Explanations
+
+#### 1. `__init__`: Constructor
+Initializes the linked list:
+- `__head` and `__tail` are sentinel nodes with no values (`-1`).
+- `__head.next` points to `__tail`, and `__tail.prev` points to `__head`.
+- `__size` is initialized to `0` since the list starts empty.
+
+#### 2. `get`: Get the Value of a Node by Index
+- If the index is within valid bounds, the function traverses from either the head or the tail, whichever is closer to the target index.
+  - **Left half** (`0 <= index <= __size // 2`): Uses `__forward` traversal starting from the `__head`.
+  - **Right half** (`__size // 2 < index < __size`): Uses `__backward` traversal starting from the `__tail`.
+- Returns the node's value at the target index or `-1` if the index is invalid.
+
+#### 3. `addAtHead`: Insert Node at the Head
+- Calls `__add`, passing `__head` as the previous node to insert a new node after `__head`.
+
+#### 4. `addAtTail`: Insert Node at the Tail
+- Calls `__add`, passing `__tail.prev` as the previous node to insert a new node before `__tail`.
+
+#### 5. `addAtIndex`: Insert Node at a Specific Index
+- Checks if the index is within bounds (`0 <= index <= __size`). If valid:
+  - If closer to the **head**, it calls `__forward` to find the insertion point.
+  - If closer to the **tail**, it calls `__backward` to find the insertion point.
+- Inserts the new node at the specified index.
+
+#### 6. `deleteAtIndex`: Delete Node at a Specific Index
+- Checks if the index is valid. If so:
+  - Calls `__forward` or `__backward` to locate the node to delete.
+  - Calls `__remove` to unlink the node from the list.
+
+#### 7. `__add`: Helper for Node Insertion
+- Creates a new `Node` with the given value, inserts it after `preNode`, and updates links to include the new node.
+
+#### 8. `__remove`: Helper for Node Deletion
+- Unlinks the specified node from the list by adjusting the `next` pointer of the node’s `prev` and the `prev` pointer of the node’s `next`.
+
+#### 9. `__forward` and `__backward`: Helpers for Traversing the List
+- `__forward`: Starts from a given node, traversing forward to reach a specified index.
+- `__backward`: Starts from a given node, traversing backward to reach a specified index.
+
+### Example Walkthrough
+
+```python
+linked_list = MyLinkedList()
+linked_list.addAtHead(1)    # List: 1
+linked_list.addAtTail(2)    # List: 1 -> 2
+linked_list.addAtIndex(1, 3)  # List: 1 -> 3 -> 2
+print(linked_list.get(1))   # Output: 3
+linked_list.deleteAtIndex(1)  # List: 1 -> 2
+print(linked_list.get(1))   # Output: 2
+```
+
+#### Explanation of Steps:
+1. `addAtHead(1)`: Creates and inserts a node with value `1` at the head.
+2. `addAtTail(2)`: Creates and appends a node with value `2` at the tail.
+3. `addAtIndex(1, 3)`: Inserts a node with value `3` at index `1`, between nodes `1` and `2`.
+4. `get(1)`: Retrieves the value of the node at index `1`, which is `3`.
+5. `deleteAtIndex(1)`: Deletes the node at index `1` (value `3`), leaving the list as `1 -> 2`.
+6. `get(1)`: Retrieves the value of the node at index `1`, which is now `2`.
+
+### Complexity Analysis
+
+#### Time Complexity
+- **`get(index)`**: `O(n)`, where `n` is the size of the list.
+  - Traverses either forward or backward depending on index proximity to `head` or `tail`, requiring up to `O(n)` operations in the worst case.
+- **`addAtHead(val)`** and **`addAtTail(val)`**: `O(1)`.
+  - Insertion at the head or tail is done in constant time, involving only link adjustments.
+- **`addAtIndex(index, val)`**: `O(n)`.
+  - Requires traversal to the specified index (up to `O(n)` operations) before inserting the node.
+- **`deleteAtIndex(index)`**: `O(n)`.
+  - Requires traversal to locate the node to delete (up to `O(n)` operations) before unlinking it.
+
+#### Space Complexity
+- **Overall**: `O(n)` for storing `n` nodes in the list, each requiring space for `val`, `next`, and `prev`.
+- **Auxiliary Space**: `O(1)` as all helper methods operate in-place without additional data structures.
+
+This design leverages doubly linked list advantages for efficient node removal and insertion but incurs `O(n)` time complexity for direct access due to traversal requirements.
+
+---
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    # Time:  O(n)
+    # Space: O(n)
+
+    from typing import Optional
+
+    class Node:
+        def __init__(self, value: int) -> None:
+            self.val: int = value
+            self.next: Optional[Node] = None
+            self.prev: Optional[Node] = None
+
+
+    class MyLinkedList:
+        def __init__(self) -> None:
+            """
+            Initialize your data structure here.
+            """
+            self.__head: Node = Node(-1)
+            self.__tail: Node = Node(-1)
+            self.__head.next = self.__tail
+            self.__tail.prev = self.__head
+            self.__size: int = 0
+
+        def get(self, index: int) -> int:
+            """
+            Get the value of the index-th node in the linked list. If the index is invalid, return -1.
+            """
+            if 0 <= index <= self.__size // 2:
+                return self.__forward(0, index, self.__head.next).val
+            elif self.__size // 2 < index < self.__size:
+                return self.__backward(self.__size, index, self.__tail).val
+            return -1
+
+        def addAtHead(self, val: int) -> None:
+            """
+            Add a node of value val before the first element of the linked list.
+            After the insertion, the new node will be the first node of the linked list.
+            """
+            self.__add(self.__head, val)
+
+        def addAtTail(self, val: int) -> None:
+            """
+            Append a node of value val to the last element of the linked list.
+            """
+            self.__add(self.__tail.prev, val)
+
+        def addAtIndex(self, index: int, val: int) -> None:
+            """
+            Add a node of value val before the index-th node in the linked list.
+            If index equals to the length of linked list, the node will be appended to the end of linked list.
+            If index is greater than the length, the node will not be inserted.
+            """
+            if 0 <= index <= self.__size // 2:
+                self.__add(self.__forward(0, index, self.__head.next).prev, val)
+            elif self.__size // 2 < index <= self.__size:
+                self.__add(self.__backward(self.__size, index, self.__tail).prev, val)
+
+        def deleteAtIndex(self, index: int) -> None:
+            """
+            Delete the index-th node in the linked list, if the index is valid.
+            """
+            if 0 <= index <= self.__size // 2:
+                self.__remove(self.__forward(0, index, self.__head.next))
+            elif self.__size // 2 < index < self.__size:
+                self.__remove(self.__backward(self.__size, index, self.__tail))
+
+        def __add(self, preNode: Node, val: int) -> None:
+            node = Node(val)
+            node.prev = preNode
+            node.next = preNode.next
+            node.prev.next = node.next.prev = node
+            self.__size += 1
+
+        def __remove(self, node: Node) -> None:
+            node.prev.next = node.next
+            node.next.prev = node.prev
+            self.__size -= 1
+
+        def __forward(self, start: int, end: int, curr: Node) -> Node:
+            while start != end:
+                start += 1
+                curr = curr.next
+            return curr
+
+        def __backward(self, start: int, end: int, curr: Node) -> Node:
+            while start != end:
+                start -= 1
+                curr = curr.prev
+            return curr
+    ```
+
+=== "C++"
+
+    ```cpp
+    #include <iostream>
+
+    class Node {
+    public:
+        int val;
+        Node* next;
+        Node* prev;
+        Node(int value) : val(value), next(nullptr), prev(nullptr) {}
+    };
+
+    class MyLinkedList {
+    public:
+        MyLinkedList() {
+            head = new Node(-1);
+            tail = new Node(-1);
+            head->next = tail;
+            tail->prev = head;
+            size = 0;
+        }
+
+        int get(int index) {
+            if (index < 0 || index >= size) return -1;
+            Node* curr = (index < size / 2) ? forward(0, index, head->next) : backward(size, index, tail);
+            return curr->val;
+        }
+
+        void addAtHead(int val) { add(head, val); }
+
+        void addAtTail(int val) { add(tail->prev, val); }
+
+        void addAtIndex(int index, int val) {
+            if (index < 0 || index > size) return;
+            Node* preNode = (index <= size / 2) ? forward(0, index, head->next)->prev : backward(size, index, tail)->prev;
+            add(preNode, val);
+        }
+
+        void deleteAtIndex(int index) {
+            if (index < 0 || index >= size) return;
+            Node* node = (index < size / 2) ? forward(0, index, head->next) : backward(size, index, tail);
+            remove(node);
+        }
+
+    private:
+        Node* head;
+        Node* tail;
+        int size;
+
+        void add(Node* preNode, int val) {
+            Node* node = new Node(val);
+            node->prev = preNode;
+            node->next = preNode->next;
+            preNode->next->prev = node;
+            preNode->next = node;
+            ++size;
+        }
+
+        void remove(Node* node) {
+            node->prev->next = node->next;
+            node->next->prev = node->prev;
+            delete node;
+            --size;
+        }
+
+        Node* forward(int start, int end, Node* curr) {
+            while (start++ != end) curr = curr->next;
+            return curr;
+        }
+
+        Node* backward(int start, int end, Node* curr) {
+            while (start-- != end) curr = curr->prev;
+            return curr;
+        }
+    };
+
+    int main() {
+        MyLinkedList list;
+        list.addAtHead(1);
+        list.addAtTail(2);
+        list.addAtIndex(1, 3);
+        std::cout << "Value at index 1: " << list.get(1) << std::endl; // Output: 3
+        list.deleteAtIndex(1);
+        std::cout << "Value at index 1 after deletion: " << list.get(1) << std::endl; // Output: 2
+        return 0;
+    }
+    ```
+
+=== "Rust"
+
+    ```rust
+    use std::rc::Rc;
+    use std::cell::RefCell;
+
+    struct Node {
+        val: i32,
+        next: Option<Rc<RefCell<Node>>>,
+        prev: Option<Rc<RefCell<Node>>>,
+    }
+
+    impl Node {
+        fn new(value: i32) -> Rc<RefCell<Node>> {
+            Rc::new(RefCell::new(Node {
+                val: value,
+                next: None,
+                prev: None,
+            }))
+        }
+    }
+
+    struct MyLinkedList {
+        head: Rc<RefCell<Node>>,
+        tail: Rc<RefCell<Node>>,
+        size: usize,
+    }
+
+    impl MyLinkedList {
+        fn new() -> Self {
+            let head = Node::new(-1);
+            let tail = Node::new(-1);
+            head.borrow_mut().next = Some(Rc::clone(&tail));
+            tail.borrow_mut().prev = Some(Rc::clone(&head));
+            MyLinkedList { head, tail, size: 0 }
+        }
+
+        fn get(&self, index: usize) -> i32 {
+            if index >= self.size { return -1; }
+            let mut node = if index < self.size / 2 {
+                self.head.borrow().next.clone()
+            } else {
+                self.tail.borrow().prev.clone()
+            };
+            for _ in 0..index {
+                node = node.unwrap().borrow().next.clone();
+            }
+            node.unwrap().borrow().val
+        }
+
+        fn add_at_head(&mut self, val: i32) {
+            self.add(&self.head, val);
+        }
+
+        fn add_at_tail(&mut self, val: i32) {
+            self.add(self.tail.borrow().prev.as_ref().unwrap(), val);
+        }
+
+        fn add_at_index(&mut self, index: usize, val: i32) {
+            if index > self.size { return; }
+            let pre_node = if index <= self.size / 2 {
+                self.head.clone()
+            } else {
+                self.tail.borrow().prev.clone().unwrap()
+            };
+            self.add(&pre_node, val);
+        }
+
+        fn delete_at_index(&mut self, index: usize) {
+            if index >= self.size { return; }
+            let node = if index < self.size / 2 {
+                self.head.borrow().next.clone()
+            } else {
+                self.tail.borrow().prev.clone()
+            };
+            self.remove(&node.unwrap());
+        }
+
+        fn add(&mut self, pre_node: &Rc<RefCell<Node>>, val: i32) {
+            let node = Node::new(val);
+            node.borrow_mut().prev = Some(Rc::clone(pre_node));
+            pre_node.borrow_mut().next = Some(Rc::clone(&node));
+            self.size += 1;
+        }
+
+        fn remove(&mut self, node: &Rc<RefCell<Node>>) {
+            let prev = node.borrow().prev.clone();
+            let next = node.borrow().next.clone();
+            prev.unwrap().borrow_mut().next = next.clone();
+            next.unwrap().borrow_mut().prev = prev.clone();
+            self.size -= 1;
+        }
+    }
+
+    fn main() {
+        let mut list = MyLinkedList::new();
+        list.add_at_head(1);
+        list.add_at_tail(2);
+        list.add_at_index(1, 3);
+        println!("Value at index 1: {}", list.get(1)); // Output: 3
+        list.delete_at_index(1);
+        println!("Value at index 1 after deletion: {}", list.get(1)); // Output: 2
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    using System;
+
+    public class Node {
+        public int val;
+        public Node next, prev;
+        public Node(int value) {
+            val = value;
+            next = prev = null;
+        }
+    }
+
+    public class MyLinkedList {
+        private Node head, tail;
+        private int size;
+
+        public MyLinkedList() {
+            head = new Node(-1);
+            tail = new Node(-1);
+            head.next = tail;
+            tail.prev = head;
+            size = 0;
+        }
+
+        public int Get(int index) {
+            if (index < 0 || index >= size) return -1;
+            Node curr = (index < size / 2) ? Forward(0, index, head.next) : Backward(size, index, tail);
+            return curr.val;
+        }
+
+        public void AddAtHead(int val) { Add(head, val); }
+
+        public void AddAtTail(int val) { Add(tail.prev, val); }
+
+        public void AddAtIndex(int index, int val) {
+            if (index < 0 || index > size) return;
+            Node preNode = (index <= size / 2) ? Forward(0, index, head.next).prev : Backward(size, index, tail).prev;
+            Add(preNode, val);
+        }
+
+        public void DeleteAtIndex(int index) {
+            if (index < 0 || index >= size) return;
+            Node node = (index < size / 2) ? Forward(0, index, head.next) : Backward(size, index, tail);
+            Remove(node);
+        }
+
+        private void Add(Node preNode, int val) {
+            Node node = new Node(val);
+            node.prev = preNode;
+            node.next = preNode.next;
+            preNode.next.prev = node;
+            preNode.next = node;
+            size++;
+        }
+
+        private void Remove(Node node) {
+            node.prev.next = node.next;
+            node.next.prev = node.prev;
+            size--;
+        }
+
+        private Node Forward(int start, int end, Node curr) {
+            while (start++ != end) curr = curr.next;
+            return curr;
+        }
+
+        private Node Backward(int start, int end, Node curr) {
+            while (start-- != end) curr = curr.prev;
+            return curr;
+        }
+    }
+
+    public class Program {
+        public static void Main() {
+            MyLinkedList list = new MyLinkedList();
+            list.AddAtHead(1);
+            list.AddAtTail(2);
+            list.AddAtIndex(1, 3);
+            Console.WriteLine("Value at index 1: " + list.Get(1)); // Output: 3
+            list.DeleteAtIndex(1);
+            Console.WriteLine("Value at index 1 after deletion: " + list.Get(1)); // Output: 2
+        }
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    class Node {
+        int val;
+        Node next, prev;
+
+        Node(int value) {
+            this.val = value;
+        }
+    }
+
+    public class MyLinkedList {
+        private Node head, tail;
+        private int size;
+
+        public MyLinkedList() {
+            head = new Node(-1);
+            tail = new Node(-1);
+            head.next = tail;
+            tail.prev = head;
+            size = 0;
+        }
+
+        public int get(int index) {
+            if (index < 0 || index >= size) return -1;
+            Node curr = (index < size / 2) ? forward(0, index, head.next) : backward(size, index, tail);
+            return curr.val;
+        }
+
+        public void addAtHead(int val) { add(head, val); }
+
+        public void addAtTail(int val) { add(tail.prev, val); }
+
+        public void addAtIndex(int index, int val) {
+            if (index < 0 || index > size) return;
+            Node preNode = (index <= size / 2) ? forward(0, index, head.next).prev : backward(size, index, tail).prev;
+            add(preNode, val);
+        }
+
+        public void deleteAtIndex(int index) {
+            if (index < 0 || index >= size) return;
+            Node node = (index < size / 2) ? forward(0, index, head.next) : backward(size, index, tail);
+            remove(node);
+        }
+
+        private void add(Node preNode, int val) {
+            Node node = new Node(val);
+            node.prev = preNode;
+            node.next = preNode.next;
+            preNode.next.prev = node;
+            preNode.next = node;
+            size++;
+        }
+
+        private void remove(Node node) {
+            node.prev.next = node.next;
+            node.next.prev = node.prev;
+            size--;
+        }
+
+        private Node forward(int start, int end, Node curr) {
+            while (start++ != end) curr = curr.next;
+            return curr;
+        }
+
+        private Node backward(int start, int end, Node curr) {
+            while (start-- != end) curr = curr.prev;
+            return curr;
+        }
+
+        public static void main(String[] args) {
+            MyLinkedList list = new MyLinkedList();
+            list.addAtHead(1);
+            list.addAtTail(2);
+            list.addAtIndex(1, 3);
+            System.out.println("Value at index 1: " + list.get(1)); // Output: 3
+            list.deleteAtIndex(1);
+            System.out.println("Value at index 1 after deletion: " + list.get(1)); // Output: 2
+        }
+    }
+    ```
+
+=== "Scala"
+
+    ```scala
+    class Node(var val: Int, var next: Node = null, var prev: Node = null)
+
+    class MyLinkedList {
+        private val head = new Node(-1)
+        private val tail = new Node(-1)
+        private var size = 0
+        head.next = tail
+        tail.prev = head
+
+        def get(index: Int): Int = {
+            if (index < 0 || index >= size) -1
+            else (if (index < size / 2) forward(0, index, head.next) else backward(size, index, tail)).val
+        }
+
+        def addAtHead(value: Int): Unit = add(head, value)
+
+        def addAtTail(value: Int): Unit = add(tail.prev, value)
+
+        def addAtIndex(index: Int, value: Int): Unit = {
+            if (index >= 0 && index <= size) {
+            val preNode = if (index <= size / 2) forward(0, index, head.next).prev else backward(size, index, tail).prev
+            add(preNode, value)
+            }
+        }
+
+        def deleteAtIndex(index: Int): Unit = {
+            if (index >= 0 && index < size) {
+            val node = if (index < size / 2) forward(0, index, head.next) else backward(size, index, tail)
+            remove(node)
+            }
+        }
+
+        private def add(preNode: Node, value: Int): Unit = {
+            val node = new Node(value)
+            node.prev = preNode
+            node.next = preNode.next
+            preNode.next.prev = node
+            preNode.next = node
+            size += 1
+        }
+
+        private def remove(node: Node): Unit = {
+            node.prev.next = node.next
+            node.next.prev = node.prev
+            size -= 1
+        }
+
+        private def forward(start: Int, end: Int, curr: Node): Node = {
+            var cur = curr
+            for (_ <- start until end) cur = cur.next
+            cur
+        }
+
+        private def backward(start: Int, end: Int, curr: Node): Node = {
+            var cur = curr
+            for (_ <- end until start) cur = cur.prev
+            cur
+        }
+    }
+
+    object Main {
+        def main(args: Array[String]): Unit = {
+            val list = new MyLinkedList
+            list.addAtHead(1)
+            list.addAtTail(2)
+            list.addAtIndex(1, 3)
+            println(s"Value at index 1: ${list.get(1)}") // Output: 3
+            list.deleteAtIndex(1)
+            println(s"Value at index 1 after deletion: ${list.get(1)}") // Output: 2
+        }
+    }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    class Node(val value: Int) {
+        var next: Node? = null
+        var prev: Node? = null
+    }
+
+    class MyLinkedList {
+        private val head = Node(-1)
+        private val tail = Node(-1)
+        private var size = 0
+
+        init {
+            head.next = tail
+            tail.prev = head
+        }
+
+        fun get(index: Int): Int {
+            if (index < 0 || index >= size) return -1
+            val node = if (index < size / 2) forward(0, index, head.next) else backward(size, index, tail)
+            return node?.value ?: -1
+        }
+
+        fun addAtHead(value: Int) = add(head, value)
+
+        fun addAtTail(value: Int) = add(tail.prev!!, value)
+
+        fun addAtIndex(index: Int, value: Int) {
+            if (index < 0 || index > size) return
+            val preNode = if (index <= size / 2) forward(0, index, head.next)?.prev else backward(size, index, tail)?.prev
+            add(preNode!!, value)
+        }
+
+        fun deleteAtIndex(index: Int) {
+            if (index < 0 || index >= size) return
+            val node = if (index < size / 2) forward(0, index, head.next) else backward(size, index, tail)
+            node?.let { remove(it) }
+        }
+
+        private fun add(preNode: Node, value: Int) {
+            val node = Node(value)
+            node.prev = preNode
+            node.next = preNode.next
+            preNode.next?.prev = node
+            preNode.next = node
+            size++
+        }
+
+        private fun remove(node: Node) {
+            node.prev?.next = node.next
+            node.next?.prev = node.prev
+            size--
+        }
+
+        private fun forward(start: Int, end: Int, curr: Node?): Node? {
+            var cur = curr
+            repeat(end - start) { cur = cur?.next }
+            return cur
+        }
+
+        private fun backward(start: Int, end: Int, curr: Node?): Node? {
+            var cur = curr
+            repeat(start - end) { cur = cur?.prev }
+            return cur
+        }
+    }
+
+    fun main() {
+        val list = MyLinkedList()
+        list.addAtHead(1)
+        list.addAtTail(2)
+        list.addAtIndex(1, 3)
+        println("Value at index 1: ${list.get(1)}") // Output: 3
+        list.deleteAtIndex(1)
+        println("Value at index 1 after deletion: ${list.get(1)}") // Output: 2
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    package main
+    import "fmt"
+
+    type Node struct {
+        val  int
+        next *Node
+        prev *Node
+    }
+
+    type MyLinkedList struct {
+        head *Node
+        tail *Node
+        size int
+    }
+
+    func Constructor() MyLinkedList {
+        head := &Node{-1, nil, nil}
+        tail := &Node{-1, nil, nil}
+        head.next = tail
+        tail.prev = head
+        return MyLinkedList{head: head, tail: tail, size: 0}
+    }
+
+    func (this *MyLinkedList) Get(index int) int {
+        if index < 0 || index >= this.size {
+            return -1
+        }
+        var node *Node
+        if index < this.size/2 {
+            node = this.forward(0, index, this.head.next)
+        } else {
+            node = this.backward(this.size, index, this.tail)
+        }
+        return node.val
+    }
+
+    func (this *MyLinkedList) AddAtHead(val int) {
+        this.add(this.head, val)
+    }
+
+    func (this *MyLinkedList) AddAtTail(val int) {
+        this.add(this.tail.prev, val)
+    }
+
+    func (this *MyLinkedList) AddAtIndex(index, val int) {
+        if index < 0 || index > this.size {
+            return
+        }
+        var preNode *Node
+        if index <= this.size/2 {
+            preNode = this.forward(0, index, this.head.next).prev
+        } else {
+            preNode = this.backward(this.size, index, this.tail).prev
+        }
+        this.add(preNode, val)
+    }
+
+    func (this *MyLinkedList) DeleteAtIndex(index int) {
+        if index < 0 || index >= this.size {
+            return
+        }
+        var node *Node
+        if index < this.size/2 {
+            node = this.forward(0, index, this.head.next)
+        } else {
+            node = this.backward(this.size, index, this.tail)
+        }
+        this.remove(node)
+    }
+
+    func (this *MyLinkedList) add(preNode *Node, val int) {
+        node := &Node{val: val}
+        node.prev = preNode
+        node.next = preNode.next
+        preNode.next.prev = node
+        preNode.next = node
+        this.size++
+    }
+
+    func (this *MyLinkedList) remove(node *Node) {
+        node.prev.next = node.next
+        node.next.prev = node.prev
+        this.size--
+    }
+
+    func (this *MyLinkedList) forward(start, end int, curr *Node) *Node {
+        for start < end {
+            curr = curr.next
+            start++
+        }
+        return curr
+    }
+
+    func (this *MyLinkedList) backward(start, end int, curr *Node) *Node {
+        for start > end {
+            curr = curr.prev
+            start--
+        }
+        return curr
+    }
+
+    func main() {
+        list := Constructor()
+        list.AddAtHead(1)
+        list.AddAtTail(2)
+        list.AddAtIndex(1, 3)
+        fmt.Println("Value at index 1:", list.Get(1)) // Output: 3
+        list.DeleteAtIndex(1)
+        fmt.Println("Value at index 1 after deletion:", list.Get(1)) // Output: 2
+    }
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    class Node {
+        val: number;
+        next: Node | null = null;
+        prev: Node | null = null;
+
+        constructor(value: number) {
+            this.val = value;
+        }
+    }
+
+    class MyLinkedList {
+        private head: Node;
+        private tail: Node;
+        private size: number = 0;
+
+        constructor() {
+            this.head = new Node(-1);
+            this.tail = new Node(-1);
+            this.head.next = this.tail;
+            this.tail.prev = this.head;
+        }
+
+        get(index: number): number {
+            if (index < 0 || index >= this.size) return -1;
+            const node = (index < this.size / 2) ? this.forward(0, index, this.head.next) : this.backward(this.size, index, this.tail);
+            return node ? node.val : -1;
+        }
+
+        addAtHead(value: number): void {
+            this.add(this.head, value);
+        }
+
+        addAtTail(value: number): void {
+            this.add(this.tail.prev as Node, value);
+        }
+
+        addAtIndex(index: number, value: number): void {
+            if (index < 0 || index > this.size) return;
+            const preNode = (index <= this.size / 2) ? this.forward(0, index, this.head.next)?.prev : this.backward(this.size, index, this.tail)?.prev;
+            if (preNode) this.add(preNode, value);
+        }
+
+        deleteAtIndex(index: number): void {
+            if (index < 0 || index >= this.size) return;
+            const node = (index < this.size / 2) ? this.forward(0, index, this.head.next) : this.backward(this.size, index, this.tail);
+            if (node) this.remove(node);
+        }
+
+        private add(preNode: Node, value: number): void {
+            const node = new Node(value);
+            node.prev = preNode;
+            node.next = preNode.next;
+            preNode.next!.prev = node;
+            preNode.next = node;
+            this.size++;
+        }
+
+        private remove(node: Node): void {
+            node.prev!.next = node.next;
+            node.next!.prev = node.prev;
+            this.size--;
+        }
+
+        private forward(start: number, end: number, curr: Node | null): Node | null {
+            while (start++ !== end) curr = curr!.next;
+            return curr;
+        }
+
+        private backward(start: number, end: number, curr: Node | null): Node | null {
+            while (start-- !== end) curr = curr!.prev;
+            return curr;
+        }
+    }
+
+    // Testing
+    const list = new MyLinkedList();
+    list.addAtHead(1);
+    list.addAtTail(2);
+    list.addAtIndex(1, 3);
+    console.log("Value at index 1:", list.get(1)); // Output: 3
+    list.deleteAtIndex(1);
+    console.log("Value at index 1 after deletion:", list.get(1)); // Output: 2
+    ```
+
+=== "R"
+
+    ```r
+    Node <- setRefClass("Node",
+                        fields = list(
+                        val = "numeric",
+                        next = "Node",
+                        prev = "Node"
+                        ))
+
+    MyLinkedList <- setRefClass("MyLinkedList",
+                                fields = list(
+                                head = "Node",
+                                tail = "Node",
+                                size = "numeric"
+                                ),
+                                methods = list(
+                                initialize = function() {
+                                    head <<- Node$new(val = -1)
+                                    tail <<- Node$new(val = -1)
+                                    head$next <- tail
+                                    tail$prev <- head
+                                    size <<- 0
+                                },
+                                get = function(index) {
+                                    if (index < 0 || index >= size) return(-1)
+                                    node <- if (index < size / 2) .self$forward(0, index, head$next) else .self$backward(size, index, tail)
+                                    node$val
+                                },
+                                addAtHead = function(val) {
+                                    add(head, val)
+                                },
+                                addAtTail = function(val) {
+                                    add(tail$prev, val)
+                                },
+                                addAtIndex = function(index, val) {
+                                    if (index < 0 || index > size) return(NULL)
+                                    preNode <- if (index <= size / 2) .self$forward(0, index, head$next)$prev else .self$backward(size, index, tail)$prev
+                                    add(preNode, val)
+                                },
+                                deleteAtIndex = function(index) {
+                                    if (index < 0 || index >= size) return(NULL)
+                                    node <- if (index < size / 2) .self$forward(0, index, head$next) else .self$backward(size, index, tail)
+                                    remove(node)
+                                },
+                                add = function(preNode, val) {
+                                    node <- Node$new(val = val)
+                                    node$prev <- preNode
+                                    node$next <- preNode$next
+                                    preNode$next$prev <- node
+                                    preNode$next <- node
+                                    size <<- size + 1
+                                },
+                                remove = function(node) {
+                                    node$prev$next <- node$next
+                                    node$next$prev <- node$prev
+                                    size <<- size - 1
+                                },
+                                forward = function(start, end, curr) {
+                                    while (start < end) {
+                                    start <- start + 1
+                                    curr <- curr$next
+                                    }
+                                    curr
+                                },
+                                backward = function(start, end, curr) {
+                                    while (start > end) {
+                                    start <- start - 1
+                                    curr <- curr$prev
+                                    }
+                                    curr
+                                }
+                                ))
+
+    # Testing
+    list <- MyLinkedList$new()
+    list$addAtHead(1)
+    list$addAtTail(2)
+    list$addAtIndex(1, 3)
+    print(paste("Value at index 1:", list$get(1))) # Output: 3
+    list$deleteAtIndex(1)
+    print(paste("Value at index 1 after deletion:", list$get(1))) # Output: 2
+    ```
+
+=== "Julia"
+
+    ```julia
+    module MyLinkedListModule
+
+    mutable struct Node
+        val::Int
+        next::Union{Node, Nothing}
+        prev::Union{Node, Nothing}
+
+        Node(val::Int) = new(val, nothing, nothing)
+    end
+
+    mutable struct MyLinkedList
+        head::Node
+        tail::Node
+        size::Int
+
+        MyLinkedList() = begin
+            head = Node(-1)
+            tail = Node(-1)
+            head.next = tail
+            tail.prev = head
+            new(head, tail, 0)
+        end
+    end
+
+    function get(list::MyLinkedList, index::Int)::Int
+        if index < 0 || index >= list.size
+            return -1
+        end
+        node = index < div(list.size, 2) ? forward(0, index, list.head.next) : backward(list.size, index, list.tail)
+        return node.val
+    end
+
+    function add_at_head!(list::MyLinkedList, val::Int)
+        add!(list, list.head, val)
+    end
+
+    function add_at_tail!(list::MyLinkedList, val::Int)
+        add!(list, list.tail.prev, val)
+    end
+
+    function add_at_index!(list::MyLinkedList, index::Int, val::Int)
+        if index < 0 || index > list.size
+            return
+        end
+        preNode = index <= div(list.size, 2) ? forward(0, index, list.head.next).prev : backward(list.size, index, list.tail).prev
+        add!(list, preNode, val)
+    end
+
+    function delete_at_index!(list::MyLinkedList, index::Int)
+        if index < 0 || index >= list.size
+            return
+        end
+        node = index < div(list.size, 2) ? forward(0, index, list.head.next) : backward(list.size, index, list.tail)
+        remove!(list, node)
+    end
+
+    function add!(list::MyLinkedList, preNode::Node, val::Int)
+        node = Node(val)
+        node.prev = preNode
+        node.next = preNode.next
+        preNode.next.prev = node
+        preNode.next = node
+        list.size += 1
+    end
+
+    function remove!(list::MyLinkedList, node::Node)
+        node.prev.next = node.next
+        node.next.prev = node.prev
+        list.size -= 1
+    end
+
+    function forward(start::Int, end::Int, curr::Node)::Node
+        while start < end
+            curr = curr.next
+            start += 1
+        end
+        return curr
+    end
+
+    function backward(start::Int, end::Int, curr::Node)::Node
+        while start > end
+            curr = curr.prev
+            start -= 1
+        end
+        return curr
+    end
+
+    # Testing
+    list = MyLinkedList()
+    add_at_head!(list, 1)
+    add_at_tail!(list, 2)
+    add_at_index!(list, 1, 3)
+    println("Value at index 1:", get(list, 1)) # Output: 3
+    delete_at_index!(list, 1)
+    println("Value at index 1 after deletion:", get(list, 1)) # Output: 2
+
+    end # module
+    ```
+
 ## Reverse Linked List
 
 ### Problem Description: [LeetCode - Problem 206 - Reverse Linked List](https://leetcode.com/problems/reverse-linked-list/)
