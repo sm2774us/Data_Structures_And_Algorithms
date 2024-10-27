@@ -41,7 +41,7 @@ Heap's Algorithm is an iterative method for generating permutations of a list in
 #### **Time Complexity**
 - **Swap Operations**: For each permutation, the algorithm performs up to `n` swaps, where `n` is the length of the list (`n = 10` in this case).
 - **Permutations**: There are `n!` permutations (for `n = 10`, this is `10! = 3,628,800`).
-- **Total Time Complexity**: $$O(n \times n!)$$, where `n` is the size of the list.
+- **Total Time Complexity**: `O(n * n!)`, where `n` is the size of the list.
   - Each permutation requires `O(n)` swaps.
   - There are `n!` permutations to generate.
 
@@ -49,7 +49,7 @@ Heap's Algorithm is an iterative method for generating permutations of a list in
 - **Control Array**: The `c` array has size `n`, so it requires `O(n)` space.
 - **Current Permutation**: The current list of length `n` requires `O(n)` space.
 - **Stack Memory**: Since this solution uses `yield`, it doesn't store all permutations in memory at once, only one at a time.
-- **Total Space Complexity**: $$O(n)$$, which is dominated by the `c` array and the current permutation.
+- **Total Space Complexity**: `O(n)`, which is dominated by the `c` array and the current permutation.
 
 ### Solutions
 

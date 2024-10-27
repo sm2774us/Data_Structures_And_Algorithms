@@ -15,11 +15,15 @@ edit_uri: edit/main/docs/
 copyright: Copyright &copy; 2024 Shaikat Majumdar
 
 extra_javascript:
+  - javascript/katex.js
+  - https://unpkg.com/katex@0/dist/katex.min.js
+  - https://unpkg.com/katex@0/dist/contrib/auto-render.min.js
   - javascript/config.js
   - https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
 extra_css:
+  - https://unpkg.com/katex@0/dist/katex.min.css
   - stylesheets/extra.css
 
 # Configuration
@@ -53,8 +57,6 @@ theme:
 markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
-      tex_inline_wrap: ['$', '$']
-      tex_block_wrap: ['$$', '$$']
   - pymdownx.highlight
   - admonition
   - pymdownx.details
