@@ -75,24 +75,24 @@ The provided Python code implements a Least Recently Used (LRU) Cache using two 
 - **OrderedDict-Based LRUCache**:
   - **get**: 
     - __`O(1)`__ average case for retrieving a value using the `OrderedDict`'s hash map.
-    - __`O(n) in the worst case for moving the accessed item to the end of the `OrderedDict` due to the underlying structure (but this operation is generally fast due to the order being maintained).
+    - __`O(n)`__ in the worst case for moving the accessed item to the end of the `OrderedDict` due to the underlying structure (but this operation is generally fast due to the order being maintained).
   
   - **put**: 
-    - __`O(1) for checking existence and inserting into the `OrderedDict`. The eviction is O(1) since it removes the first item (least recently used).
+    - __`O(1)`__ for checking existence and inserting into the `OrderedDict`. The eviction is O(1)`__ since it removes the first item (least recently used).
 
 - **LinkedList-Based LRUCache2**:
   - **get**: 
-    - __`O(1) for retrieving the node from the hash map.
-    - __`O(1) for deleting and reinserting the node in the linked list (updating position).
+    - __`O(1)`__ for retrieving the node from the hash map.
+    - __`O(1)`__ for deleting and reinserting the node in the linked list (updating position).
   
   - **put**: 
-    - __`O(1) for checking existence and updating or inserting the node in the hash map.
-    - __`O(1) for deleting the least recently used node (head of the linked list) if the cache is full.
+    - __`O(1)`__ for checking existence and updating or inserting the node in the hash map.
+    - __`O(1)`__ for deleting the least recently used node (head of the linked list) if the cache is full.
 
 #### Space Complexity
 
 - Both implementations maintain two data structures:
-  - A hash map to store key-value pairs for __`O(1) access.
+  - A hash map to store key-value pairs for __`O(1)`__ access.
   - An additional structure (either `OrderedDict` or a linked list) to maintain the order of keys.
   
 - **Space Complexity**:
@@ -102,7 +102,7 @@ The provided Python code implements a Least Recently Used (LRU) Cache using two 
 
 - The `OrderedDict`-based implementation is simpler and leverages Python's built-in features, making it easy to read and understand.
 - The linked list implementation is more manual but provides a good understanding of how LRU caches work at a lower level, managing nodes and pointers.
-- Both implementations efficiently support the required operations while adhering to __`O(1) average time complexity for `get` and `put` operations and __`O(capacity) space complexity.
+- Both implementations efficiently support the required operations while adhering to __`O(1)`__ average time complexity for `get` and `put` operations and __`O(capacity) space complexity.
 
 ### Solutions
 
@@ -342,11 +342,11 @@ The provided Python code implements a Least Recently Used (LRU) Cache using two 
         LRUCacheOrdered lruOrdered(2);
         lruOrdered.put(1, 1);
         lruOrdered.put(2, 2);
-        std::cout << lruOrdered.get(1) << std::endl;  // returns 1
+        std::cout << lruOrdered.get(1)`__ << std::endl;  // returns 1
         lruOrdered.put(3, 3);  // evicts key 2
         std::cout << lruOrdered.get(2) << std::endl;  // returns -1 (not found)
         lruOrdered.put(4, 4);  // evicts key 1
-        std::cout << lruOrdered.get(1) << std::endl;  // returns -1 (not found)
+        std::cout << lruOrdered.get(1)`__ << std::endl;  // returns -1 (not found)
         std::cout << lruOrdered.get(3) << std::endl;  // returns 3
         std::cout << lruOrdered.get(4) << std::endl;  // returns 4
 
@@ -355,11 +355,11 @@ The provided Python code implements a Least Recently Used (LRU) Cache using two 
         LRUCacheLinkedList lruLinked(2);
         lruLinked.put(1, 1);
         lruLinked.put(2, 2);
-        std::cout << lruLinked.get(1) << std::endl;  // returns 1
+        std::cout << lruLinked.get(1)`__ << std::endl;  // returns 1
         lruLinked.put(3, 3);  // evicts key 2
         std::cout << lruLinked.get(2) << std::endl;  // returns -1 (not found)
         lruLinked.put(4, 4);  // evicts key 1
-        std::cout << lruLinked.get(1) << std::endl;  // returns -1 (not found)
+        std::cout << lruLinked.get(1)`__ << std::endl;  // returns -1 (not found)
         std::cout << lruLinked.get(3) << std::endl;  // returns 3
         std::cout << lruLinked.get(4) << std::endl;  // returns 4
 
@@ -1350,7 +1350,7 @@ Here's a detailed explanation of the provided circular queue solution, along wit
 4. **Dequeue (`deQueue` method)**:
    - This method removes an element from the front of the queue:
      - It checks if the queue is empty by calling `isEmpty()`. If empty, it returns `False`.
-     - If not empty, it updates `__start` to point to the next element in the queue using the formula `(__start + 1) % len(__buffer)`, wrapping around if necessary.
+     - If not empty, it updates `__start` to point to the next element in the queue using the formula `(__start + 1)`__ % len(__buffer)`, wrapping around if necessary.
      - `__size` is decremented by 1 to reflect the removal of the element.
      - It returns `True` to indicate that the operation was successful.
 
@@ -1362,7 +1362,7 @@ Here's a detailed explanation of the provided circular queue solution, along wit
 6. **Rear (`Rear` method)**:
    - This method returns the last element of the queue:
      - If the queue is empty, it returns -1.
-     - Otherwise, it calculates the position of the last element using `(__start + __size - 1) % len(__buffer)` and returns that element.
+     - Otherwise, it calculates the position of the last element using `(__start + __size - 1)`__ % len(__buffer)` and returns that element.
 
 7. **isEmpty (`isEmpty` method)**:
    - This method checks if the queue is empty by comparing `__size` to 0. It returns `True` if empty, otherwise `False`.
@@ -1431,7 +1431,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
             """
             if self.isEmpty():
                 return False
-            self.__start = (self.__start + 1) % len(self.__buffer)
+            self.__start = (self.__start + 1)`__ % len(self.__buffer)
             self.__size -= 1
             return True
 
@@ -1447,7 +1447,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
             Get the last item from the queue.
             :return: int
             """
-            return -1 if self.isEmpty() else self.__buffer[(self.__start + self.__size - 1) % len(self.__buffer)]
+            return -1 if self.isEmpty() else self.__buffer[(self.__start + self.__size - 1)`__ % len(self.__buffer)]
 
         def isEmpty(self) -> bool:
             """
@@ -1510,7 +1510,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
 
         bool deQueue() {
             if (isEmpty()) return false;
-            start = (start + 1) % buffer.size();
+            start = (start + 1)`__ % buffer.size();
             size--;
             return true;
         }
@@ -1520,7 +1520,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
         }
 
         int Rear() {
-            return isEmpty() ? -1 : buffer[(start + size - 1) % buffer.size()];
+            return isEmpty() ? -1 : buffer[(start + size - 1)`__ % buffer.size()];
         }
 
         bool isEmpty() {
@@ -1536,7 +1536,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
         MyCircularQueue circularQueue(3);
         
         std::cout << std::boolalpha;
-        std::cout << circularQueue.enQueue(1) << std::endl;  // returns true
+        std::cout << circularQueue.enQueue(1)`__ << std::endl;  // returns true
         std::cout << circularQueue.enQueue(2) << std::endl;  // returns true
         std::cout << circularQueue.enQueue(3) << std::endl;  // returns true
         std::cout << circularQueue.enQueue(4) << std::endl;  // returns false
@@ -1585,7 +1585,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
             if self.is_empty() {
                 return false;
             }
-            self.start = (self.start + 1) % self.buffer.len();
+            self.start = (self.start + 1)`__ % self.buffer.len();
             self.size -= 1;
             true
         }
@@ -1602,7 +1602,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
             if self.is_empty() {
                 -1
             } else {
-                self.buffer[(self.start + self.size - 1) % self.buffer.len()]
+                self.buffer[(self.start + self.size - 1)`__ % self.buffer.len()]
             }
         }
 
@@ -1659,7 +1659,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
 
         public bool DeQueue() {
             if (IsEmpty()) return false;
-            start = (start + 1) % buffer.Length;
+            start = (start + 1)`__ % buffer.Length;
             size--;
             return true;
         }
@@ -1669,7 +1669,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
         }
 
         public int Rear() {
-            return IsEmpty() ? -1 : buffer[(start + size - 1) % buffer.Length];
+            return IsEmpty() ? -1 : buffer[(start + size - 1)`__ % buffer.Length];
         }
 
         public bool IsEmpty() {
@@ -1725,7 +1725,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
 
         public boolean deQueue() {
             if (isEmpty()) return false;
-            start = (start + 1) % buffer.length;
+            start = (start + 1)`__ % buffer.length;
             size--;
             return true;
         }
@@ -1735,7 +1735,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
         }
 
         public int Rear() {
-            return isEmpty() ? -1 : buffer[(start + size - 1) % buffer.length];
+            return isEmpty() ? -1 : buffer[(start + size - 1)`__ % buffer.length];
         }
 
         public boolean isEmpty() {
@@ -1785,7 +1785,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
 
         def deQueue(): Boolean = {
             if (isEmpty()) return false
-            start = (start + 1) % buffer.length
+            start = (start + 1)`__ % buffer.length
             size -= 1
             true
         }
@@ -1795,7 +1795,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
         }
 
         def Rear(): Int = {
-            if (isEmpty()) -1 else buffer((start + size - 1) % buffer.length)
+            if (isEmpty()) -1 else buffer((start + size - 1)`__ % buffer.length)
         }
 
         def isEmpty(): Boolean = size == 0
@@ -1839,7 +1839,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
 
         fun deQueue(): Boolean {
             if (isEmpty()) return false
-            start = (start + 1) % buffer.size
+            start = (start + 1)`__ % buffer.size
             size--
             return true
         }
@@ -1849,7 +1849,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
         }
 
         fun Rear(): Int {
-            return if (isEmpty()) -1 else buffer[(start + size - 1) % buffer.size]
+            return if (isEmpty()) -1 else buffer[(start + size - 1)`__ % buffer.size]
         }
 
         fun isEmpty(): Boolean {
@@ -1914,7 +1914,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
         if this.IsEmpty() {
             return false
         }
-        this.start = (this.start + 1) % len(this.buffer)
+        this.start = (this.start + 1)`__ % len(this.buffer)
         this.size--
         return true
     }
@@ -1983,7 +1983,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
 
         deQueue(): boolean {
             if (this.isEmpty()) return false;
-            this.start = (this.start + 1) % this.buffer.length;
+            this.start = (this.start + 1)`__ % this.buffer.length;
             this.size--;
             return true;
         }
@@ -1993,7 +1993,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
         }
 
         Rear(): number {
-            return this.isEmpty() ? -1 : this.buffer[(this.start + this.size - 1) % this.buffer.length];
+            return this.isEmpty() ? -1 : this.buffer[(this.start + this.size - 1)`__ % this.buffer.length];
         }
 
         isEmpty(): boolean {
@@ -2044,7 +2044,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
             },
             enQueue = function(value) {
                 if (isFull()) return(FALSE)
-                buffer[(start + size - 1) %% length(buffer) + 1] <<- value
+                buffer[(start + size - 1)`__ %% length(buffer) + 1] <<- value
                 size <<- size + 1
                 return(TRUE)
             },
@@ -2109,7 +2109,7 @@ The overall complexity for the circular queue operations (enqueue, dequeue, and 
         if isFull(queue)
             return false
         end
-        queue.buffer[(queue.start + queue.size - 1) % length(queue.buffer) + 1] = value
+        queue.buffer[(queue.start + queue.size - 1)`__ % length(queue.buffer) + 1] = value
         queue.size += 1
         return true
     end
