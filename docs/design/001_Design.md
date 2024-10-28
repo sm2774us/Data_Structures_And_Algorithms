@@ -74,35 +74,35 @@ The provided Python code implements a Least Recently Used (LRU) Cache using two 
 
 - **OrderedDict-Based LRUCache**:
   - **get**: 
-    - O(1) average case for retrieving a value using the `OrderedDict`'s hash map.
-    - O(n) in the worst case for moving the accessed item to the end of the `OrderedDict` due to the underlying structure (but this operation is generally fast due to the order being maintained).
+    - __`O(1)`__ average case for retrieving a value using the `OrderedDict`'s hash map.
+    - __`O(n) in the worst case for moving the accessed item to the end of the `OrderedDict` due to the underlying structure (but this operation is generally fast due to the order being maintained).
   
   - **put**: 
-    - O(1) for checking existence and inserting into the `OrderedDict`. The eviction is O(1) since it removes the first item (least recently used).
+    - __`O(1) for checking existence and inserting into the `OrderedDict`. The eviction is O(1) since it removes the first item (least recently used).
 
 - **LinkedList-Based LRUCache2**:
   - **get**: 
-    - O(1) for retrieving the node from the hash map.
-    - O(1) for deleting and reinserting the node in the linked list (updating position).
+    - __`O(1) for retrieving the node from the hash map.
+    - __`O(1) for deleting and reinserting the node in the linked list (updating position).
   
   - **put**: 
-    - O(1) for checking existence and updating or inserting the node in the hash map.
-    - O(1) for deleting the least recently used node (head of the linked list) if the cache is full.
+    - __`O(1) for checking existence and updating or inserting the node in the hash map.
+    - __`O(1) for deleting the least recently used node (head of the linked list) if the cache is full.
 
 #### Space Complexity
 
 - Both implementations maintain two data structures:
-  - A hash map to store key-value pairs for O(1) access.
+  - A hash map to store key-value pairs for __`O(1) access.
   - An additional structure (either `OrderedDict` or a linked list) to maintain the order of keys.
   
 - **Space Complexity**:
-  - O(capacity) for both implementations since they can only store up to `capacity` key-value pairs.
+  - __`O(capacity) for both implementations since they can only store up to `capacity` key-value pairs.
 
 ### Summary
 
 - The `OrderedDict`-based implementation is simpler and leverages Python's built-in features, making it easy to read and understand.
 - The linked list implementation is more manual but provides a good understanding of how LRU caches work at a lower level, managing nodes and pointers.
-- Both implementations efficiently support the required operations while adhering to O(1) average time complexity for `get` and `put` operations and O(capacity) space complexity.
+- Both implementations efficiently support the required operations while adhering to __`O(1) average time complexity for `get` and `put` operations and __`O(capacity) space complexity.
 
 ### Solutions
 
@@ -1374,26 +1374,26 @@ Here's a detailed explanation of the provided circular queue solution, along wit
 
 1. **Time Complexity**:
    - **Initialization**: 
-     - The `__init__` method runs in `O(k)` time due to the creation of the buffer list of size `k`. 
+     - The `__init__` method runs in __`O(k)`__ time due to the creation of the buffer list of size `k`. 
    - **Enqueue (`enQueue`)**: 
-     - The method runs in `O(1)` time because it performs a constant number of operations: checking if full, calculating the position, and inserting the element.
+     - The method runs in __`O(1)`__ time because it performs a constant number of operations: checking if full, calculating the position, and inserting the element.
    - **Dequeue (`deQueue`)**: 
-     - The method also runs in `O(1)` time for similar reasons: checking if empty, updating the start position, and decrementing the size.
+     - The method also runs in __`O(1)`__ time for similar reasons: checking if empty, updating the start position, and decrementing the size.
    - **Front (`Front`)**: 
-     - This method runs in `O(1)` time as it accesses the element directly.
+     - This method runs in __`O(1)`__ time as it accesses the element directly.
    - **Rear (`Rear`)**: 
-     - This method runs in `O(1)` time as it accesses the element directly.
+     - This method runs in __`O(1)`__ time as it accesses the element directly.
    - **isEmpty**: 
-     - This method runs in `O(1)` time as it performs a simple comparison.
+     - This method runs in __`O(1)`__ time as it performs a simple comparison.
    - **isFull**: 
-     - This method runs in `O(1)` time as it performs a simple comparison.
+     - This method runs in __`O(1)`__ time as it performs a simple comparison.
 
 2. **Space Complexity**:
-   - The space complexity of the circular queue is `O(k)` due to the storage in `__buffer`, where `k` is the capacity of the queue. 
-   - Other variables (`__start`, `__size`) consume `O(1)` space, but they do not scale with the input size.
+   - The space complexity of the circular queue is __`O(k)`__ due to the storage in `__buffer`, where `k` is the capacity of the queue. 
+   - Other variables (`__start`, `__size`) consume __`O(1)`__ space, but they do not scale with the input size.
 
 ### Summary
-The overall complexity for the circular queue operations (enqueue, dequeue, and access) is very efficient, with constant time complexity `O(1)` for each operation and linear space complexity `O(k)` for the buffer, making this implementation well-suited for scenarios requiring a fixed-size queue with efficient insertions and deletions.
+The overall complexity for the circular queue operations (enqueue, dequeue, and access) is very efficient, with constant time complexity __`O(1)`__ for each operation and linear space complexity __`O(k)`__ for the buffer, making this implementation well-suited for scenarios requiring a fixed-size queue with efficient insertions and deletions.
 
 ### Solutions
 

@@ -85,20 +85,20 @@ print(linked_list.get(1))   # Output: 2
 ### Complexity Analysis
 
 #### Time Complexity
-- **`get(index)`**: `O(n)`, where `n` is the size of the list.
-  - Traverses either forward or backward depending on index proximity to `head` or `tail`, requiring up to `O(n)` operations in the worst case.
-- **`addAtHead(val)`** and **`addAtTail(val)`**: `O(1)`.
+- **`get(index)`**: __`O(n)`__, where `n` is the size of the list.
+  - Traverses either forward or backward depending on index proximity to `head` or `tail`, requiring up to __`O(n)`__ operations in the worst case.
+- **`addAtHead(val)`** and **`addAtTail(val)`**: __`O(1)`__.
   - Insertion at the head or tail is done in constant time, involving only link adjustments.
-- **`addAtIndex(index, val)`**: `O(n)`.
-  - Requires traversal to the specified index (up to `O(n)` operations) before inserting the node.
-- **`deleteAtIndex(index)`**: `O(n)`.
-  - Requires traversal to locate the node to delete (up to `O(n)` operations) before unlinking it.
+- **`addAtIndex(index, val)`**: __`O(n)`__.
+  - Requires traversal to the specified index (up to __`O(n)`__ operations) before inserting the node.
+- **`deleteAtIndex(index)`**: __`O(n)`__.
+  - Requires traversal to locate the node to delete (up to __`O(n)`__ operations) before unlinking it.
 
 #### Space Complexity
-- **Overall**: `O(n)` for storing `n` nodes in the list, each requiring space for `val`, `next`, and `prev`.
-- **Auxiliary Space**: `O(1)` as all helper methods operate in-place without additional data structures.
+- **Overall**: __`O(n)`__ for storing `n` nodes in the list, each requiring space for `val`, `next`, and `prev`.
+- **Auxiliary Space**: __`O(1)`__ as all helper methods operate in-place without additional data structures.
 
-This design leverages doubly linked list advantages for efficient node removal and insertion but incurs `O(n)` time complexity for direct access due to traversal requirements.
+This design leverages doubly linked list advantages for efficient node removal and insertion but incurs __`O(n)`__ time complexity for direct access due to traversal requirements.
 
 ---
 
@@ -2172,9 +2172,9 @@ Both approaches correctly reverse the linked list, but the iterative solution is
 
 - __Space Complexity:__
   - Additional memory is only used for the `cur` pointer and the new merged linked list.
-  - Since the new nodes are created in-place and the space usage is mainly for pointers, the space complexity is __`O(1)`__, constant space complexity.
+  - Since the new nodes are created in-place and the space usage is mainly for pointers, the space complexity is ____`O(1)`____, constant space complexity.
 
-In summary, the code efficiently merges two sorted singly-linked lists into a single sorted list __with a time complexity of `O(m + n)` and a space complexity of `O(1)`.__
+In summary, the code efficiently merges two sorted singly-linked lists into a single sorted list __with a time complexity of `O(m + n)` and a space complexity of __`O(1)`__.__
 
 ### Solutions
 
