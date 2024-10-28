@@ -870,8 +870,6 @@ Bonus: Can you provide the in-place merge, improved space complexity solution.
 ### Problem Description:
 Merge `k` Sorted Lists.
 
-Bonus: Can you provide the in-place merge, improved space complexity solution.
-
 !!! tip
 
     Python solution is the easiest to understand so always start with that.

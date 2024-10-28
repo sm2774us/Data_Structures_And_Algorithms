@@ -10,8 +10,6 @@ tags:
 ### Problem Description:
 Display the number of permutations for a list of `n` integers.
 
-Bonus: Can you provide the in-place merge, improved space complexity solution.
-
 !!! tip
 
     Python solution is the easiest to understand so always start with that.

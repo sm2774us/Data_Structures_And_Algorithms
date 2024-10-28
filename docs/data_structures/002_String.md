@@ -1718,51 +1718,557 @@ This solution finds the longest common prefix among an array of strings.
 === "C++"
 
     ```cpp
+    #include <iostream>
+    #include <vector>
+    #include <string>
+
+    class Solution {
+    public:
+        int strStr(const std::string& haystack, const std::string& needle) {
+            if (needle.empty()) return 0;
+            return KMP(haystack, needle);
+        }
+
+    private:
+        int KMP(const std::string& text, const std::string& pattern) {
+            std::vector<int> prefix = getPrefix(pattern);
+            int j = -1;
+
+            for (size_t i = 0; i < text.size(); ++i) {
+                while (j > -1 && pattern[j + 1] != text[i]) {
+                    j = prefix[j];
+                }
+                if (pattern[j + 1] == text[i]) {
+                    j++;
+                }
+                if (j == static_cast<int>(pattern.size()) - 1) {
+                    return i - j;
+                }
+            }
+            return -1;
+        }
+
+        std::vector<int> getPrefix(const std::string& pattern) {
+            std::vector<int> prefix(pattern.size(), -1);
+            int j = -1;
+
+            for (size_t i = 1; i < pattern.size(); ++i) {
+                while (j > -1 && pattern[j + 1] != pattern[i]) {
+                    j = prefix[j];
+                }
+                if (pattern[j + 1] == pattern[i]) {
+                    j++;
+                }
+                prefix[i] = j;
+            }
+            return prefix;
+        }
+    };
+
+    int main() {
+        Solution solution;
+        std::string haystack = "hello";
+        std::string needle = "ll";
+        int result = solution.strStr(haystack, needle);
+        std::cout << "Result: " << result << std::endl; // Output: 2
+        return 0;
+    }
     ```
 
 === "Rust"
 
     ```rust
+    struct Solution;
+
+    impl Solution {
+        pub fn strStr(haystack: String, needle: String) -> i32 {
+            if needle.is_empty() {
+                return 0;
+            }
+            Self::kmp(&haystack, &needle)
+        }
+
+        fn kmp(text: &str, pattern: &str) -> i32 {
+            let prefix = Self::get_prefix(pattern);
+            let mut j = -1;
+
+            for (i, c) in text.chars().enumerate() {
+                while j >= 0 && pattern.chars().nth((j + 1) as usize) != Some(c) {
+                    j = prefix[j as usize];
+                }
+                if pattern.chars().nth((j + 1) as usize) == Some(c) {
+                    j += 1;
+                }
+                if j == (pattern.len() as i32) - 1 {
+                    return i as i32 - j;
+                }
+            }
+            -1
+        }
+
+        fn get_prefix(pattern: &str) -> Vec<i32> {
+            let mut prefix = vec![-1; pattern.len()];
+            let mut j = -1;
+
+            for i in 1..pattern.len() {
+                while j >= 0 && pattern.chars().nth((j + 1) as usize) != pattern.chars().nth(i) {
+                    j = prefix[j as usize];
+                }
+                if pattern.chars().nth((j + 1) as usize) == pattern.chars().nth(i) {
+                    j += 1;
+                }
+                prefix[i] = j;
+            }
+            prefix
+        }
+    }
+
+    fn main() {
+        let haystack = String::from("hello");
+        let needle = String::from("ll");
+        let result = Solution::strStr(haystack, needle);
+        println!("Result: {}", result); // Output: 2
+    }
     ```
 
 === "C#"
 
     ```csharp
+    using System;
+
+    class Solution {
+        public int StrStr(string haystack, string needle) {
+            if (string.IsNullOrEmpty(needle)) return 0;
+            return KMP(haystack, needle);
+        }
+
+        private int KMP(string text, string pattern) {
+            int[] prefix = GetPrefix(pattern);
+            int j = -1;
+
+            for (int i = 0; i < text.Length; i++) {
+                while (j >= 0 && pattern[j + 1] != text[i]) {
+                    j = prefix[j];
+                }
+                if (pattern[j + 1] == text[i]) {
+                    j++;
+                }
+                if (j == pattern.Length - 1) {
+                    return i - j;
+                }
+            }
+            return -1;
+        }
+
+        private int[] GetPrefix(string pattern) {
+            int[] prefix = new int[pattern.Length];
+            for (int i = 0; i < pattern.Length; i++) prefix[i] = -1;
+            int j = -1;
+
+            for (int i = 1; i < pattern.Length; i++) {
+                while (j >= 0 && pattern[j + 1] != pattern[i]) {
+                    j = prefix[j];
+                }
+                if (pattern[j + 1] == pattern[i]) {
+                    j++;
+                }
+                prefix[i] = j;
+            }
+            return prefix;
+        }
+    }
+
+    class Program {
+        static void Main() {
+            Solution solution = new Solution();
+            string haystack = "hello";
+            string needle = "ll";
+            int result = solution.StrStr(haystack, needle);
+            Console.WriteLine($"Result: {result}"); // Output: 2
+        }
+    }
     ```
 
 === "Java"
 
     ```java
+    class Solution {
+        public int strStr(String haystack, String needle) {
+            if (needle.isEmpty()) return 0;
+            return KMP(haystack, needle);
+        }
+
+        private int KMP(String text, String pattern) {
+            int[] prefix = getPrefix(pattern);
+            int j = -1;
+
+            for (int i = 0; i < text.length(); i++) {
+                while (j >= 0 && pattern.charAt(j + 1) != text.charAt(i)) {
+                    j = prefix[j];
+                }
+                if (pattern.charAt(j + 1) == text.charAt(i)) {
+                    j++;
+                }
+                if (j == pattern.length() - 1) {
+                    return i - j;
+                }
+            }
+            return -1;
+        }
+
+        private int[] getPrefix(String pattern) {
+            int[] prefix = new int[pattern.length()];
+            for (int i = 0; i < prefix.length; i++) prefix[i] = -1;
+            int j = -1;
+
+            for (int i = 1; i < pattern.length(); i++) {
+                while (j >= 0 && pattern.charAt(j + 1) != pattern.charAt(i)) {
+                    j = prefix[j];
+                }
+                if (pattern.charAt(j + 1) == pattern.charAt(i)) {
+                    j++;
+                }
+                prefix[i] = j;
+            }
+            return prefix;
+        }
+    }
+
+    public class Main {
+        public static void main(String[] args) {
+            Solution solution = new Solution();
+            String haystack = "hello";
+            String needle = "ll";
+            int result = solution.strStr(haystack, needle);
+            System.out.println("Result: " + result); // Output: 2
+        }
+    }
     ```
 
 === "Scala"
 
     ```scala
+    object Solution {
+        def strStr(haystack: String, needle: String): Int = {
+            if (needle.isEmpty) return 0
+            KMP(haystack, needle)
+        }
+
+        private def KMP(text: String, pattern: String): Int = {
+            val prefix = getPrefix(pattern)
+            var j = -1
+
+            for (i <- text.indices) {
+                while (j >= 0 && pattern.charAt(j + 1) != text.charAt(i)) {
+                    j = prefix(j)
+                }
+                if (pattern.charAt(j + 1) == text.charAt(i)) {
+                    j += 1
+                }
+                if (j == pattern.length - 1) {
+                    return i - j
+                }
+            }
+            -1
+        }
+
+        private def getPrefix(pattern: String): Array[Int] = {
+            val prefix = Array.fill(pattern.length)(-1)
+            var j = -1
+
+            for (i <- 1 until pattern.length) {
+                while (j >= 0 && pattern.charAt(j + 1) != pattern.charAt(i)) {
+                    j = prefix(j)
+                }
+                if (pattern.charAt(j + 1) == pattern.charAt(i)) {
+                    j += 1
+                }
+                prefix(i) = j
+            }
+            prefix
+        }
+
+        def main(args: Array[String]): Unit = {
+            val haystack = "hello"
+            val needle = "ll"
+            val result = strStr(haystack, needle)
+            println(s"Result: $result") // Output: 2
+        }
+    }
     ```
 
 === "Kotlin"
 
     ```kotlin
+    class Solution {
+        fun strStr(haystack: String, needle: String): Int {
+            if (needle.isEmpty()) return 0
+            return kmp(haystack, needle)
+        }
+
+        private fun kmp(text: String, pattern: String): Int {
+            val prefix = getPrefix(pattern)
+            var j = -1
+
+            for (i in text.indices) {
+                while (j >= 0 && pattern[j + 1] != text[i]) {
+                    j = prefix[j]
+                }
+                if (pattern[j + 1] == text[i]) {
+                    j++
+                }
+                if (j == pattern.length - 1) {
+                    return i - j
+                }
+            }
+            return -1
+        }
+
+        private fun getPrefix(pattern: String): IntArray {
+            val prefix = IntArray(pattern.length) { -1 }
+            var j = -1
+
+            for (i in 1 until pattern.length) {
+                while (j >= 0 && pattern[j + 1] != pattern[i]) {
+                    j = prefix[j]
+                }
+                if (pattern[j + 1] == pattern[i]) {
+                    j++
+                }
+                prefix[i] = j
+            }
+            return prefix
+        }
+    }
+
+    fun main() {
+        val solution = Solution()
+        val haystack = "hello"
+        val needle = "ll"
+        val result = solution.strStr(haystack, needle)
+        println("Result: $result") // Output: 2
+    }
     ```
 
 === "Go"
 
     ```go
+    package main
+
+    import (
+        "fmt"
+    )
+
+    type Solution struct{}
+
+    func (s *Solution) strStr(haystack string, needle string) int {
+        if len(needle) == 0 {
+            return 0
+        }
+        return s.kmp(haystack, needle)
+    }
+
+    func (s *Solution) kmp(text string, pattern string) int {
+        prefix := s.getPrefix(pattern)
+        j := -1
+
+        for i := 0; i < len(text); i++ {
+            for j >= 0 && pattern[j+1] != text[i] {
+                j = prefix[j]
+            }
+            if pattern[j+1] == text[i] {
+                j++
+            }
+            if j == len(pattern)-1 {
+                return i - j
+            }
+        }
+        return -1
+    }
+
+    func (s *Solution) getPrefix(pattern string) []int {
+        prefix := make([]int, len(pattern))
+        for i := range prefix {
+            prefix[i] = -1
+        }
+        j := -1
+
+        for i := 1; i < len(pattern); i++ {
+            for j >= 0 && pattern[j+1] != pattern[i] {
+                j = prefix[j]
+            }
+            if pattern[j+1] == pattern[i] {
+                j++
+            }
+            prefix[i] = j
+        }
+        return prefix
+    }
+
+    func main() {
+        solution := &Solution{}
+        haystack := "hello"
+        needle := "ll"
+        result := solution.strStr(haystack, needle)
+        fmt.Printf("Result: %d\n", result) // Output: 2
+    }
     ```
 
 === "TypeScript"
 
     ```typescript
+    class Solution {
+        strStr(haystack: string, needle: string): number {
+            if (needle.length === 0) return 0;
+            return this.kmp(haystack, needle);
+        }
+
+        private kmp(text: string, pattern: string): number {
+            const prefix = this.getPrefix(pattern);
+            let j = -1;
+
+            for (let i = 0; i < text.length; i++) {
+                while (j >= 0 && pattern[j + 1] !== text[i]) {
+                    j = prefix[j];
+                }
+                if (pattern[j + 1] === text[i]) {
+                    j++;
+                }
+                if (j === pattern.length - 1) {
+                    return i - j;
+                }
+            }
+            return -1;
+        }
+
+        private getPrefix(pattern: string): number[] {
+            const prefix = new Array(pattern.length).fill(-1);
+            let j = -1;
+
+            for (let i = 1; i < pattern.length; i++) {
+                while (j >= 0 && pattern[j + 1] !== pattern[i]) {
+                    j = prefix[j];
+                }
+                if (pattern[j + 1] === pattern[i]) {
+                    j++;
+                }
+                prefix[i] = j;
+            }
+            return prefix;
+        }
+    }
+
+    const solution = new Solution();
+    const haystack = "hello";
+    const needle = "ll";
+    const result = solution.strStr(haystack, needle);
+    console.log(`Result: ${result}`); // Output: 2
     ```
 
 === "R"
 
     ```r
+    strStr <- function(haystack, needle) {
+        if (nchar(needle) == 0) return(0)
+        return(KMP(haystack, needle))
+    }
+
+    KMP <- function(text, pattern) {
+        prefix <- getPrefix(pattern)
+        j <- -1
+        
+        for (i in seq_along(text)) {
+            while (j >= 0 && substr(pattern, j + 2, j + 2) != substr(text, i, i)) {
+            j <- prefix[j + 1]
+            }
+            if (substr(pattern, j + 2, j + 2) == substr(text, i, i)) {
+            j <- j + 1
+            }
+            if (j == nchar(pattern) - 1) {
+            return(i - j - 1)
+            }
+        }
+        return(-1)
+    }
+
+    getPrefix <- function(pattern) {
+        prefix <- rep(-1, nchar(pattern))
+        j <- -1
+        
+        for (i in 2:nchar(pattern)) {
+            while (j >= 0 && substr(pattern, j + 2, j + 2) != substr(pattern, i, i)) {
+                j <- prefix[j + 1]
+            }
+            if (substr(pattern, j + 2, j + 2) == substr(pattern, i, i)) {
+                j <- j + 1
+            }
+            prefix[i] <- j
+        }
+        return(prefix)
+    }
+
+    # Example usage
+    haystack <- "hello"
+    needle <- "ll"
+    result <- strStr(haystack, needle)
+    cat("Result:", result, "\n") # Output: 2
     ```
 
 === "Julia"
 
     ```julia
+    module KMPStringMatching
+
+    export strStr
+
+    function strStr(haystack::String, needle::String)
+        if isempty(needle) return 0 end
+        return kmp(haystack, needle)
+    end
+
+    function kmp(text::String, pattern::String)
+        prefix = getPrefix(pattern)
+        j = -1
+
+        for i in 1:length(text)
+            while j >= 0 && pattern[j + 1] != text[i]
+                j = prefix[j + 1]
+            end
+            if pattern[j + 1] == text[i]
+                j += 1
+            end
+            if j == length(pattern) - 1
+                return i - j - 1
+            end
+        end
+        return -1
+    end
+
+    function getPrefix(pattern::String)
+        prefix = fill(-1, length(pattern))
+        j = -1
+
+        for i in 2:length(pattern)
+            while j >= 0 && pattern[j + 1] != pattern[i]
+                j = prefix[j + 1]
+            end
+            if pattern[j + 1] == pattern[i]
+                j += 1
+            end
+            prefix[i] = j
+        end
+        return prefix
+    end
+
+    end # module
+
+    using .KMPStringMatching
+
+    # Example usage
+    haystack = "hello"
+    needle = "ll"
+    result = strStr(haystack, needle)
+    println("Result: ", result) # Output: 2
     ```
 
 ## Add Binary
@@ -1825,51 +2331,338 @@ This solution finds the longest common prefix among an array of strings.
 === "C++"
 
     ```cpp
+    #include <iostream>
+    #include <string>
+
+    class Solution {
+    public:
+        std::string addBinary(std::string a, std::string b) {
+            std::string result;
+            int carry = 0;
+
+            int maxLength = std::max(a.length(), b.length());
+            for (int i = 0; i < maxLength; ++i) {
+                int val = carry;
+                if (i < a.length()) val += a[a.length() - 1 - i] - '0';
+                if (i < b.length()) val += b[b.length() - 1 - i] - '0';
+                carry = val / 2;
+                result += (val % 2) + '0';
+            }
+            if (carry) result += '1';
+            std::reverse(result.begin(), result.end());
+            return result;
+        }
+    };
+
+    int main() {
+        Solution solution;
+        std::string a = "1010";
+        std::string b = "1011";
+        std::string result = solution.addBinary(a, b);
+        std::cout << "Result: " << result << std::endl; // Output: 10101
+        return 0;
+    }
     ```
 
 === "Rust"
 
     ```rust
+    struct Solution;
+
+    impl Solution {
+        pub fn add_binary(a: String, b: String) -> String {
+            let mut result = String::new();
+            let mut carry = 0;
+
+            let max_length = a.len().max(b.len());
+            for i in 0..max_length {
+                let mut val = carry;
+                if i < a.len() {
+                    val += a.chars().rev().nth(i).unwrap().to_digit(10).unwrap();
+                }
+                if i < b.len() {
+                    val += b.chars().rev().nth(i).unwrap().to_digit(10).unwrap();
+                }
+                carry = val / 2;
+                result.push(char::from_digit(val % 2, 10).unwrap());
+            }
+            if carry != 0 {
+                result.push('1');
+            }
+            result.chars().rev().collect()
+        }
+    }
+
+    fn main() {
+        let solution = Solution;
+        let a = String::from("1010");
+        let b = String::from("1011");
+        let result = solution.add_binary(a, b);
+        println!("Result: {}", result); // Output: 10101
+    }
     ```
 
 === "C#"
 
     ```csharp
+    using System;
+
+    public class Solution {
+        public string AddBinary(string a, string b) {
+            string result = "";
+            int carry = 0;
+
+            int maxLength = Math.Max(a.Length, b.Length);
+            for (int i = 0; i < maxLength; i++) {
+                int val = carry;
+                if (i < a.Length) val += a[a.Length - 1 - i] - '0';
+                if (i < b.Length) val += b[b.Length - 1 - i] - '0';
+                carry = val / 2;
+                result += (val % 2).ToString();
+            }
+            if (carry > 0) result += carry;
+            char[] charArray = result.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
+        }
+    }
+
+    class Program {
+        static void Main() {
+            Solution solution = new Solution();
+            string a = "1010";
+            string b = "1011";
+            string result = solution.AddBinary(a, b);
+            Console.WriteLine("Result: " + result); // Output: 10101
+        }
+    }
     ```
 
 === "Java"
 
     ```java
+    public class Solution {
+        public String addBinary(String a, String b) {
+            StringBuilder result = new StringBuilder();
+            int carry = 0;
+
+            int maxLength = Math.max(a.length(), b.length());
+            for (int i = 0; i < maxLength; i++) {
+                int val = carry;
+                if (i < a.length()) val += a.charAt(a.length() - 1 - i) - '0';
+                if (i < b.length()) val += b.charAt(b.length() - 1 - i) - '0';
+                carry = val / 2;
+                result.append(val % 2);
+            }
+            if (carry > 0) result.append(carry);
+            return result.reverse().toString();
+        }
+
+        public static void main(String[] args) {
+            Solution solution = new Solution();
+            String a = "1010";
+            String b = "1011";
+            String result = solution.addBinary(a, b);
+            System.out.println("Result: " + result); // Output: 10101
+        }
+    }
     ```
 
 === "Scala"
 
     ```scala
+    object Solution {
+        def addBinary(a: String, b: String): String = {
+            val result = new StringBuilder
+            var carry = 0
+
+            val maxLength = math.max(a.length, b.length)
+            for (i <- 0 until maxLength) {
+                var val = carry
+                if (i < a.length) val += a(a.length - 1 - i) - '0'
+                if (i < b.length) val += b(b.length - 1 - i) - '0'
+                carry = val / 2
+                result.append(val % 2)
+            }
+            if (carry > 0) result.append(carry)
+            result.reverse.toString()
+        }
+
+        def main(args: Array[String]): Unit = {
+            val a = "1010"
+            val b = "1011"
+            val result = addBinary(a, b)
+            println(s"Result: $result") // Output: 10101
+        }
+    }
     ```
 
 === "Kotlin"
 
     ```kotlin
+    class Solution {
+        fun addBinary(a: String, b: String): String {
+            val result = StringBuilder()
+            var carry = 0
+
+            val maxLength = maxOf(a.length, b.length)
+            for (i in 0 until maxLength) {
+                var val = carry
+                if (i < a.length) val += a[a.length - 1 - i] - '0'
+                if (i < b.length) val += b[b.length - 1 - i] - '0'
+                carry = val / 2
+                result.append(val % 2)
+            }
+            if (carry > 0) result.append(carry)
+            return result.reverse().toString()
+        }
+    }
+
+    fun main() {
+        val solution = Solution()
+        val a = "1010"
+        val b = "1011"
+        val result = solution.addBinary(a, b)
+        println("Result: $result") // Output: 10101
+    }
     ```
 
 === "Go"
 
     ```go
+    package main
+
+    import (
+        "fmt"
+    )
+
+    type Solution struct{}
+
+    func (s *Solution) addBinary(a string, b string) string {
+        result := ""
+        carry := 0
+
+        maxLength := len(a)
+        if len(b) > maxLength {
+            maxLength = len(b)
+        }
+        for i := 0; i < maxLength; i++ {
+            val := carry
+            if i < len(a) {
+                val += int(a[len(a)-1-i] - '0')
+            }
+            if i < len(b) {
+                val += int(b[len(b)-1-i] - '0')
+            }
+            carry = val / 2
+            result += string(val%2 + '0')
+        }
+        if carry > 0 {
+            result += '1'
+        }
+        // Reverse the result
+        runes := []rune(result)
+        for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+            runes[i], runes[j] = runes[j], runes[i]
+        }
+        return string(runes)
+    }
+
+    func main() {
+        solution := Solution{}
+        a := "1010"
+        b := "1011"
+        result := solution.addBinary(a, b)
+        fmt.Println("Result:", result) // Output: 10101
+    }
     ```
 
 === "TypeScript"
 
     ```typescript
+    class Solution {
+        addBinary(a: string, b: string): string {
+            let result = '';
+            let carry = 0;
+
+            const maxLength = Math.max(a.length, b.length);
+            for (let i = 0; i < maxLength; i++) {
+                let val = carry;
+                if (i < a.length) val += parseInt(a[a.length - 1 - i]);
+                if (i < b.length) val += parseInt(b[b.length - 1 - i]);
+                carry = Math.floor(val / 2);
+                result += (val % 2).toString();
+            }
+            if (carry) result += carry;
+            return result.split('').reverse().join('');
+        }
+    }
+
+    const solution = new Solution();
+    const a = "1010";
+    const b = "1011";
+    const result = solution.addBinary(a, b);
+    console.log("Result:", result); // Output: 10101
     ```
 
 === "R"
 
     ```r
+    addBinary <- function(a, b) {
+        result <- ""
+        carry <- 0
+
+        max_length <- max(nchar(a), nchar(b))
+        for (i in 0:(max_length - 1)) {
+            val <- carry
+            if (i < nchar(a)) val <- val + as.integer(substr(a, nchar(a) - i, nchar(a) - i))
+            if (i < nchar(b)) val <- val + as.integer(substr(b, nchar(b) - i, nchar(b) - i))
+            carry <- val %/% 2
+            result <- paste0(val %% 2, result)
+        }
+        if (carry > 0) result <- paste0(carry, result)
+        return(result)
+    }
+
+    # Main method
+    a <- "1010"
+    b <- "1011"
+    result <- addBinary(a, b)
+    cat("Result:", result, "\n") # Output: 10101
     ```
 
 === "Julia"
 
     ```julia
+    module BinaryAddition
+
+    export addBinary
+
+    function addBinary(a::String, b::String)
+        result = ""
+        carry = 0
+
+        max_length = max(length(a), length(b))
+        for i in 0:(max_length - 1)
+            val = carry
+            if i < length(a) val += Int(a[end - i] - '0') end
+            if i < length(b) val += Int(b[end - i] - '0') end
+            carry = div(val, 2)
+            result *= string(val % 2)
+        end
+        if carry > 0 result *= string(carry) end
+        return reverse(result)
+    end
+
+    end # module
+
+    # Main method
+    using .BinaryAddition
+
+    a = "1010"
+    b = "1011"
+    result = addBinary(a, b)
+    println("Result: ", result) # Output: 10101
     ```
 
 ## Text Justification
@@ -1932,51 +2725,611 @@ This solution finds the longest common prefix among an array of strings.
 === "C++"
 
     ```cpp
+    #include <iostream>
+    #include <vector>
+    #include <string>
+
+    class Solution {
+    public:
+        std::vector<std::string> fullJustify(std::vector<std::string>& words, int maxWidth) {
+            std::vector<std::string> res;
+            int begin = 0, length = 0;
+
+            for (int i = 0; i < words.size(); ++i) {
+                if (length + words[i].length() + (i - begin) > maxWidth) {
+                    res.push_back(connect(words, maxWidth, begin, i, length, false));
+                    begin = i;
+                    length = 0;
+                }
+                length += words[i].length();
+            }
+
+            // Last line
+            res.push_back(connect(words, maxWidth, begin, words.size(), length, true));
+            return res;
+        }
+
+    private:
+        int addSpaces(int i, int spaceCnt, int maxWidth, bool is_last) {
+            if (i < spaceCnt) {
+                return is_last ? 1 : (maxWidth / spaceCnt) + (i < maxWidth % spaceCnt);
+            }
+            return 0;
+        }
+
+        std::string connect(std::vector<std::string>& words, int maxWidth, int begin, int end, int length, bool is_last) {
+            std::string line;
+            int n = end - begin;
+            for (int i = 0; i < n; ++i) {
+                line += words[begin + i];
+                line += std::string(addSpaces(i, n - 1, maxWidth - length, is_last), ' ');
+            }
+            if (line.length() < maxWidth) {
+                line += std::string(maxWidth - line.length(), ' ');
+            }
+            return line;
+        }
+    };
+
+    int main() {
+        Solution solution;
+        std::vector<std::string> words = {"This", "is", "an", "example", "of", "text", "justification."};
+        int maxWidth = 16;
+        std::vector<std::string> result = solution.fullJustify(words, maxWidth);
+
+        for (const auto& line : result) {
+            std::cout << "\"" << line << "\"" << std::endl;
+        }
+        return 0;
+    }
     ```
 
 === "Rust"
 
     ```rust
+    struct Solution;
+
+    impl Solution {
+        pub fn full_justify(words: Vec<String>, max_width: usize) -> Vec<String> {
+            let mut res = Vec::new();
+            let mut begin = 0;
+            let mut length = 0;
+
+            for i in 0..words.len() {
+                if length + words[i].len() + (i - begin) > max_width {
+                    res.push(Solution::connect(&words, max_width, begin, i, length, false));
+                    begin = i;
+                    length = 0;
+                }
+                length += words[i].len();
+            }
+
+            // Last line
+            res.push(Solution::connect(&words, max_width, begin, words.len(), length, true));
+            res
+        }
+
+        fn add_spaces(i: usize, space_cnt: usize, max_width: usize, is_last: bool) -> usize {
+            if i < space_cnt {
+                return if is_last { 1 } else { max_width / space_cnt + (i < max_width % space_cnt) as usize };
+            }
+            0
+        }
+
+        fn connect(words: &[String], max_width: usize, begin: usize, end: usize, length: usize, is_last: bool) -> String {
+            let mut line = String::new();
+            let n = end - begin;
+
+            for i in 0..n {
+                line.push_str(&words[begin + i]);
+                line.push_str(&" ".repeat(Solution::add_spaces(i, n - 1, max_width - length, is_last)));
+            }
+
+            if line.len() < max_width {
+                line.push_str(&" ".repeat(max_width - line.len()));
+            }
+            line
+        }
+    }
+
+    fn main() {
+        let solution = Solution;
+        let words = vec![
+            String::from("This"),
+            String::from("is"),
+            String::from("an"),
+            String::from("example"),
+            String::from("of"),
+            String::from("text"),
+            String::from("justification."),
+        ];
+        let max_width = 16;
+        let result = solution.full_justify(words, max_width);
+
+        for line in result {
+            println!("{:?}", line);
+        }
+    }
     ```
 
 === "C#"
 
     ```csharp
+    using System;
+    using System.Collections.Generic;
+
+    public class Solution {
+        public IList<string> FullJustify(string[] words, int maxWidth) {
+            var res = new List<string>();
+            int begin = 0, length = 0;
+
+            for (int i = 0; i < words.Length; i++) {
+                if (length + words[i].Length + (i - begin) > maxWidth) {
+                    res.Add(Connect(words, maxWidth, begin, i, length, false));
+                    begin = i;
+                    length = 0;
+                }
+                length += words[i].Length;
+            }
+
+            // Last line
+            res.Add(Connect(words, maxWidth, begin, words.Length, length, true));
+            return res;
+        }
+
+        private int AddSpaces(int i, int spaceCnt, int maxWidth, bool isLast) {
+            if (i < spaceCnt) {
+                return isLast ? 1 : (maxWidth / spaceCnt) + (i < maxWidth % spaceCnt ? 1 : 0);
+            }
+            return 0;
+        }
+
+        private string Connect(string[] words, int maxWidth, int begin, int end, int length, bool isLast) {
+            var line = "";
+            int n = end - begin;
+
+            for (int i = 0; i < n; i++) {
+                line += words[begin + i];
+                line += new string(' ', AddSpaces(i, n - 1, maxWidth - length, isLast));
+            }
+            if (line.Length < maxWidth) {
+                line += new string(' ', maxWidth - line.Length);
+            }
+            return line;
+        }
+    }
+
+    class Program {
+        static void Main() {
+            Solution solution = new Solution();
+            string[] words = { "This", "is", "an", "example", "of", "text", "justification." };
+            int maxWidth = 16;
+            IList<string> result = solution.FullJustify(words, maxWidth);
+
+            foreach (var line in result) {
+                Console.WriteLine($"\"{line}\"");
+            }
+        }
+    }
     ```
 
 === "Java"
 
     ```java
+    import java.util.ArrayList;
+    import java.util.List;
+
+    public class Solution {
+        public List<String> fullJustify(String[] words, int maxWidth) {
+            List<String> res = new ArrayList<>();
+            int begin = 0, length = 0;
+
+            for (int i = 0; i < words.length; i++) {
+                if (length + words[i].length() + (i - begin) > maxWidth) {
+                    res.add(connect(words, maxWidth, begin, i, length, false));
+                    begin = i;
+                    length = 0;
+                }
+                length += words[i].length();
+            }
+
+            // Last line
+            res.add(connect(words, maxWidth, begin, words.length, length, true));
+            return res;
+        }
+
+        private int addSpaces(int i, int spaceCnt, int maxWidth, boolean isLast) {
+            if (i < spaceCnt) {
+                return isLast ? 1 : (maxWidth / spaceCnt) + (i < maxWidth % spaceCnt ? 1 : 0);
+            }
+            return 0;
+        }
+
+        private String connect(String[] words, int maxWidth, int begin, int end, int length, boolean isLast) {
+            StringBuilder line = new StringBuilder();
+            int n = end - begin;
+
+            for (int i = 0; i < n; i++) {
+                line.append(words[begin + i]);
+                for (int j = 0; j < addSpaces(i, n - 1, maxWidth - length, isLast); j++) {
+                    line.append(' ');
+                }
+            }
+            if (line.length() < maxWidth) {
+                for (int j = 0; j < maxWidth - line.length(); j++) {
+                    line.append(' ');
+                }
+            }
+            return line.toString();
+        }
+
+        public static void main(String[] args) {
+            Solution solution = new Solution();
+            String[] words = { "This", "is", "an", "example", "of", "text", "justification." };
+            int maxWidth = 16;
+            List<String> result = solution.fullJustify(words, maxWidth);
+
+            for (String line : result) {
+                System.out.println("\"" + line + "\"");
+            }
+        }
+    }
     ```
 
 === "Scala"
 
     ```scala
+    object Solution {
+        def fullJustify(words: Array[String], maxWidth: Int): List[String] = {
+            var res = List[String]()
+            var begin = 0
+            var length = 0
+
+            for (i <- words.indices) {
+                if (length + words(i).length + (i - begin) > maxWidth) {
+                    res = res :+ connect(words, maxWidth, begin, i, length, false)
+                    begin = i
+                    length = 0
+                }
+                length += words(i).length
+            }
+
+            // Last line
+            res = res :+ connect(words, maxWidth, begin, words.length, length, true)
+            res
+        }
+
+        private def addSpaces(i: Int, spaceCnt: Int, maxWidth: Int, isLast: Boolean): Int = {
+            if (i < spaceCnt) {
+                if (isLast) 1 else (maxWidth / spaceCnt) + (if (i < maxWidth % spaceCnt) 1 else 0)
+            } else {
+                0
+            }
+        }
+
+        private def connect(words: Array[String], maxWidth: Int, begin: Int, end: Int, length: Int, isLast: Boolean): String = {
+            val n = end - begin
+            val sb = new StringBuilder()
+
+            for (i <- 0 until n) {
+                sb.append(words(begin + i))
+                sb.append(" " * addSpaces(i, n - 1, maxWidth - length, isLast))
+            }
+
+            if (sb.length < maxWidth) {
+                sb.append(" " * (maxWidth - sb.length))
+            }
+            sb.toString()
+        }
+
+        def main(args: Array[String]): Unit = {
+            val words = Array("This", "is", "an", "example", "of", "text", "justification.")
+            val maxWidth = 16
+            val result = fullJustify(words, maxWidth)
+
+            result.foreach(line => println(s""""$line""""))
+        }
+    }
     ```
 
 === "Kotlin"
 
     ```kotlin
+    class Solution {
+        fun fullJustify(words: Array<String>, maxWidth: Int): List<String> {
+            val res = mutableListOf<String>()
+            var begin = 0
+            var length = 0
+
+            for (i in words.indices) {
+                if (length + words[i].length + (i - begin) > maxWidth) {
+                    res.add(connect(words, maxWidth, begin, i, length, false))
+                    begin = i
+                    length = 0
+                }
+                length += words[i].length
+            }
+
+            // Last line
+            res.add(connect(words, maxWidth, begin, words.size, length, true))
+            return res
+        }
+
+        private fun addSpaces(i: Int, spaceCnt: Int, maxWidth: Int, isLast: Boolean): Int {
+            return if (i < spaceCnt) {
+                if (isLast) 1 else (maxWidth / spaceCnt) + if (i < maxWidth % spaceCnt) 1 else 0
+            } else {
+                0
+            }
+        }
+
+        private fun connect(words: Array<String>, maxWidth: Int, begin: Int, end: Int, length: Int, isLast: Boolean): String {
+            val line = StringBuilder()
+            val n = end - begin
+
+            for (i in 0 until n) {
+                line.append(words[begin + i])
+                line.append(" ".repeat(addSpaces(i, n - 1, maxWidth - length, isLast)))
+            }
+            if (line.length < maxWidth) {
+                line.append(" ".repeat(maxWidth - line.length))
+            }
+            return line.toString()
+        }
+    }
+
+    fun main() {
+        val solution = Solution()
+        val words = arrayOf("This", "is", "an", "example", "of", "text", "justification.")
+        val maxWidth = 16
+        val result = solution.fullJustify(words, maxWidth)
+
+        for (line in result) {
+            println("\"$line\"")
+        }
+    }
     ```
 
 === "Go"
 
     ```go
+    package main
+
+    import (
+        "fmt"
+        "strings"
+    )
+
+    type Solution struct{}
+
+    func (s *Solution) FullJustify(words []string, maxWidth int) []string {
+        res := []string{}
+        begin, length := 0, 0
+
+        for i := 0; i < len(words); i++ {
+            if length+len(words[i])+(i-begin) > maxWidth {
+                res = append(res, s.connect(words, maxWidth, begin, i, length, false))
+                begin = i
+                length = 0
+            }
+            length += len(words[i])
+        }
+
+        // Last line
+        res = append(res, s.connect(words, maxWidth, begin, len(words), length, true))
+        return res
+    }
+
+    func (s *Solution) addSpaces(i, spaceCnt, maxWidth int, isLast bool) int {
+        if i < spaceCnt {
+            if isLast {
+                return 1
+            }
+            return (maxWidth / spaceCnt) + boolToInt(i < maxWidth%spaceCnt)
+        }
+        return 0
+    }
+
+    func (s *Solution) connect(words []string, maxWidth, begin, end, length int, isLast bool) string {
+        line := ""
+        n := end - begin
+
+        for i := 0; i < n; i++ {
+            line += words[begin+i]
+            line += strings.Repeat(" ", s.addSpaces(i, n-1, maxWidth-length, isLast))
+        }
+        if len(line) < maxWidth {
+            line += strings.Repeat(" ", maxWidth-len(line))
+        }
+        return line
+    }
+
+    func boolToInt(b bool) int {
+        if b {
+            return 1
+        }
+        return 0
+    }
+
+    func main() {
+        solution := Solution{}
+        words := []string{"This", "is", "an", "example", "of", "text", "justification."}
+        maxWidth := 16
+        result := solution.FullJustify(words, maxWidth)
+
+        for _, line := range result {
+            fmt.Printf("\"%s\"\n", line)
+        }
+    }
     ```
 
 === "TypeScript"
 
     ```typescript
+    class Solution {
+        fullJustify(words: string[], maxWidth: number): string[] {
+            const res: string[] = [];
+            let begin = 0;
+            let length = 0;
+
+            for (let i = 0; i < words.length; i++) {
+                if (length + words[i].length + (i - begin) > maxWidth) {
+                    res.push(this.connect(words, maxWidth, begin, i, length, false));
+                    begin = i;
+                    length = 0;
+                }
+                length += words[i].length;
+            }
+
+            // Last line
+            res.push(this.connect(words, maxWidth, begin, words.length, length, true));
+            return res;
+        }
+
+        private addSpaces(i: number, spaceCnt: number, maxWidth: number, isLast: boolean): number {
+            if (i < spaceCnt) {
+                return isLast ? 1 : Math.floor(maxWidth / spaceCnt) + (i < maxWidth % spaceCnt ? 1 : 0);
+            }
+            return 0;
+        }
+
+        private connect(words: string[], maxWidth: number, begin: number, end: number, length: number, isLast: boolean): string {
+            let line = '';
+            const n = end - begin;
+
+            for (let i = 0; i < n; i++) {
+                line += words[begin + i];
+                line += ' '.repeat(this.addSpaces(i, n - 1, maxWidth - length, isLast));
+            }
+            if (line.length < maxWidth) {
+                line += ' '.repeat(maxWidth - line.length);
+            }
+            return line;
+        }
+    }
+
+    const solution = new Solution();
+    const words = ["This", "is", "an", "example", "of", "text", "justification."];
+    const maxWidth = 16;
+    const result = solution.fullJustify(words, maxWidth);
+
+    for (const line of result) {
+        console.log(`"${line}"`);
+    }
     ```
 
 === "R"
 
     ```r
+    fullJustify <- function(words, maxWidth) {
+        res <- c()
+        begin <- 1
+        length <- 0
+
+        for (i in seq_along(words)) {
+            if (length + nchar(words[i]) + (i - begin) > maxWidth) {
+            res <- c(res, connect(words, maxWidth, begin, i, length, FALSE))
+            begin <- i
+            length <- 0
+            }
+            length <- length + nchar(words[i])
+        }
+
+        # Last line
+        res <- c(res, connect(words, maxWidth, begin, length(words), length, TRUE))
+        return(res)
+    }
+
+    addSpaces <- function(i, spaceCnt, maxWidth, isLast) {
+        if (i < spaceCnt) {
+            return(ifelse(isLast, 1, floor(maxWidth / spaceCnt) + ifelse(i < maxWidth %% spaceCnt, 1, 0)))
+        }
+        return(0)
+    }
+
+    connect <- function(words, maxWidth, begin, end, length, isLast) {
+        line <- ""
+        n <- end - begin
+
+        for (i in seq_len(n)) {
+            line <- paste0(line, words[begin + i - 1])
+            line <- paste0(line, strrep(" ", addSpaces(i - 1, n - 1, maxWidth - length, isLast)))
+        }
+        if (nchar(line) < maxWidth) {
+            line <- paste0(line, strrep(" ", maxWidth - nchar(line)))
+        }
+        return(line)
+    }
+
+    # Main function
+    words <- c("This", "is", "an", "example", "of", "text", "justification.")
+    maxWidth <- 16
+    result <- fullJustify(words, maxWidth)
+
+    for (line in result) {
+        cat(sprintf("\"%s\"\n", line))
+    }
     ```
 
 === "Julia"
 
     ```julia
+    module Justification
+
+    export fullJustify
+
+    function fullJustify(words::Vector{String}, maxWidth::Int)
+        res = String[]
+        begin = 1
+        length = 0
+
+        for i in 1:length(words)
+            if length + length(words[i]) + (i - begin) > maxWidth
+                push!(res, connect(words, maxWidth, begin, i, length, false))
+                begin = i
+                length = 0
+            end
+            length += length(words[i])
+        end
+
+        # Last line
+        push!(res, connect(words, maxWidth, begin, length(words), length, true))
+        return res
+    end
+
+    function addSpaces(i::Int, spaceCnt::Int, maxWidth::Int, isLast::Bool)
+        if i < spaceCnt
+            return isLast ? 1 : div(maxWidth, spaceCnt) + (i < maxWidth % spaceCnt ? 1 : 0)
+        end
+        return 0
+    end
+
+    function connect(words::Vector{String}, maxWidth::Int, begin::Int, end::Int, length::Int, isLast::Bool)
+        line = ""
+        n = end - begin
+
+        for i in 0:n-1
+            line *= words[begin + i]
+            line *= " " ^ addSpaces(i, n - 1, maxWidth - length, isLast)
+        end
+        if length(line) < maxWidth
+            line *= " " ^ (maxWidth - length(line))
+        end
+        return line
+    end
+
+    end
+
+    # Main function
+    using .Justification
+
+    words = ["This", "is", "an", "example", "of", "text", "justification."]
+    maxWidth = 16
+    result = fullJustify(words, maxWidth)
+
+    for line in result
+        println("\"$line\"")
+    end
     ```
 
 ## Valid Palindrome
@@ -2015,51 +3368,347 @@ This solution finds the longest common prefix among an array of strings.
 === "C++"
 
     ```cpp
+    #include <iostream>
+    #include <string>
+    #include <cctype>
+
+    class Solution {
+    public:
+        bool isPalindrome(const std::string& s) {
+            int i = 0, j = s.size() - 1;
+            while (i < j) {
+                while (i < j && !std::isalnum(s[i])) {
+                    i++;
+                }
+                while (i < j && !std::isalnum(s[j])) {
+                    j--;
+                }
+                if (std::tolower(s[i]) != std::tolower(s[j])) {
+                    return false;
+                }
+                i++;
+                j--;
+            }
+            return true;
+        }
+    };
+
+    int main() {
+        Solution solution;
+        std::string s = "A man, a plan, a canal: Panama";
+        std::cout << std::boolalpha << solution.isPalindrome(s) << std::endl;  // Output: true
+        return 0;
+    }
     ```
 
 === "Rust"
 
     ```rust
+    struct Solution;
+
+    impl Solution {
+        pub fn is_palindrome(s: String) -> bool {
+            let mut i = 0;
+            let mut j = s.len() - 1;
+
+            let s = s.to_lowercase();
+
+            while i < j {
+                while i < j && !s.chars().nth(i).unwrap().is_alphanumeric() {
+                    i += 1;
+                }
+                while i < j && !s.chars().nth(j).unwrap().is_alphanumeric() {
+                    j -= 1;
+                }
+                if s.chars().nth(i).unwrap() != s.chars().nth(j).unwrap() {
+                    return false;
+                }
+                i += 1;
+                j -= 1;
+            }
+            true
+        }
+    }
+
+    fn main() {
+        let solution = Solution;
+        let s = String::from("A man, a plan, a canal: Panama");
+        println!("{}", solution.is_palindrome(s));  // Output: true
+    }
     ```
 
 === "C#"
 
     ```csharp
+    using System;
+
+    public class Solution {
+        public bool IsPalindrome(string s) {
+            int i = 0, j = s.Length - 1;
+            while (i < j) {
+                while (i < j && !char.IsLetterOrDigit(s[i])) {
+                    i++;
+                }
+                while (i < j && !char.IsLetterOrDigit(s[j])) {
+                    j--;
+                }
+                if (char.ToLower(s[i]) != char.ToLower(s[j])) {
+                    return false;
+                }
+                i++;
+                j--;
+            }
+            return true;
+        }
+    }
+
+    public class Program {
+        public static void Main() {
+            Solution solution = new Solution();
+            string s = "A man, a plan, a canal: Panama";
+            Console.WriteLine(solution.IsPalindrome(s));  // Output: True
+        }
+    }
     ```
 
 === "Java"
 
     ```java
+    public class Solution {
+        public boolean isPalindrome(String s) {
+            int i = 0, j = s.length() - 1;
+            while (i < j) {
+                while (i < j && !Character.isLetterOrDigit(s.charAt(i))) {
+                    i++;
+                }
+                while (i < j && !Character.isLetterOrDigit(s.charAt(j))) {
+                    j--;
+                }
+                if (Character.toLowerCase(s.charAt(i)) != Character.toLowerCase(s.charAt(j))) {
+                    return false;
+                }
+                i++;
+                j--;
+            }
+            return true;
+        }
+
+        public static void main(String[] args) {
+            Solution solution = new Solution();
+            String s = "A man, a plan, a canal: Panama";
+            System.out.println(solution.isPalindrome(s));  // Output: true
+        }
+    }
     ```
 
 === "Scala"
 
     ```scala
+    object Solution {
+        def isPalindrome(s: String): Boolean = {
+            var i = 0
+            var j = s.length - 1
+
+            while (i < j) {
+                while (i < j && !s(i).isLetterOrDigit) {
+                    i += 1
+                }
+                while (i < j && !s(j).isLetterOrDigit) {
+                    j -= 1
+                }
+                if (s(i).toLower != s(j).toLower) {
+                    return false
+                }
+                i += 1
+                j -= 1
+            }
+            true
+        }
+
+        def main(args: Array[String]): Unit = {
+            val s = "A man, a plan, a canal: Panama"
+            println(isPalindrome(s))  // Output: true
+        }
+    }
     ```
 
 === "Kotlin"
 
     ```kotlin
+    class Solution {
+        fun isPalindrome(s: String): Boolean {
+            var i = 0
+            var j = s.length - 1
+
+            while (i < j) {
+                while (i < j && !s[i].isLetterOrDigit()) {
+                    i++
+                }
+                while (i < j && !s[j].isLetterOrDigit()) {
+                    j--
+                }
+                if (s[i].lowercaseChar() != s[j].lowercaseChar()) {
+                    return false
+                }
+                i++
+                j--
+            }
+            return true
+        }
+    }
+
+    fun main() {
+        val solution = Solution()
+        val s = "A man, a plan, a canal: Panama"
+        println(solution.isPalindrome(s))  // Output: true
+    }
     ```
 
 === "Go"
 
     ```go
+    package main
+
+    import (
+        "fmt"
+        "unicode"
+    )
+
+    type Solution struct{}
+
+    func (s *Solution) IsPalindrome(sStr string) bool {
+        i, j := 0, len(sStr)-1
+
+        for i < j {
+            for i < j && !isAlphanumeric(rune(sStr[i])) {
+                i++
+            }
+            for i < j && !isAlphanumeric(rune(sStr[j])) {
+                j--
+            }
+            if toLower(rune(sStr[i])) != toLower(rune(sStr[j])) {
+                return false
+            }
+            i++
+            j--
+        }
+        return true
+    }
+
+    func isAlphanumeric(r rune) bool {
+        return unicode.IsLetter(r) || unicode.IsDigit(r)
+    }
+
+    func toLower(r rune) rune {
+        if 'A' <= r && r <= 'Z' {
+            return r + 'a' - 'A'
+        }
+        return r
+    }
+
+    func main() {
+        solution := Solution{}
+        s := "A man, a plan, a canal: Panama"
+        fmt.Println(solution.IsPalindrome(s))  // Output: true
+    }
     ```
 
 === "TypeScript"
 
     ```typescript
+    class Solution {
+        isPalindrome(s: string): boolean {
+            let i = 0;
+            let j = s.length - 1;
+
+            while (i < j) {
+                while (i < j && !this.isAlphanumeric(s[i])) {
+                    i++;
+                }
+                while (i < j && !this.isAlphanumeric(s[j])) {
+                    j--;
+                }
+                if (s[i].toLowerCase() !== s[j].toLowerCase()) {
+                    return false;
+                }
+                i++;
+                j--;
+            }
+            return true;
+        }
+
+        private isAlphanumeric(char: string): boolean {
+            return /^[a-zA-Z0-9]+$/.test(char);
+        }
+    }
+
+    const solution = new Solution();
+    const s = "A man, a plan, a canal: Panama";
+    console.log(solution.isPalindrome(s));  // Output: true
     ```
 
 === "R"
 
     ```r
+    isPalindrome <- function(s) {
+        i <- 1
+        j <- nchar(s)
+
+        while (i < j) {
+            while (i < j && !is.alnum(substr(s, i, i))) {
+                i <- i + 1
+            }
+            while (i < j && !is.alnum(substr(s, j, j))) {
+                j <- j - 1
+            }
+            if (tolower(substr(s, i, i)) != tolower(substr(s, j, j))) {
+                return(FALSE)
+            }
+            i <- i + 1
+            j <- j - 1
+        }
+        return(TRUE)
+    }
+
+    # Main function
+    s <- "A man, a plan, a canal: Panama"
+    print(isPalindrome(s))  # Output: TRUE
     ```
 
 === "Julia"
 
     ```julia
+    module Palindrome
+
+    export is_palindrome
+
+    function is_palindrome(s::String)
+        i = 1
+        j = length(s)
+
+        while i < j
+            while i < j && !isletter(s[i]) && !isdigit(s[i])
+                i += 1
+            end
+            while i < j && !isletter(s[j]) && !isdigit(s[j])
+                j -= 1
+            end
+            if lowercase(s[i]) != lowercase(s[j])
+                return false
+            end
+            i += 1
+            j -= 1
+        end
+        return true
+    end
+
+    end
+
+    # Main function
+    using .Palindrome
+
+    s = "A man, a plan, a canal: Panama"
+    println(is_palindrome(s))  # Output: true
     ```
 
 ## Reverse Words in a String
@@ -2108,51 +3757,287 @@ This solution finds the longest common prefix among an array of strings.
 === "C++"
 
     ```cpp
+    #include <iostream>
+    #include <string>
+    #include <sstream>
+
+    class Solution {
+    public:
+        std::string reverseWords(const std::string& s) {
+            std::string word;
+            std::string res;
+
+            for (char i : s + " ") {
+                if (i != ' ') {
+                    word += i;
+                } else if (!word.empty()) {
+                    res = word + " " + res;
+                    word.clear();
+                }
+            }
+            return res.empty() ? res : res.substr(0, res.size() - 1); // Remove the trailing space
+        }
+    };
+
+    int main() {
+        Solution solution;
+        std::string s = "The sky is blue";
+        std::cout << solution.reverseWords(s) << std::endl;  // Output: "blue is sky The"
+        return 0;
+    }
     ```
 
 === "Rust"
 
     ```rust
+    struct Solution;
+
+    impl Solution {
+        pub fn reverse_words(s: String) -> String {
+            let mut word = String::new();
+            let mut res = String::new();
+
+            for c in s.chars().chain(" ".chars()) {
+                if c != ' ' {
+                    word.push(c);
+                } else if !word.is_empty() {
+                    res = format!("{} {}", word, res);
+                    word.clear();
+                }
+            }
+            res.trim_end().to_string() // Remove trailing space
+        }
+    }
+
+    fn main() {
+        let solution = Solution;
+        let s = String::from("The sky is blue");
+        println!("{}", solution.reverse_words(s)); // Output: "blue is sky The"
+    }
     ```
 
 === "C#"
 
     ```csharp
+    using System;
+
+    public class Solution {
+        public string ReverseWords(string s) {
+            string word = "";
+            string res = "";
+
+            foreach (char c in s + " ") {
+                if (c != ' ') {
+                    word += c;
+                } else if (word != "") {
+                    res = word + " " + res;
+                    word = "";
+                }
+            }
+            return res.TrimEnd(); // Remove trailing space
+        }
+    }
+
+    public class Program {
+        public static void Main() {
+            Solution solution = new Solution();
+            string s = "The sky is blue";
+            Console.WriteLine(solution.ReverseWords(s));  // Output: "blue is sky The"
+        }
+    }
     ```
 
 === "Java"
 
     ```java
+    public class Solution {
+        public String reverseWords(String s) {
+            StringBuilder word = new StringBuilder();
+            StringBuilder res = new StringBuilder();
+
+            for (char c : (s + " ").toCharArray()) {
+                if (c != ' ') {
+                    word.append(c);
+                } else if (word.length() > 0) {
+                    res.insert(0, word.toString() + " ");
+                    word.setLength(0);
+                }
+            }
+            return res.toString().trim(); // Remove trailing space
+        }
+
+        public static void main(String[] args) {
+            Solution solution = new Solution();
+            String s = "The sky is blue";
+            System.out.println(solution.reverseWords(s));  // Output: "blue is sky The"
+        }
+    }
     ```
 
 === "Scala"
 
     ```scala
+    object Solution {
+        def reverseWords(s: String): String = {
+            var word = ""
+            var res = ""
+
+            for (c <- (s + " ")) {
+                if (c != ' ') {
+                    word += c
+                } else if (word.nonEmpty) {
+                    res = word + " " + res
+                    word = ""
+                }
+            }
+            res.trim // Remove trailing space
+        }
+
+        def main(args: Array[String]): Unit = {
+            val s = "The sky is blue"
+            println(reverseWords(s))  // Output: "blue is sky The"
+        }
+    }
     ```
 
 === "Kotlin"
 
     ```kotlin
+    class Solution {
+        fun reverseWords(s: String): String {
+            var word = ""
+            var res = ""
+
+            for (c in s + " ") {
+                if (c != ' ') {
+                    word += c
+                } else if (word.isNotEmpty()) {
+                    res = "$word $res"
+                    word = ""
+                }
+            }
+            return res.trim() // Remove trailing space
+        }
+    }
+
+    fun main() {
+        val solution = Solution()
+        val s = "The sky is blue"
+        println(solution.reverseWords(s))  // Output: "blue is sky The"
+    }
     ```
 
 === "Go"
 
     ```go
+    package main
+
+    import (
+        "fmt"
+        "strings"
+    )
+
+    type Solution struct{}
+
+    func (s *Solution) ReverseWords(sStr string) string {
+        word := ""
+        res := ""
+
+        for _, c := range sStr + " " {
+            if c != ' ' {
+                word += string(c)
+            } else if word != "" {
+                res = word + " " + res
+                word = ""
+            }
+        }
+        return strings.TrimSpace(res) // Remove trailing space
+    }
+
+    func main() {
+        solution := Solution{}
+        s := "The sky is blue"
+        fmt.Println(solution.ReverseWords(s)) // Output: "blue is sky The"
+    }
     ```
 
 === "TypeScript"
 
     ```typescript
+    class Solution {
+        reverseWords(s: string): string {
+            let word = "";
+            let res = "";
+
+            for (let i of (s + " ")) {
+                if (i !== ' ') {
+                    word += i;
+                } else if (word) {
+                    res = word + " " + res;
+                    word = "";
+                }
+            }
+            return res.trim(); // Remove trailing space
+        }
+    }
+
+    const solution = new Solution();
+    const s = "The sky is blue";
+    console.log(solution.reverseWords(s));  // Output: "blue is sky The"
     ```
 
 === "R"
 
     ```r
+    reverseWords <- function(s) {
+        word <- ""
+        res <- ""
+
+        for (i in strsplit(paste(s, " "), NULL)[[1]]) {
+            if (i != " ") {
+                word <- paste0(word, i)
+            } else if (nchar(word) > 0) {
+                res <- paste(word, res)
+                word <- ""
+            }
+        }
+        return(trimws(res))  # Remove trailing space
+    }
+
+    # Main function
+    s <- "The sky is blue"
+    print(reverseWords(s))  # Output: "blue is sky The"
     ```
 
 === "Julia"
 
     ```julia
+    module ReverseWords
+
+    export reverse_words
+
+    function reverse_words(s::String)
+        word = ""
+        res = ""
+
+        for c in s * " "
+            if c != ' '
+                word *= c
+            elseif !isempty(word)
+                res *= word * " "
+                word = ""
+            end
+        end
+        return strip(res)  # Remove trailing space
+    end
+
+    end
+
+    # Main function
+    using .ReverseWords
+
+    s = "The sky is blue"
+    println(reverse_words(s))  # Output: "blue is sky The"
     ```
 
 ## Shortest Palindrome - `Manacher's Algorithm`
@@ -2213,51 +4098,615 @@ This solution finds the longest common prefix among an array of strings.
 === "C++"
 
     ```cpp
+    #include <iostream>
+    #include <vector>
+    #include <string>
+
+    class Solution {
+    public:
+        std::string shortestPalindrome(const std::string& s) {
+            auto preProcess = [](const std::string& s) {
+                if (s.empty()) return std::vector<char>{'^', '$'};
+                std::vector<char> result{'^'};
+                for (char c : s) {
+                    result.push_back('#');
+                    result.push_back(c);
+                }
+                result.push_back('#');
+                result.push_back('$');
+                return result;
+            };
+
+            auto string = preProcess(s);
+            std::vector<int> palindrome(string.size(), 0);
+            int center = 0, right = 0;
+
+            for (size_t i = 1; i < string.size() - 1; ++i) {
+                int i_mirror = 2 * center - i;
+                if (right > i) {
+                    palindrome[i] = std::min(right - i, palindrome[i_mirror]);
+                } else {
+                    palindrome[i] = 0;
+                }
+
+                while (string[i + 1 + palindrome[i]] == string[i - 1 - palindrome[i]]) {
+                    ++palindrome[i];
+                }
+
+                if (i + palindrome[i] > right) {
+                    center = i;
+                    right = i + palindrome[i];
+                }
+            }
+
+            int max_len = 0;
+            for (size_t i = 1; i < string.size() - 1; ++i) {
+                if (i - palindrome[i] == 1) {
+                    max_len = palindrome[i];
+                }
+            }
+
+            return std::string(s.rbegin(), s.rbegin() + s.size() - max_len) + s; // append reversed prefix
+        }
+    };
+
+    int main() {
+        Solution solution;
+        std::string s = "aacecaaa";
+        std::cout << solution.shortestPalindrome(s) << std::endl; // Output: "aaacecaaa"
+        return 0;
+    }
     ```
 
 === "Rust"
 
     ```rust
+    struct Solution;
+
+    impl Solution {
+        pub fn shortest_palindrome(s: String) -> String {
+            fn pre_process(s: &str) -> Vec<char> {
+                if s.is_empty() {
+                    return vec!['^', '$'];
+                }
+                let mut result = vec!['^'];
+                for c in s.chars() {
+                    result.push('#');
+                    result.push(c);
+                }
+                result.push('#');
+                result.push('$');
+                result
+            }
+
+            let string = pre_process(&s);
+            let mut palindrome = vec![0; string.len()];
+            let mut center = 0;
+            let mut right = 0;
+
+            for i in 1..string.len() - 1 {
+                let i_mirror = 2 * center - i;
+                if right > i {
+                    palindrome[i] = palindrome[i_mirror].min(right - i);
+                } else {
+                    palindrome[i] = 0;
+                }
+
+                while string[i + 1 + palindrome[i]] == string[i - 1 - palindrome[i]] {
+                    palindrome[i] += 1;
+                }
+
+                if i + palindrome[i] > right {
+                    center = i;
+                    right = i + palindrome[i];
+                }
+            }
+
+            let mut max_len = 0;
+            for i in 1..string.len() - 1 {
+                if i - palindrome[i] == 1 {
+                    max_len = palindrome[i];
+                }
+            }
+
+            let prefix: String = s.chars().rev().take(s.len() - max_len).collect();
+            format!("{}{}", prefix, s) // append reversed prefix
+        }
+    }
+
+    fn main() {
+        let solution = Solution;
+        let s = String::from("aacecaaa");
+        println!("{}", solution.shortest_palindrome(s)); // Output: "aaacecaaa"
+    }
     ```
 
 === "C#"
 
     ```csharp
+    using System;
+    using System.Collections.Generic;
+
+    public class Solution {
+        public string ShortestPalindrome(string s) {
+            char[] preProcess(string s) {
+                if (string.IsNullOrEmpty(s)) return new char[] { '^', '$' };
+                List<char> result = new List<char> { '^' };
+                foreach (char c in s) {
+                    result.Add('#');
+                    result.Add(c);
+                }
+                result.Add('#');
+                result.Add('$');
+                return result.ToArray();
+            }
+
+            char[] stringProcessed = preProcess(s);
+            int[] palindrome = new int[stringProcessed.Length];
+            int center = 0, right = 0;
+
+            for (int i = 1; i < stringProcessed.Length - 1; i++) {
+                int i_mirror = 2 * center - i;
+                if (right > i) {
+                    palindrome[i] = Math.Min(right - i, palindrome[i_mirror]);
+                } else {
+                    palindrome[i] = 0;
+                }
+
+                while (stringProcessed[i + 1 + palindrome[i]] == stringProcessed[i - 1 - palindrome[i]]) {
+                    palindrome[i]++;
+                }
+
+                if (i + palindrome[i] > right) {
+                    center = i;
+                    right = i + palindrome[i];
+                }
+            }
+
+            int maxLen = 0;
+            for (int i = 1; i < stringProcessed.Length - 1; i++) {
+                if (i - palindrome[i] == 1) {
+                    maxLen = palindrome[i];
+                }
+            }
+
+            string prefix = new string(s.AsSpan(0, s.Length - maxLen).ToArray());
+            char[] reversedPrefix = prefix.ToCharArray();
+            Array.Reverse(reversedPrefix);
+            return new string(reversedPrefix) + s; // append reversed prefix
+        }
+
+        public static void Main() {
+            Solution solution = new Solution();
+            string s = "aacecaaa";
+            Console.WriteLine(solution.ShortestPalindrome(s)); // Output: "aaacecaaa"
+        }
+    }
     ```
 
 === "Java"
 
     ```java
+    import java.util.ArrayList;
+    import java.util.List;
+
+    public class Solution {
+        public String shortestPalindrome(String s) {
+            char[] preProcess(String s) {
+                if (s.isEmpty()) return new char[] {'^', '$'};
+                List<Character> result = new ArrayList<>();
+                result.add('^');
+                for (char c : s.toCharArray()) {
+                    result.add('#');
+                    result.add(c);
+                }
+                result.add('#');
+                result.add('$');
+                char[] array = new char[result.size()];
+                for (int i = 0; i < result.size(); i++) {
+                    array[i] = result.get(i);
+                }
+                return array;
+            }
+
+            char[] stringProcessed = preProcess(s);
+            int[] palindrome = new int[stringProcessed.length];
+            int center = 0, right = 0;
+
+            for (int i = 1; i < stringProcessed.length - 1; i++) {
+                int iMirror = 2 * center - i;
+                if (right > i) {
+                    palindrome[i] = Math.min(right - i, palindrome[iMirror]);
+                } else {
+                    palindrome[i] = 0;
+                }
+
+                while (stringProcessed[i + 1 + palindrome[i]] == stringProcessed[i - 1 - palindrome[i]]) {
+                    palindrome[i]++;
+                }
+
+                if (i + palindrome[i] > right) {
+                    center = i;
+                    right = i + palindrome[i];
+                }
+            }
+
+            int maxLen = 0;
+            for (int i = 1; i < stringProcessed.length - 1; i++) {
+                if (i - palindrome[i] == 1) {
+                    maxLen = palindrome[i];
+                }
+            }
+
+            String prefix = new StringBuilder(s.substring(0, s.length() - maxLen)).reverse().toString();
+            return prefix + s; // append reversed prefix
+        }
+
+        public static void main(String[] args) {
+            Solution solution = new Solution();
+            String s = "aacecaaa";
+            System.out.println(solution.shortestPalindrome(s)); // Output: "aaacecaaa"
+        }
+    }
     ```
 
 === "Scala"
 
     ```scala
+    object Solution {
+        def shortestPalindrome(s: String): String = {
+            def preProcess(s: String): Array[Char] = {
+                if (s.isEmpty) return Array('^', '$')
+                val result = new scala.collection.mutable.ArrayBuffer[Char]()
+                result.append('^')
+                for (c <- s) {
+                    result.append('#', c)
+                }
+                result.append('#', '$')
+                result.toArray
+            }
+
+            val stringProcessed = preProcess(s)
+            val palindrome = Array.fill(stringProcessed.length)(0)
+            var center = 0
+            var right = 0
+
+            for (i <- 1 until stringProcessed.length - 1) {
+                val iMirror = 2 * center - i
+                if (right > i) {
+                    palindrome(i) = math.min(right - i, palindrome(iMirror))
+                } else {
+                    palindrome(i) = 0
+                }
+
+                while (stringProcessed(i + 1 + palindrome(i)) == stringProcessed(i - 1 - palindrome(i))) {
+                    palindrome(i) += 1
+                }
+
+                if (i + palindrome(i) > right) {
+                    center = i
+                    right = i + palindrome(i)
+                }
+            }
+
+            var maxLen = 0
+            for (i <- 1 until stringProcessed.length - 1) {
+                if (i - palindrome(i) == 1) {
+                    maxLen = palindrome(i)
+                }
+            }
+
+            val prefix = s.substring(0, s.length - maxLen).reverse
+            prefix + s // append reversed prefix
+        }
+
+        def main(args: Array[String]): Unit = {
+            val s = "aacecaaa"
+            println(shortestPalindrome(s)) // Output: "aaacecaaa"
+        }
+    }
     ```
 
 === "Kotlin"
 
     ```kotlin
+    class Solution {
+        fun shortestPalindrome(s: String): String {
+            fun preProcess(s: String): CharArray {
+                if (s.isEmpty()) return charArrayOf('^', '$')
+                val result = mutableListOf<Char>('^')
+                for (c in s) {
+                    result.add('#')
+                    result.add(c)
+                }
+                result.add('#')
+                result.add('$')
+                return result.toCharArray()
+            }
+
+            val stringProcessed = preProcess(s)
+            val palindrome = IntArray(stringProcessed.size)
+            var center = 0
+            var right = 0
+
+            for (i in 1 until stringProcessed.size - 1) {
+                val iMirror = 2 * center - i
+                palindrome[i] = if (right > i) {
+                    minOf(right - i, palindrome[iMirror])
+                } else {
+                    0
+                }
+
+                while (stringProcessed[i + 1 + palindrome[i]] == stringProcessed[i - 1 - palindrome[i]]) {
+                    palindrome[i]++
+                }
+
+                if (i + palindrome[i] > right) {
+                    center = i
+                    right = i + palindrome[i]
+                }
+            }
+
+            var maxLen = 0
+            for (i in 1 until stringProcessed.size - 1) {
+                if (i - palindrome[i] == 1) {
+                    maxLen = palindrome[i]
+                }
+            }
+
+            val prefix = s.substring(0, s.length - maxLen).reversed()
+            return prefix + s // append reversed prefix
+        }
+    }
+
+    fun main() {
+        val solution = Solution()
+        val s = "aacecaaa"
+        println(solution.shortestPalindrome(s)) // Output: "aaacecaaa"
+    }
     ```
 
 === "Go"
 
     ```go
+    package main
+
+    import (
+        "fmt"
+    )
+
+    type Solution struct{}
+
+    func (s *Solution) shortestPalindrome(sStr string) string {
+        preProcess := func(s string) []rune {
+            if len(s) == 0 {
+                return []rune{'^', '$'}
+            }
+            result := []rune{'^'}
+            for _, c := range s {
+                result = append(result, '#', c)
+            }
+            result = append(result, '#', '$')
+            return result
+        }
+
+        stringProcessed := preProcess(sStr)
+        palindrome := make([]int, len(stringProcessed))
+        center, right := 0, 0
+
+        for i := 1; i < len(stringProcessed)-1; i++ {
+            iMirror := 2*center - i
+            if right > i {
+                palindrome[i] = min(right-i, palindrome[iMirror])
+            } else {
+                palindrome[i] = 0
+            }
+
+            for stringProcessed[i+1+palindrome[i]] == stringProcessed[i-1-palindrome[i]] {
+                palindrome[i]++
+            }
+
+            if i+palindrome[i] > right {
+                center, right = i, i+palindrome[i]
+            }
+        }
+
+        maxLen := 0
+        for i := 1; i < len(stringProcessed)-1; i++ {
+            if i-palindrome[i] == 1 {
+                maxLen = palindrome[i]
+            }
+        }
+
+        prefix := reverse(sStr[:len(sStr)-maxLen])
+        return prefix + sStr // append reversed prefix
+    }
+
+    func min(a, b int) int {
+        if a < b {
+            return a
+        }
+        return b
+    }
+
+    func reverse(s string) string {
+        runes := []rune(s)
+        for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+            runes[i], runes[j] = runes[j], runes[i]
+        }
+        return string(runes)
+    }
+
+    func main() {
+        solution := &Solution{}
+        s := "aacecaaa"
+        fmt.Println(solution.shortestPalindrome(s)) // Output: "aaacecaaa"
+    }
     ```
 
 === "TypeScript"
 
     ```typescript
+    class Solution {
+        shortestPalindrome(s: string): string {
+            const preProcess = (s: string): string[] => {
+                if (s.length === 0) return ['^', '$'];
+                const result: string[] = ['^'];
+                for (const c of s) {
+                    result.push('#', c);
+                }
+                result.push('#', '$');
+                return result;
+            };
+
+            const stringProcessed = preProcess(s);
+            const palindrome: number[] = Array(stringProcessed.length).fill(0);
+            let center = 0;
+            let right = 0;
+
+            for (let i = 1; i < stringProcessed.length - 1; i++) {
+                const iMirror = 2 * center - i;
+                if (right > i) {
+                    palindrome[i] = Math.min(right - i, palindrome[iMirror]);
+                } else {
+                    palindrome[i] = 0;
+                }
+
+                while (stringProcessed[i + 1 + palindrome[i]] === stringProcessed[i - 1 - palindrome[i]]) {
+                    palindrome[i]++;
+                }
+
+                if (i + palindrome[i] > right) {
+                    center = i;
+                    right = i + palindrome[i];
+                }
+            }
+
+            let maxLen = 0;
+            for (let i = 1; i < stringProcessed.length - 1; i++) {
+                if (i - palindrome[i] === 1) {
+                    maxLen = palindrome[i];
+                }
+            }
+
+            const prefix = s.substring(0, s.length - maxLen).split('').reverse().join('');
+            return prefix + s; // append reversed prefix
+        }
+    }
+
+    const solution = new Solution();
+    const s = "aacecaaa";
+    console.log(solution.shortestPalindrome(s)); // Output: "aaacecaaa"
     ```
 
 === "R"
 
     ```r
+    shortestPalindrome <- function(s) {
+        preProcess <- function(s) {
+            if (nchar(s) == 0) return(c('^', '$'))
+            result <- c('^')
+            for (c in strsplit(s, NULL)[[1]]) {
+                result <- c(result, '#', c)
+            }
+            c(result, '#', '$')
+        }
+
+        stringProcessed <- preProcess(s)
+        palindrome <- integer(length(stringProcessed))
+        center <- 0
+        right <- 0
+
+        for (i in 2:(length(stringProcessed) - 1)) {
+            iMirror <- 2 * center - i
+            if (right > i) {
+                palindrome[i] <- min(right - i, palindrome[iMirror])
+            } else {
+                palindrome[i] <- 0
+            }
+
+            while (stringProcessed[i + 1 + palindrome[i]] == stringProcessed[i - 1 - palindrome[i]]) {
+                palindrome[i] <- palindrome[i] + 1
+            }
+
+            if (i + palindrome[i] > right) {
+                center <- i
+                right <- i + palindrome[i]
+            }
+        }
+
+        maxLen <- 0
+        for (i in 2:(length(stringProcessed) - 1)) {
+            if (i - palindrome[i] == 1) {
+                maxLen <- palindrome[i]
+            }
+        }
+
+        prefix <- rev(strsplit(substring(s, 1, nchar(s) - maxLen), NULL)[[1]])
+        paste(c(prefix, strsplit(s, NULL)[[1]]), collapse = "") # append reversed prefix
+    }
+
+    s <- "aacecaaa"
+    print(shortestPalindrome(s)) # Output: "aaacecaaa"
     ```
 
 === "Julia"
 
     ```julia
+    struct Solution end
+
+    function shortest_palindrome(s::String)
+        function pre_process(s::String)
+            if s == "" 
+                return ['^', '$']
+            end
+            result = ['^']
+            for c in s
+                push!(result, '#', c)
+            end
+            push!(result, '#', '$')
+            return result
+        end
+
+        string_processed = pre_process(s)
+        palindrome = zeros(Int, length(string_processed))
+        center, right = 0, 0
+
+        for i in 2:length(string_processed)-1
+            i_mirror = 2 * center - i
+            if right > i
+                palindrome[i] = min(right - i, palindrome[i_mirror])
+            else
+                palindrome[i] = 0
+            end
+
+            while string_processed[i + 1 + palindrome[i]] == string_processed[i - 1 - palindrome[i]
+            ]
+                palindrome[i] += 1
+            end
+
+            if i + palindrome[i] > right
+                center, right = i, i + palindrome[i]
+            end
+        end
+
+        max_len = 0
+        for i in 2:length(string_processed)-1
+            if i - palindrome[i] == 1
+                max_len = palindrome[i]
+            end
+        end
+
+        prefix = reverse(s[1:end-max_len])
+        return prefix * s # append reversed prefix
+    end
+
+    function main()
+        s = "aacecaaa"
+        println(shortest_palindrome(s)) # Output: "aaacecaaa"
+    end
+
+    main()
     ```
 
 ## Valid Anagram
@@ -2301,51 +4750,327 @@ This solution finds the longest common prefix among an array of strings.
 === "C++"
 
     ```cpp
+    #include <iostream>
+    #include <unordered_map>
+    #include <string>
+
+    class Solution {
+    public:
+        bool isAnagram(const std::string& s, const std::string& t) {
+            if (s.length() != t.length()) {
+                return false;
+            }
+            std::unordered_map<char, int> count;
+            for (char c : s) {
+                count[c]++;
+            }
+            for (char c : t) {
+                count[c]--;
+                if (count[c] < 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    };
+
+    int main() {
+        Solution solution;
+        std::string s = "anagram";
+        std::string t = "nagaram";
+        std::cout << std::boolalpha << solution.isAnagram(s, t) << std::endl; // Output: true
+        return 0;
+    }
     ```
 
 === "Rust"
 
     ```rust
+    use std::collections::HashMap;
+
+    struct Solution;
+
+    impl Solution {
+        pub fn is_anagram(s: String, t: String) -> bool {
+            if s.len() != t.len() {
+                return false;
+            }
+            let mut count = HashMap::new();
+            for c in s.chars() {
+                *count.entry(c).or_insert(0) += 1;
+            }
+            for c in t.chars() {
+                let entry = count.entry(c).or_insert(0);
+                *entry -= 1;
+                if *entry < 0 {
+                    return false;
+                }
+            }
+            true
+        }
+    }
+
+    fn main() {
+        let s = String::from("anagram");
+        let t = String::from("nagaram");
+        println!("{}", Solution::is_anagram(s, t)); // Output: true
+    }
     ```
 
 === "C#"
 
     ```csharp
+    using System;
+    using System.Collections.Generic;
+
+    class Solution {
+        public bool IsAnagram(string s, string t) {
+            if (s.Length != t.Length) {
+                return false;
+            }
+            var count = new Dictionary<char, int>();
+            foreach (char c in s) {
+                if (count.ContainsKey(c)) {
+                    count[c]++;
+                } else {
+                    count[c] = 1;
+                }
+            }
+            foreach (char c in t) {
+                if (count.ContainsKey(c)) {
+                    count[c]--;
+                    if (count[c] < 0) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    class Program {
+        static void Main() {
+            var solution = new Solution();
+            string s = "anagram";
+            string t = "nagaram";
+            Console.WriteLine(solution.IsAnagram(s, t)); // Output: True
+        }
+    }
     ```
 
 === "Java"
 
     ```java
+    import java.util.HashMap;
+
+    class Solution {
+        public boolean isAnagram(String s, String t) {
+            if (s.length() != t.length()) {
+                return false;
+            }
+            HashMap<Character, Integer> count = new HashMap<>();
+            for (char c : s.toCharArray()) {
+                count.put(c, count.getOrDefault(c, 0) + 1);
+            }
+            for (char c : t.toCharArray()) {
+                count.put(c, count.getOrDefault(c, 0) - 1);
+                if (count.get(c) < 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public static void main(String[] args) {
+            Solution solution = new Solution();
+            String s = "anagram";
+            String t = "nagaram";
+            System.out.println(solution.isAnagram(s, t)); // Output: true
+        }
+    }
     ```
 
 === "Scala"
 
     ```scala
+    import scala.collection.mutable
+
+    class Solution {
+        def isAnagram(s: String, t: String): Boolean = {
+            if (s.length != t.length) {
+                return false
+            }
+            val count = mutable.Map[Char, Int]()
+            for (c <- s) {
+                count(c) = count.getOrElse(c, 0) + 1
+            }
+            for (c <- t) {
+                count(c) = count.getOrElse(c, 0) - 1
+                if (count(c) < 0) {
+                    return false
+                }
+            }
+            true
+        }
+    }
+
+    object Main {
+        def main(args: Array[String]): Unit = {
+            val solution = new Solution()
+            val s = "anagram"
+            val t = "nagaram"
+            println(solution.isAnagram(s, t)) // Output: true
+        }
+    }
     ```
 
 === "Kotlin"
 
     ```kotlin
+    class Solution {
+        fun isAnagram(s: String, t: String): Boolean {
+            if (s.length != t.length) {
+                return false
+            }
+            val count = mutableMapOf<Char, Int>()
+            for (c in s) {
+                count[c] = count.getOrDefault(c, 0) + 1
+            }
+            for (c in t) {
+                count[c] = count.getOrDefault(c, 0) - 1
+                if (count[c]!! < 0) {
+                    return false
+                }
+            }
+            return true
+        }
+    }
+
+    fun main() {
+        val solution = Solution()
+        val s = "anagram"
+        val t = "nagaram"
+        println(solution.isAnagram(s, t)) // Output: true
+    }
     ```
 
 === "Go"
 
     ```go
+    package main
+
+    import (
+        "fmt"
+    )
+
+    type Solution struct{}
+
+    func (s *Solution) IsAnagram(sStr string, tStr string) bool {
+        if len(sStr) != len(tStr) {
+            return false
+        }
+        count := make(map[rune]int)
+        for _, c := range sStr {
+            count[c]++
+        }
+        for _, c := range tStr {
+            count[c]--
+            if count[c] < 0 {
+                return false
+            }
+        }
+        return true
+    }
+
+    func main() {
+        solution := &Solution{}
+        s := "anagram"
+        t := "nagaram"
+        fmt.Println(solution.IsAnagram(s, t)) // Output: true
+    }
     ```
 
 === "TypeScript"
 
     ```typescript
+    class Solution {
+        isAnagram(s: string, t: string): boolean {
+            if (s.length !== t.length) {
+                return false;
+            }
+            const count: { [key: string]: number } = {};
+            for (const c of s) {
+                count[c] = (count[c] || 0) + 1;
+            }
+            for (const c of t) {
+                count[c] = (count[c] || 0) - 1;
+                if (count[c] < 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    const solution = new Solution();
+    const s = "anagram";
+    const t = "nagaram";
+    console.log(solution.isAnagram(s, t)); // Output: true
     ```
 
 === "R"
 
     ```r
+    isAnagram <- function(s, t) {
+        if (nchar(s) != nchar(t)) {
+            return(FALSE)
+        }
+        count <- table(strsplit(s, NULL)[[1]])
+        for (c in strsplit(t, NULL)[[1]]) {
+            count[c] <- count[c] - 1
+            if (count[c] < 0) {
+                return(FALSE)
+            }
+        }
+        return(TRUE)
+    }
+
+    s <- "anagram"
+    t <- "nagaram"
+    print(isAnagram(s, t)) # Output: TRUE
     ```
 
 === "Julia"
 
     ```julia
+    struct Solution end
+
+    function is_anagram(s::String, t::String)
+        if length(s) != length(t)
+            return false
+        end
+        count = Dict{Char, Int}()
+        for c in s
+            count[c] = get(count, c, 0) + 1
+        end
+        for c in t
+            count[c] = get(count, c, 0) - 1
+            if count[c] < 0
+                return false
+            end
+        end
+        return true
+    end
+
+    function main()
+        s = "anagram"
+        t = "nagaram"
+        println(is_anagram(s, t)) # Output: true
+    end
+
+    main()
     ```
 
 ### Problem Description: [LeetCode - Problem 2800 - Shortest String That Contains Three Strings](https://leetcode.com/problems/shortest-string-that-contains-three-strings/)
