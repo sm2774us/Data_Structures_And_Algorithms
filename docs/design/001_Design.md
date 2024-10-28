@@ -96,13 +96,13 @@ The provided Python code implements a Least Recently Used (LRU) Cache using two 
   - An additional structure (either `OrderedDict` or a linked list) to maintain the order of keys.
   
 - **Space Complexity**:
-  - __`O(capacity) for both implementations since they can only store up to `capacity` key-value pairs.
+  - __`O(capacity)`__  for both implementations since they can only store up to `capacity` key-value pairs.
 
 ### Summary
 
 - The `OrderedDict`-based implementation is simpler and leverages Python's built-in features, making it easy to read and understand.
 - The linked list implementation is more manual but provides a good understanding of how LRU caches work at a lower level, managing nodes and pointers.
-- Both implementations efficiently support the required operations while adhering to __`O(1)`__ average time complexity for `get` and `put` operations and __`O(capacity) space complexity.
+- Both implementations efficiently support the required operations while adhering to __`O(1)`__ average time complexity for `get` and `put` operations and __`O(capacity)`__  space complexity.
 
 ### Solutions
 
