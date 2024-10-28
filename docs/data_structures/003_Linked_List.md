@@ -1977,60 +1977,60 @@ Both approaches correctly reverse the linked list, but the iterative solution is
     ```r
     # Define a ListNode class
     ListNode <- setRefClass("ListNode",
-    fields = list(
-        val = "numeric",
-        next = "ListNode"
-    )
+        fields = list(
+            val = "numeric",
+            next = "ListNode"
+        )
     )
 
     # Function to push a new node at the end
     push <- function(head, data) {
-    newNode <- ListNode$new(val = data)
-    if (is.null(head)) {
-        return(newNode)
-    }
-    
-    current <- head
-    while (!is.null(current$next)) {
-        current <- current$next
-    }
-    current$next <- newNode
-    return(head)
+        newNode <- ListNode$new(val = data)
+        if (is.null(head)) {
+            return(newNode)
+        }
+        
+        current <- head
+        while (!is.null(current$next)) {
+            current <- current$next
+        }
+        current$next <- newNode
+        return(head)
     }
 
     # Function to print the list
     printList <- function(head) {
-    current <- head
-    while (!is.null(current)) {
-        cat(current$val, "--> ")
-        current <- current$next
-    }
-    cat("NULL\n")
+        current <- head
+        while (!is.null(current)) {
+            cat(current$val, "--> ")
+            current <- current$next
+        }
+        cat("NULL\n")
     }
 
     # Iterative reversal function
     reverseIter <- function(head) {
-    prev <- NULL
-    current <- head
-    while (!is.null(current)) {
-        nextNode <- current$next
-        current$next <- prev
-        prev <- current
-        current <- nextNode
-    }
-    return(prev)
+        prev <- NULL
+        current <- head
+        while (!is.null(current)) {
+            nextNode <- current$next
+            current$next <- prev
+            prev <- current
+            current <- nextNode
+        }
+        return(prev)
     }
 
     # Recursive reversal function
     reverseRecur <- function(head) {
-    if (is.null(head) || is.null(head$next)) {
-        return(head)
-    }
-    
-    rest <- reverseRecur(head$next)
-    head$next$next <- head
-    head$next <- NULL
-    return(rest)
+        if (is.null(head) || is.null(head$next)) {
+            return(head)
+        }
+        
+        rest <- reverseRecur(head$next)
+        head$next$next <- head
+        head$next <- NULL
+        return(rest)
     }
 
     # Test the functions
@@ -2704,4 +2704,819 @@ In summary, the code efficiently merges two sorted singly-linked lists into a si
     println("Merged Linked List:")
     merged = mergeTwoLists(list1, list2)
     printList(merged)
+    ```
+
+## Linked List Cycle
+
+### Problem Description: [LeetCode - Problem 21 - Linked List Cycle](https://leetcode.com/problems/merge-two-sorted-lists/description/)
+
+!!! tip
+
+    Python solution is the easiest to understand so always start with that.
+
+### Solution Explanation
+
+### Complexity Analysis
+
+#### Time Complexity
+
+#### Space Complexity
+
+---
+
+### Solutions
+
+=== "Python"
+
+    ```python
+    # TC = O(N), SC = O(1)
+
+    from typing import Optional
+
+    class Node:
+        def __init__(self, data: int) -> None:
+            self.data: int = data
+            self.next: Optional['Node'] = None
+
+    def push(head: Optional[Node], data: int) -> Node:
+        new_node = Node(data)
+        if head is None:
+            return new_node
+        else:
+            curr = head
+            while curr.next is not None:
+                curr = curr.next
+            curr.next = new_node
+            return head
+
+    #def print_list(head: Optional[Node]) -> None:
+    #    while head:
+    #        print(f"{head.data}-->", end="")
+    #        head = head.next
+    #    print("NULL")
+
+    def print_list(head: Optional[Node]) -> None:
+        visited = set()
+        while head:
+            if head in visited:
+                print(f"({head.data})-->", end="")
+                print("Cycle detected here...")
+                return
+            print(f"{head.data}-->", end="")
+            visited.add(head)
+            head = head.next
+        print("NULL")
+
+    class Solution:
+        def hasCycle(self, head: Optional[Node]) -> bool:
+            if not head or not head.next:
+                return False
+            
+            slow = head
+            fast = head.next
+            
+            while slow != fast:
+                if not fast or not fast.next:
+                    return False
+                slow = slow.next
+                fast = fast.next.next
+            
+            return True
+
+    if __name__ == "__main__":
+        head: Optional[Node] = None
+        head = push(head, 1)
+        head = push(head, 2)
+        head = push(head, 3)
+        head = push(head, 4)
+        head = push(head, 5)
+
+        print("Does the following LinkedList: [ ", end="")
+        print_list(head)
+        print(f" ] have a cycle? {Solution().hasCycle(head)}")
+    ```
+
+=== "C++"
+
+    ```cpp
+    #include <iostream>
+    #include <unordered_set>
+
+    class Node {
+    public:
+        int data;
+        Node* next;
+
+        Node(int data) : data(data), next(nullptr) {}
+    };
+
+    Node* push(Node* head, int data) {
+        Node* new_node = new Node(data);
+        if (!head) {
+            return new_node;
+        }
+        Node* curr = head;
+        while (curr->next) {
+            curr = curr->next;
+        }
+        curr->next = new_node;
+        return head;
+    }
+
+    void print_list(Node* head) {
+        std::unordered_set<Node*> visited;
+        while (head) {
+            if (visited.count(head)) {
+                std::cout << "(" << head->data << ")-->";
+                std::cout << "Cycle detected here..." << std::endl;
+                return;
+            }
+            std::cout << head->data << "-->";
+            visited.insert(head);
+            head = head->next;
+        }
+        std::cout << "NULL" << std::endl;
+    }
+
+    class Solution {
+    public:
+        bool hasCycle(Node* head) {
+            if (!head || !head->next) return false;
+
+            Node* slow = head;
+            Node* fast = head->next;
+
+            while (slow != fast) {
+                if (!fast || !fast->next) return false;
+                slow = slow->next;
+                fast = fast->next->next;
+            }
+            return true;
+        }
+    };
+
+    int main() {
+        Node* head = nullptr;
+        head = push(head, 1);
+        head = push(head, 2);
+        head = push(head, 3);
+        head = push(head, 4);
+        head = push(head, 5);
+
+        std::cout << "Does the following LinkedList: [ ";
+        print_list(head);
+        std::cout << "] have a cycle? " << std::boolalpha << Solution().hasCycle(head) << std::endl;
+
+        return 0;
+    }
+    ```
+
+=== "Rust"
+
+    ```rust
+    use std::collections::HashSet;
+
+    #[derive(Debug)]
+    struct Node {
+        data: i32,
+        next: Option<Box<Node>>,
+    }
+
+    impl Node {
+        fn new(data: i32) -> Self {
+            Node { data, next: None }
+        }
+    }
+
+    fn push(head: Option<Box<Node>>, data: i32) -> Option<Box<Node>> {
+        let mut new_node = Box::new(Node::new(data));
+        if let Some(mut curr) = head {
+            while let Some(next) = curr.next.take() {
+                curr = next;
+            }
+            curr.next = Some(new_node);
+            Some(head)
+        } else {
+            Some(new_node)
+        }
+    }
+
+    fn print_list(head: &Option<Box<Node>>) {
+        let mut visited = HashSet::new();
+        let mut current = head;
+        while let Some(node) = current {
+            if visited.contains(&node.as_ref()) {
+                println!("({})--> Cycle detected here...", node.data);
+                return;
+            }
+            print!("{}-->", node.data);
+            visited.insert(node.as_ref());
+            current = &node.next;
+        }
+        println!("NULL");
+    }
+
+    struct Solution;
+
+    impl Solution {
+        fn has_cycle(head: &Option<Box<Node>>) -> bool {
+            let mut slow = head.as_ref();
+            let mut fast = head.as_ref();
+
+            while let Some(s) = slow {
+                slow = s.next.as_ref();
+                fast = fast.and_then(|f| f.next.as_ref()).and_then(|f| f.next.as_ref());
+                if slow == fast {
+                    return true;
+                }
+            }
+            false
+        }
+    }
+
+    fn main() {
+        let mut head = None;
+        head = push(head, 1);
+        head = push(head, 2);
+        head = push(head, 3);
+        head = push(head, 4);
+        head = push(head, 5);
+
+        print!("Does the following LinkedList: [ ");
+        print_list(&head);
+        println!("] have a cycle? {}", Solution::has_cycle(&head));
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    using System;
+    using System.Collections.Generic;
+
+    public class Node {
+        public int data;
+        public Node next;
+
+        public Node(int data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+
+    public class Solution {
+        public bool HasCycle(Node head) {
+            if (head == null || head.next == null) return false;
+
+            Node slow = head;
+            Node fast = head.next;
+
+            while (slow != fast) {
+                if (fast == null || fast.next == null) return false;
+                slow = slow.next;
+                fast = fast.next.next;
+            }
+            return true;
+        }
+    }
+
+    class Program {
+        static Node Push(Node head, int data) {
+            Node newNode = new Node(data);
+            if (head == null) {
+                return newNode;
+            } else {
+                Node curr = head;
+                while (curr.next != null) {
+                    curr = curr.next;
+                }
+                curr.next = newNode;
+                return head;
+            }
+        }
+
+        static void PrintList(Node head) {
+            HashSet<Node> visited = new HashSet<Node>();
+            while (head != null) {
+                if (visited.Contains(head)) {
+                    Console.WriteLine($"({head.data})--> Cycle detected here...");
+                    return;
+                }
+                Console.Write($"{head.data}-->");
+                visited.Add(head);
+                head = head.next;
+            }
+            Console.WriteLine("NULL");
+        }
+
+        static void Main() {
+            Node head = null;
+            head = Push(head, 1);
+            head = Push(head, 2);
+            head = Push(head, 3);
+            head = Push(head, 4);
+            head = Push(head, 5);
+
+            Console.Write("Does the following LinkedList: [ ");
+            PrintList(head);
+            Console.WriteLine($"] have a cycle? {new Solution().HasCycle(head)}");
+        }
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    import java.util.HashSet;
+
+    class Node {
+        int data;
+        Node next;
+
+        Node(int data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+
+    class Solution {
+        public boolean hasCycle(Node head) {
+            if (head == null || head.next == null) return false;
+
+            Node slow = head;
+            Node fast = head.next;
+
+            while (slow != fast) {
+                if (fast == null || fast.next == null) return false;
+                slow = slow.next;
+                fast = fast.next.next;
+            }
+            return true;
+        }
+    }
+
+    public class LinkedListCycle {
+        static Node push(Node head, int data) {
+            Node newNode = new Node(data);
+            if (head == null) {
+                return newNode;
+            } else {
+                Node curr = head;
+                while (curr.next != null) {
+                    curr = curr.next;
+                }
+                curr.next = newNode;
+                return head;
+            }
+        }
+
+        static void printList(Node head) {
+            HashSet<Node> visited = new HashSet<>();
+            while (head != null) {
+                if (visited.contains(head)) {
+                    System.out.println("(" + head.data + ")--> Cycle detected here...");
+                    return;
+                }
+                System.out.print(head.data + "-->");
+                visited.add(head);
+                head = head.next;
+            }
+            System.out.println("NULL");
+        }
+
+        public static void main(String[] args) {
+            Node head = null;
+            head = push(head, 1);
+            head = push(head, 2);
+            head = push(head, 3);
+            head = push(head, 4);
+            head = push(head, 5);
+
+            System.out.print("Does the following LinkedList: [ ");
+            printList(head);
+            System.out.println("] have a cycle? " + new Solution().hasCycle(head));
+        }
+    }
+    ```
+
+=== "Scala"
+
+    ```scala
+    import scala.collection.mutable
+
+    class Node(var data: Int) {
+        var next: Option[Node] = None
+    }
+
+    object LinkedListCycle {
+        def push(head: Option[Node], data: Int): Option[Node] = {
+            val newNode = new Node(data)
+            head match {
+            case None => Some(newNode)
+            case Some(curr) =>
+                var temp = curr
+                while (temp.next.isDefined) {
+                    temp = temp.next.get
+                }
+                temp.next = Some(newNode)
+                head
+            }
+        }
+
+        def printList(head: Option[Node]): Unit = {
+            val visited = mutable.HashSet[Node]()
+            var current = head
+            while (current.isDefined) {
+                current match {
+                    case Some(node) =>
+                        if (visited.contains(node)) {
+                            println(s"(${node.data})--> Cycle detected here...")
+                            return
+                        }
+                        print(s"${node.data}-->")
+                        visited.add(node)
+                        current = node.next
+                    case None => 
+                }
+            }
+            println("NULL")
+        }
+
+        class Solution {
+            def hasCycle(head: Option[Node]): Boolean = {
+            if (head.isEmpty || head.get.next.isEmpty) return false
+
+            var slow = head
+            var fast = head.flatMap(_.next)
+
+            while (slow != fast) {
+                if (fast.isEmpty || fast.get.next.isEmpty) return false
+                slow = slow.flatMap(_.next)
+                fast = fast.flatMap(_.next).flatMap(_.next)
+            }
+            true
+            }
+        }
+
+        def main(args: Array[String]): Unit = {
+            var head: Option[Node] = None
+            head = push(head, 1)
+            head = push(head, 2)
+            head = push(head, 3)
+            head = push(head, 4)
+            head = push(head, 5)
+
+            print("Does the following LinkedList: [ ")
+            printList(head)
+            println(s"] have a cycle? ${new Solution().hasCycle(head)}")
+        }
+    }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    class Node(var data: Int) {
+        var next: Node? = null
+    }
+
+    class Solution {
+        fun hasCycle(head: Node?): Boolean {
+            if (head == null || head.next == null) return false
+
+            var slow: Node? = head
+            var fast: Node? = head.next
+
+            while (slow != fast) {
+                if (fast == null || fast.next == null) return false
+                slow = slow?.next
+                fast = fast.next?.next
+            }
+            return true
+        }
+    }
+
+    fun push(head: Node?, data: Int): Node {
+        val newNode = Node(data)
+        return if (head == null) {
+            newNode
+        } else {
+            var curr = head
+            while (curr.next != null) {
+                curr = curr.next!!
+            }
+            curr.next = newNode
+            head
+        }
+    }
+
+    fun printList(head: Node?) {
+        val visited = mutableSetOf<Node>()
+        var current: Node? = head
+        while (current != null) {
+            if (current in visited) {
+                println("(${current.data})--> Cycle detected here...")
+                return
+            }
+            print("${current.data}-->")
+            visited.add(current)
+            current = current.next
+        }
+        println("NULL")
+    }
+
+    fun main() {
+        var head: Node? = null
+        head = push(head, 1)
+        head = push(head, 2)
+        head = push(head, 3)
+        head = push(head, 4)
+        head = push(head, 5)
+
+        print("Does the following LinkedList: [ ")
+        printList(head)
+        println("] have a cycle? ${Solution().hasCycle(head)}")
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    package main
+
+    import (
+        "fmt"
+    )
+
+    type Node struct {
+        data int
+        next *Node
+    }
+
+    func push(head *Node, data int) *Node {
+        newNode := &Node{data: data}
+        if head == nil {
+            return newNode
+        }
+        curr := head
+        for curr.next != nil {
+            curr = curr.next
+        }
+        curr.next = newNode
+        return head
+    }
+
+    func printList(head *Node) {
+        visited := make(map[*Node]bool)
+        for head != nil {
+            if visited[head] {
+                fmt.Printf("(%d)--> Cycle detected here...\n", head.data)
+                return
+            }
+            fmt.Printf("%d-->", head.data)
+            visited[head] = true
+            head = head.next
+        }
+        fmt.Println("NULL")
+    }
+
+    type Solution struct{}
+
+    func (s *Solution) hasCycle(head *Node) bool {
+        if head == nil || head.next == nil {
+            return false
+        }
+
+        slow, fast := head, head.next
+
+        for slow != fast {
+            if fast == nil || fast.next == nil {
+                return false
+            }
+            slow = slow.next
+            fast = fast.next.next
+        }
+        return true
+    }
+
+    func main() {
+        var head *Node
+        head = push(head, 1)
+        head = push(head, 2)
+        head = push(head, 3)
+        head = push(head, 4)
+        head = push(head, 5)
+
+        fmt.Print("Does the following LinkedList: [ ")
+        printList(head)
+        fmt.Printf("] have a cycle? %v\n", (&Solution{}).hasCycle(head))
+    }
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    class Node {
+        data: number;
+        next: Node | null;
+
+        constructor(data: number) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+
+    function push(head: Node | null, data: number): Node {
+        const newNode = new Node(data);
+        if (head === null) {
+            return newNode;
+        } else {
+            let curr = head;
+            while (curr.next !== null) {
+                curr = curr.next;
+            }
+            curr.next = newNode;
+            return head;
+        }
+    }
+
+    function printList(head: Node | null): void {
+        const visited = new Set<Node>();
+        while (head !== null) {
+            if (visited.has(head)) {
+                console.log(`(${head.data})--> Cycle detected here...`);
+                return;
+            }
+            process.stdout.write(`${head.data}-->`);
+            visited.add(head);
+            head = head.next;
+        }
+        console.log("NULL");
+    }
+
+    class Solution {
+        hasCycle(head: Node | null): boolean {
+            if (head === null || head.next === null) return false;
+
+            let slow: Node | null = head;
+            let fast: Node | null = head.next;
+
+            while (slow !== fast) {
+                if (fast === null || fast.next === null) return false;
+                slow = slow.next;
+                fast = fast.next.next;
+            }
+            return true;
+        }
+    }
+
+    function main(): void {
+        let head: Node | null = null;
+        head = push(head, 1);
+        head = push(head, 2);
+        head = push(head, 3);
+        head = push(head, 4);
+        head = push(head, 5);
+
+        process.stdout.write("Does the following LinkedList: [ ");
+        printList(head);
+        console.log(`] have a cycle? ${new Solution().hasCycle(head)}`);
+    }
+
+    main();
+    ```
+
+=== "R"
+
+    ```r
+    Node <- setRefClass("Node", fields = list(data = "numeric", next = "Node"))
+
+    push <- function(head, data) {
+        new_node <- Node$new(data)
+        if (is.null(head)) {
+            return(new_node)
+        } else {
+            curr <- head
+            while (!is.null(curr$next)) {
+                curr <- curr$next
+            }
+            curr$next <- new_node
+            return(head)
+        }
+    }
+
+    print_list <- function(head) {
+        visited <- list()
+        while (!is.null(head)) {
+            if (head %in% visited) {
+                cat(sprintf("(%d)--> Cycle detected here...\n", head$data))
+                return()
+            }
+            cat(sprintf("%d-->", head$data))
+            visited <- append(visited, list(head))
+            head <- head$next
+        }
+        cat("NULL\n")
+    }
+
+    has_cycle <- function(head) {
+        if (is.null(head) || is.null(head$next)) return(FALSE)
+
+        slow <- head
+        fast <- head$next
+
+        while (slow != fast) {
+            if (is.null(fast) || is.null(fast$next)) return(FALSE)
+            slow <- slow$next
+            fast <- fast$next$next
+        }
+        return(TRUE)
+    }
+
+    main <- function() {
+        head <- NULL
+        head <- push(head, 1)
+        head <- push(head, 2)
+        head <- push(head, 3)
+        head <- push(head, 4)
+        head <- push(head, 5)
+
+        cat("Does the following LinkedList: [ ")
+        print_list(head)
+        cat(sprintf("] have a cycle? %s\n", has_cycle(head)))
+    }
+
+    main()
+    ```
+
+=== "Julia"
+
+    ```julia
+    mutable struct Node
+        data::Int
+        next::Union{Node, Nothing}
+    end
+
+    function push(head::Union{Node, Nothing}, data::Int)
+        new_node = Node(data, nothing)
+        if head === nothing
+            return new_node
+        else
+            curr = head
+            while curr.next !== nothing
+                curr = curr.next
+            end
+            curr.next = new_node
+            return head
+        end
+    end
+
+    function print_list(head::Union{Node, Nothing})
+        visited = Set{Node}()
+        while head !== nothing
+            if head in visited
+                println("($head.data)--> Cycle detected here...")
+                return
+            end
+            print("$head.data-->")
+            push!(visited, head)
+            head = head.next
+        end
+        println("NULL")
+    end
+
+    struct Solution end
+
+    function has_cycle(s::Solution, head::Union{Node, Nothing})
+        if head === nothing || head.next === nothing
+            return false
+        end
+
+        slow = head
+        fast = head.next
+
+        while slow != fast
+            if fast === nothing || fast.next === nothing
+                return false
+            end
+            slow = slow.next
+            fast = fast.next.next
+        end
+        return true
+    end
+
+    function main()
+        head = nothing
+        head = push(head, 1)
+        head = push(head, 2)
+        head = push(head, 3)
+        head = push(head, 4)
+        head = push(head, 5)
+
+        print("Does the following LinkedList: [ ")
+        print_list(head)
+        println("] have a cycle? ", has_cycle(Solution(), head))
+    end
+
+    main()
     ```

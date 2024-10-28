@@ -18,6 +18,8 @@ search:
     - [Tree](data_structures/007_Tree.md)
     - [Graph](data_structures/008_Graph.md)
     - [Hashtable](data_structures/009_Hashtable.md)
+- Design
+    - [Design](design/001_Design.md)
 - Algorithms
     - [Two Pointers](algorithms/001_Two_Pointers.md)
     - [Binary Search](algorithms/002_Binary_Search.md)
