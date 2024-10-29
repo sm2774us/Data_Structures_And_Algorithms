@@ -29,6 +29,8 @@ search:
     - [Backtracking](algorithms/006_Backtracking.md)
     - [Dynamic Programming](algorithms/007_Dynamic_Programming.md)
     - [Recursion](algorithms/008_Recursion.md)
+- Logical Resoning
+    - [Logical Reasoning Problems](logical_reasoning/001_logical_reasoning.md)
 - Algebra
     - [Fundamentals](algebra/001_fundamentals.md)
     - [Prime Numbers](algebra/002_prime_numbers.md)
