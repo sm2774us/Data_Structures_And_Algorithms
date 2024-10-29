@@ -1,6 +1,5 @@
 ---
-  -
-  Original
+  - Original
 ---
 
 # Logical Reasoning
@@ -39,3 +38,4 @@ $$
 The number of spiders is __`4c = 4(13) = 52`__.
 
 Thus, there are **52 spiders**.
+

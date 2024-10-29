@@ -45,6 +45,8 @@ search:
     - [Sweep-Line](geometry/004_sweep_line.md)
     - [Planar Graphs](geometry/005_planar_graphs.md)
     - [Miscellaeous](geometry/006_miscellaneous.md)
+- Probability
+    - [Probability Problems](probability/001_probability.md)
 - Linear Algebra
     - [Matrices](linear_algebra/001_matrices.md)
 - Combinatorics
