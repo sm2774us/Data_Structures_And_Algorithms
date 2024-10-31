@@ -14,17 +14,6 @@ edit_uri: edit/main/docs/
 # Copyright
 copyright: Copyright &copy; 2024 Shaikat Majumdar
 
-extra_javascript:
-  - javascript/config.js
-  - https://polyfill.io/v3/polyfill.min.js?features=es6
-  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
-  - https://unpkg.com/mermaid/dist/mermaid.min.js
-
-
-extra_css:
-  - https://unpkg.com/katex@0/dist/katex.min.css
-  - stylesheets/extra.css
-
 # Configuration
 theme:
   name: material
@@ -51,6 +40,16 @@ theme:
     - search.suggest
     - toc.integrate
     - content.code.copy
+
+extra_javascript:
+  - javascript/config.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js
+
+extra_css:
+  - https://unpkg.com/katex@0/dist/katex.min.css
+  - stylesheets/extra.css
 
 # Extensions
 markdown_extensions:
@@ -103,11 +102,6 @@ plugins:
             show_bases: false
   - macros
   - rss
-
-extra_javascript:
-  - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
-  - javascripts/tablesort.js
-  - javascript/init_kapa_widget.js
 
 extra:
   analytics:
