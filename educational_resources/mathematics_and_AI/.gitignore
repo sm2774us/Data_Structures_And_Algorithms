@@ -1,0 +1,10 @@
+materials/*.pptx
+materials/desktop.ini
+weekly-projects/week2/prevalence.tsv
+weekly-projects/week2/symptoms.tsv
+weekly-projects/*/Homework*complete.ipynb
+weekly-projects/*/Homework*solved.ipynb
+weekly-projects/*/.ipynb_checkpoints/*.ipynb
+
+
+weekly-projects/week6/example-cifar (1).ipynb

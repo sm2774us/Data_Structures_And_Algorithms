@@ -46,7 +46,8 @@ search:
     - [Planar Graphs](geometry/005_planar_graphs.md)
     - [Miscellaeous](geometry/006_miscellaneous.md)
 - Probability
-    - [Probability Problems](probability/001_probability.md)
+    - [Probability Basics](probability/001_probability_basics.md)
+    - [Probability Problems](probability/002_probability_problems.md)
 - Linear Algebra
     - [Matrices](linear_algebra/001_matrices.md)
 - Combinatorics
