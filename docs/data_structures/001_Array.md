@@ -902,16 +902,16 @@ The provided solution uses a **priority queue** (min-heap) to efficiently retrie
    - Once all elements have been processed, the result vector contains the merged sorted elements.
 
 #### Time Complexity
-- **Pushing Elements**: Inserting elements into the priority queue takes $$O(\log k)$$ time.
-- **Total Merges**: Each of the $$N$$ elements (where $$N$$ is the total number of elements across all arrays) is processed once. Therefore, the overall complexity is:
+- **Pushing Elements**: Inserting elements into the priority queue takes $O(\log k)$ time.
+- **Total Merges**: Each of the $N$ elements (where $N$ is the total number of elements across all arrays) is processed once. Therefore, the overall complexity is:
   
 ```math
 O(N \log k)
 ```
 
 #### Space Complexity
-- **Priority Queue Storage**: The priority queue holds at most `k` elements at any time, leading to a space complexity of $$O(k)$$.
-- **Result Vector**: The space used for the result vector is $$O(N)$$ since it stores all merged elements.
+- **Priority Queue Storage**: The priority queue holds at most `k` elements at any time, leading to a space complexity of $O(k)$.
+- **Result Vector**: The space used for the result vector is $O(N)$ since it stores all merged elements.
 
 Overall, the space complexity is dominated by the result vector:
 
@@ -974,8 +974,8 @@ int main() {
 2. **Sorting**: Use the standard library's `sort()` function to sort the entire `result` vector in place.
 
 #### Time Complexity
-- **Collecting Elements**: Appending elements from all `k` arrays takes $$O(N)$$.
-- **Sorting**: The sorting operation takes $$O(N \log N)$$ in the worst case.
+- **Collecting Elements**: Appending elements from all `k` arrays takes $O(N)$.
+- **Sorting**: The sorting operation takes $O(N \log N)$ in the worst case.
   
 Overall, the time complexity for this approach is:
 
@@ -984,7 +984,7 @@ O(N \log N)
 ```
 
 #### Space Complexity
-- **Result Vector**: We store all elements in a new vector, which requires $$O(N)$$ space.
+- **Result Vector**: We store all elements in a new vector, which requires $O(N)$ space.
   
 Thus, the space complexity is:
 
@@ -995,16 +995,16 @@ O(N)
 ### Summary of Complexity Analysis
 
 - **Priority Queue Method**:
-  - Time Complexity: $$O(N \log k)$$
-  - Space Complexity: $$O(N + k)$$
+  - Time Complexity: $O(N \log k)$
+  - Space Complexity: $O(N + k)$
 
 - **In-Place Merge Method**:
-  - Time Complexity: $$O(N \log N)$$
-  - Space Complexity: $$O(N)$$
+  - Time Complexity: $O(N \log N)$
+  - Space Complexity: $O(N)$
 
 ### Conclusion
 
-The priority queue method is generally more efficient for merging `k` sorted arrays, especially when $$k$$ is much smaller than $$N$$, as it takes advantage of the sorted nature of the input arrays. The in-place merge method, while simpler, incurs a higher time complexity due to the sorting step, making it less optimal for large datasets.
+The priority queue method is generally more efficient for merging `k` sorted arrays, especially when $k$ is much smaller than $N$$, as it takes advantage of the sorted nature of the input arrays. The in-place merge method, while simpler, incurs a higher time complexity due to the sorting step, making it less optimal for large datasets.
 
 
 ### Solutions
