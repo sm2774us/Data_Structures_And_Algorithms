@@ -247,7 +247,7 @@ $$
 ## Problem 3: Counting Functions
 
 #### (a)
-Let $$X$$ and $$Y$$ be two finite sets. How many functions are there from $$X$$ to $$Y$$?  
+Let $$X$$ and $$Y$$ be two finite sets. How many functions are there from $$X$$ to $$Y$$?
 *(If you are unsure about what functions precisely are, check the [Wikipedia entry Function (Mathematics)](https://en.wikipedia.org/wiki/Function_(mathematics))).*
 
 ---
@@ -470,6 +470,30 @@ $$
 **Final Answer:** If the match was hopeless, the probability that they’ve won is **0**.
 
 ---
+
+## Problem 4: A probability urn
+
+An urn contains 3 red balls, 5 green balls, and one blue ball. You randomly draw a ball, don't put it back, but add two balls of the colors you did not draw. (For example: if you have drawn a red ball, add a green and a blue ball to the urn.) What is the probability that the second ball is red? 
+
+**Hint:** Draw a tree!
+
+---
+
+## Problem 5: Probability functions
+
+Let $$(\Omega, A, P)$$ be a finite probability space and $$A, B \in A$$ two events.
+
+### (a) 1pt 
+Show that $$P$$ is monotone: if $$A \subseteq B$$, then $$P(A) \leq P(B)$$.
+
+### (b) 1pt 
+Show that if $$A \subset B$$, then $$P(B \setminus A) = P(B) - P(A)$$.  
+**Hint:** Use (a).
+
+### (c) 1pt 
+Now assume that $$A$$ and $$B$$ are independent and prove that $$A^c = \Omega \setminus A$$ and $$B$$ are also independent.  
+**Hint:** Draw a Venn diagram and post a question to the forum if you need more hints.
+
 
 ## Problem n: Exercise Survey Problem
 
